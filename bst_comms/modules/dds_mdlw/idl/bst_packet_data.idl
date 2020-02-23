@@ -1,0 +1,9 @@
+module kpsr_dds_bst {
+
+    struct BstPacketData {
+        long id; //@key
+        sequence<octet, 128> data;
+    };
+
+#pragma keylist BstPacketData id
+};

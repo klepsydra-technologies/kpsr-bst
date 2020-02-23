@@ -1,0 +1,13 @@
+class_name: kpsr::trajectory::LinearVelocity
+middlewares:
+    - type: ZMQ
+fields:
+    - name   : seq
+      type   : uint16
+    - name   : u
+      type   : float32
+    - name   : v
+      type   : float32
+    - name   : w
+      type   : float32
+

@@ -1,0 +1,13 @@
+class_name: kpsr::trajectory::GpsPosition
+middlewares:
+    - type: ZMQ
+fields:
+    - name   : seq
+      type   : uint16
+    - name   : latitude
+      type   : float32
+    - name   : longitude
+      type   : float32
+    - name   : altitude
+      type   : float32
+

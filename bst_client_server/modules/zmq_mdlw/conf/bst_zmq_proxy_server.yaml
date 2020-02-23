@@ -1,0 +1,9 @@
+bst_server_publish_url: 'tcp://localhost:8100'
+bst_server_subscribe_url: 'tcp://*:8110'
+bst_client_publish_url: 'tcp://localhost:8120'
+bst_client_subscribe_url: 'tcp://*:8130'
+
+kpsr_zmq_env_write_url: 'tcp://*:8210'
+kpsr_zmq_env_listen_url: 'tcp://*:8200'
+kpsr_zmq_env_timeout: 100
+

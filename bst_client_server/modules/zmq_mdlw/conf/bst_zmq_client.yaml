@@ -1,0 +1,23 @@
+# rest container conf
+rest_port: 9191
+rest_number_threads: 2
+
+# admin container conf
+admin_container_enable: true
+
+# Kpsr BST Client conf
+bst_client_heartbeat_period_microsecs: 1000
+bst_client_run_period_microsecs: 1000
+bst_client_flight_mode_attempts: 10
+
+# ZMQ Conf
+bst_client_publish_url: 'tcp://*:8120'
+bst_server_subscribe_url: 'tcp://localhost:8110'
+bst_client_bind_address: 'ipc://kpsr.bst.client.ipc'
+
+kpsr_zmq_env_listen_url: 'tcp://localhost:8210'
+kpsr_zmq_env_write_url: 'tcp://localhost:8200'
+kpsr_zmq_env_topic_name: 'configuration'
+kpsr_zmq_env_key: 'bst_zmq_client'
+kpsr_zmq_env_poll_period: 1000
+

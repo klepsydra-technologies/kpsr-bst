@@ -1,0 +1,16 @@
+# rest container conf
+rest_port: 9191
+rest_number_threads: 2
+
+# admin container conf
+admin_container_enable: true
+
+# Kpsr BST Client conf
+bst_client_heartbeat_period_microsecs: 1000
+bst_client_run_period_microsecs: 1000
+bst_client_flight_mode_attempts: 10
+
+# DDS Conf
+kpsr_dds_env_topic_name: 'configuration'
+kpsr_dds_env_key: 'bst_dds_client'
+

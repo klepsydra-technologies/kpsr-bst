@@ -1,0 +1,26 @@
+class_name: kpsr::trajectory::TrajectoryMonitoringResponse
+middlewares:
+    - type: ZMQ
+create_builder:
+enums:
+    - enum_name: kpsr::trajectory::TrajectoryCommandType
+      already_exists: true
+      include_file: <klepsydra/trajectory_monitoring/trajectory_command_types.h>
+fields:
+    - name   : id
+      type   : int64
+    - name   : type
+      type   : kpsr::trajectory::TrajectoryCommandType
+    - name   : result
+      type   : boolean
+    - name   : position
+      type   : kpsr::trajectory::Position
+    - name   : orientation
+      type   : kpsr::trajectory::Orientation
+    - name   : gpsPosition
+      type   : kpsr::trajectory::GpsPosition
+    - name   : linearVelocity
+      type   : kpsr::trajectory::LinearVelocity
+    - name   : angularRates
+      type   : kpsr::trajectory::AngularRates
+

@@ -1,0 +1,14 @@
+class_name: kpsr::trajectory::TrajectoryMonitoringRequest
+middlewares:
+    - type: ZMQ
+create_builder:
+enums:
+    - enum_name: kpsr::trajectory::TrajectoryCommandType
+      already_exists: true
+      include_file: <klepsydra/trajectory_monitoring/trajectory_command_types.h>
+fields:
+    - name   : id
+      type   : int64
+    - name   : type
+      type   : kpsr::trajectory::TrajectoryCommandType
+

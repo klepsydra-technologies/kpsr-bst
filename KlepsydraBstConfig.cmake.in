@@ -1,0 +1,21 @@
+# - Config file for the Klepsydra package
+# It defines the following variables
+#  KPSR_BST_INCLUDE_DIRS - include directories for Klepsydra
+#  KPSR_BST_LIBRARIES    - libraries to link against
+#  KPSR_BST_EXECUTABLE   - the bar executable
+
+# Compute paths
+get_filename_component(KPSR_BST_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(KPSR_BST_INCLUDE_DIRS "@EXPORT_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET klepsydra AND NOT KPSR_BST_BINARY_DIR)
+  include("${KPSR_BST_CMAKE_DIR}/KlepsydraBstTargets.cmake")
+endif()
+
+
+# These are IMPORTED targets created by KlepsydraBstTargets.cmake
+set(KPSR_BST_CORE_LIBRARIES "@CORE_EXPORT_TARGETS@")
+set(KPSR_BST_DDS_LIBRARIES "@DDS_EXPORT_TARGETS@")
+set(KPSR_BST_ZMQ_LIBRARIES "@ZMQ_EXPORT_TARGETS@")
+

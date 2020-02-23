@@ -1,0 +1,13 @@
+class_name: kpsr::trajectory::Orientation
+middlewares:
+    - type: ZMQ
+fields:
+    - name   : seq
+      type   : uint16
+    - name   : roll
+      type   : float32
+    - name   : pitch
+      type   : float32
+    - name   : yaw
+      type   : float32
+

@@ -1,0 +1,16 @@
+class_name: kpsr::bst::BstRequestMessage
+middlewares:
+    - type: DDS
+      class_name: kpsr_dds_bst::BstRequestData
+      sequence_fields:
+         - type
+         - id
+    - type: ZMQ
+create_builder: true
+fields:
+    - name   : type
+      type   : uchar8
+    - name   : id
+      type   : uchar8
+    - name   : value
+      type   : float32

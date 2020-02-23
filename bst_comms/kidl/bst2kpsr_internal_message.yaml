@@ -1,0 +1,37 @@
+class_name: kpsr::bst::Bst2KpsrInternalMessage
+create_builder: true
+enums:
+    - enum_name: kpsr::bst::COMMS_MODULE
+      exists: false
+      values:
+         - BASIC
+         - FLIGHT_PLAN
+    - enum_name: kpsr::bst::COMMS_FUNCTION
+      exists: false
+      values:
+         - RECEIVE
+         - RECEIVE_COMMAND
+         - RECEIVE_REPLY
+         - PUBLISH
+fields:
+    - name   : commsModule
+      type   : kpsr::bst::COMMS_MODULE
+    - name   : commsFunction
+      type   : kpsr::bst::COMMS_FUNCTION
+    - name   : type
+      type   : uchar8
+    - name   : data
+      type   : uchar8[]
+    - name   : size
+      type   : uint16
+    - name   : ack
+      type   : boolean
+    - name   : sendParameter
+      type   : void_ptr
+    - name   : receivedParameter
+      type   : const_void_ptr
+    - name   : requestValue
+      type   : uchar8
+    - name   : publishParam
+      type   : uchar8
+

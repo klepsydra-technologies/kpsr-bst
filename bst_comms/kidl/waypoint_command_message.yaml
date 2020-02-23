@@ -1,0 +1,19 @@
+class_name: kpsr::bst::WaypointCommandMessage
+middlewares:
+    - type: DDS
+      class_name: kpsr_dds_bst::WaypointCommandData
+      sequence_fields:
+         - id
+    - type: ZMQ
+enums:
+    - enum_name: FPMapMode_t
+      already_exists: true
+      include_file: "comm_packets.h"
+fields:
+    - name   : id
+      type   : uchar8
+    - name   : plan
+      type   : kpsr::bst::WaypointMessage[]
+    - name   : mode
+      type   : FPMapMode_t
+

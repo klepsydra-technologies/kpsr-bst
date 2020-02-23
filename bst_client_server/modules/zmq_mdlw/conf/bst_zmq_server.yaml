@@ -1,0 +1,30 @@
+# rest container conf
+rest_port: 9090
+rest_number_threads: 2
+
+# admin container conf
+admin_container_enable: true
+
+# BST connection conf
+bst_serial_number: 0x1234 
+bst_serial_enable: false
+bst_serial_port: '/dev/ttyUSB0' 
+bst_baud_rate: '9600'
+bst_host: 'localhost'
+bst_port: '55553'
+
+# Kpsr BST Server conf
+bst_server_period_microsecs: 1000
+
+# ZMQ Conf
+bst_server_publish_url: 'tcp://*:8100'
+bst_server_subscribe_url: 'tcp://localhost:8110'
+bst_client_subscribe_url: 'tcp://localhost:8130'
+bst_server_bind_address: 'ipc://kpsr.bst.server.ipc'
+
+kpsr_zmq_env_listen_url: 'tcp://localhost:8210'
+kpsr_zmq_env_write_url: 'tcp://localhost:8200'
+kpsr_zmq_env_topic_name: 'configuration'
+kpsr_zmq_env_key: 'bst_zmq_server'
+kpsr_zmq_env_poll_period: 1000
+

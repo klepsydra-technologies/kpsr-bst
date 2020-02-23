@@ -1,0 +1,9 @@
+[
+   {
+      "name": "kpsr-bst-mem-server",
+      "currentGpsPositions": ["kpsr-bst-mem-server"],
+      "commandedGpsPositions": ["kpsr-bst-mem-server"],
+      "url": "http://localhost:9090"
+   }
+]
+

@@ -1,0 +1,22 @@
+class_name: kpsr::bst::WaypointMessage
+middlewares:
+    - type: DDS
+      class_name: kpsr_dds_bst::WaypointData
+    - type: ZMQ
+fields:
+    - name   : id
+      type   : uchar8
+    - name   : num
+      type   : uchar8
+    - name   : next
+      type   : uchar8
+    - name   : latitude
+      type   : float32
+    - name   : longitude
+      type   : float32
+    - name   : altitude
+      type   : float32
+    - name   : radius
+      type   : float32
+    - name   : action
+      type   : uchar8

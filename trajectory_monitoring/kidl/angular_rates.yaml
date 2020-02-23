@@ -1,0 +1,13 @@
+class_name: kpsr::trajectory::AngularRates
+middlewares:
+    - type: ZMQ
+fields:
+    - name   : seq
+      type   : uint16
+    - name   : p
+      type   : float32
+    - name   : q
+      type   : float32
+    - name   : r
+      type   : float32
+
