@@ -7,59 +7,19 @@
 ## System dependencies
 
 * Ubuntu 14.04 or above
-* ConcurrentQueue (https://github.com/klepsydra-technologies/concurrentqueue)
-* Cereal (https://github.com/klepsydra-technologies/cereal)
-* ROS Indigo or above (optional)
+* ZMQ (optional)
 * DDS (optional)
 * Cmake 3.5.1 or above
 * gcc for C++11 5.4.0 or above.
+* BST SDK
 * Doxygen (optional)
 * Moxygen (https://github.com/sourcey/moxygen) (optional)
-* Open CV
-* Ros Vision Package
 
 ## Klepsydra dependencies
 
-* kpsr-serialization
 * kpsr-core
-
-## System installation
-
-	sudo apt install build-essentials
-	sudo apt install git
-	sudo apt install cmake
-	git clone https://github.com/google/googletest.git
-
-### Google Test
-
-Google-Tests has to be at the level of the part of the folder where Klepsydra core will be installed. For example, if Klepsydra is installed in:
-	$KLEPSYDRA_HOME/kpsr-core
-
-Then google tests has to be installed in:
-	$KLEPSYDRA_HOME/../googletest
-
-These locations can be overridden by including the variables `GTEST_PATH` and `THIRDPARTIES_PATH` in the kpsr-core cmake invocation.
-
-### Cereal
-	git clone https://github.com/klepsydra-technologies/cereal
-	sudo mkdir $THIRDPARTIES_PATH/include
-	sudo cp cereal/include/* $THIRDPARTIES_PATH/include
-
-By default, we choose the location of installation for Cereal to be /opt/klepsydra/thirdparties.
-This location can be overridden by including the variable
-
-	THIRDPARTIES_PATH
-
-### Concurrent queue
-
-	git clone https://github.com/klepsydra-technologies/concurrentqueue
-	sudo mkdir $THIRDPARTIES_PATH/include
-	sudo cp concurrentqueue/*.h $THIRDPARTIES_PATH/include
-
-By default, we choose the location of installation for ConcurrentQueue to be /opt/klepsydra/thirdparties.
-This location can be overridden by including the variable
-
-	THIRDPARTIES_PATH
+* kpsr-robotics
+* kpsr-admin
 
 ## Installation
 
@@ -67,7 +27,7 @@ Given ```$KLEPSYDRA_HOME```, for example ```$HOME/klepsydra```:
 
 ```
 git clone https://github.com/kpsr-devs/kpsr-vision-ocv.git
-cd kpsr-vision-ocv
+cd kpsr-bst
 mkdir build
 cd build
 cmake ..
@@ -82,33 +42,22 @@ This will install the klespydra vision-ocv in
 
 The cmake has the following options:
 * -DKPSR_WITH_DDS=true for building the DDS binding
+* -DKPSR_WITH_ZMQ=true for building the ZMQ binding
 * -DKPSR_INSTALL_PATH for specifying the Klepsydra installation location (/opt/klepsydra by default)
-* -DGTEST_PATH for the google test path (default is ../../googletest)
-* -DTHIRDPARTIES_PATH for the ConcurrentQueue and Cereal path (default is /opt/klepsydra/thirdparties)
-* -DKPSR_BUILD_PATH location of the ```kpsr-build``` repository
+* -DBST_SDK_HOME for specifying the location of the SDK path.
 * -DKPSR_WITH_DOXYGEN to allow generation of documentation
 
-### ROS installation
+Example:
 
-In case of a new project:
-
-```
-mkdir -p YOUR_ROS_PROJECT
-cd YOUR_ROS_PROJECT
-source /opt/ros/melodic/setup.bash
-catkin_init_workspace
-```
-
-Then add the Klepsydra ROS sensors project to the ROS project:
 
 ```
-cd YOUR_ROS_PROJECT
-ln -s ../../robotics_utils/kpsr-vision-ocv/modules/ros_mdlw/kpsr_ros_vision_ocv
+cmake -DKPSR_WITH_ZMQ=true -DBST_SDK_HOME=/home/user1/development/swiftpilot/SDK ..
 ```
 
-# Documentation
 
-## Documentation generation
+## Documentation
+
+### Documentation generation
 
 ```
 make doc
@@ -130,3 +79,4 @@ Limited and its licensees. All rights reserved. See [license file](./LICENSE.md)
 
 https://www.klepsydra.com
 support@klepsydra.com
+
