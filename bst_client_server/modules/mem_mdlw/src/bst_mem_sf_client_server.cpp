@@ -48,6 +48,11 @@ int main(int argc, char *argv[])
 
     kpsr::YamlEnvironment environment(fileName);
 
+    std::string logFileName;
+    environment.getPropertyString("log_file_path", logFileName);
+    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    spdlog::set_default_logger(kpsrLogger);
+
     kpsr::restapi::RestEndpoint * restEndpoint = nullptr;
     kpsr::admin::restapi::BasicRestAdminContainerProvider * adminProvider = nullptr;
     kpsr::Container * container = nullptr;

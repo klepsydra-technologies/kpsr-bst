@@ -1,3 +1,6 @@
+# Logger
+log_file_path: './kpsr_bst_zmq_client.log'
+
 # rest container conf
 rest_port: 9191
 rest_number_threads: 2

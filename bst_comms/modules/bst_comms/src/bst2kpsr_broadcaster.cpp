@@ -17,8 +17,7 @@
 *****************************************************************************/
 #include <iomanip>
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <spdlog/spdlog.h>
 
 #include <klepsydra/bst_comms/bst2kpsr_broadcaster.h>
 
@@ -182,10 +181,10 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}TELEMETRY_SYSTEM", __PRETTY_FUNCTION__);
         ::bst::comms::TelemetrySystem_t telemetrySystem;
         memcpy(&telemetrySystem, data.data(), sizeof(TelemetrySystem_t));
-        spdlog::debug("{}\tautopilot_mode:\t{:.20f}", __PRETTY_FUNCTION__, telemetrySystem.autopilot_mode);
-        spdlog::debug("{}\tbatt_percent:\t{:.20f}", __PRETTY_FUNCTION__, telemetrySystem.batt_percent);
-        spdlog::debug("{}\tsatellites:\t{:.20f}", __PRETTY_FUNCTION__, telemetrySystem.satellites);
-        spdlog::debug("{}\terror_code:\t{:.20f}", __PRETTY_FUNCTION__, telemetrySystem.error_code);
+        spdlog::debug("{}\tautopilot_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.autopilot_mode);
+        spdlog::debug("{}\tbatt_percent:\t{}", __PRETTY_FUNCTION__, telemetrySystem.batt_percent);
+        spdlog::debug("{}\tsatellites:\t{}", __PRETTY_FUNCTION__, telemetrySystem.satellites);
+        spdlog::debug("{}\terror_code:\t{}", __PRETTY_FUNCTION__, telemetrySystem.error_code);
         _telemetrySystemPublisher->publish(telemetrySystem);
         break;
     }

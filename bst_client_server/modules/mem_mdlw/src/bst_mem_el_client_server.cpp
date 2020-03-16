@@ -48,6 +48,11 @@ int main(int argc, char *argv[])
 
     kpsr::YamlEnvironment environment(fileName);
 
+    std::string logFileName;
+    environment.getPropertyString("log_file_path", logFileName);
+    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    spdlog::set_default_logger(kpsrLogger);
+
     kpsr::restapi::RestEndpoint * restEndpoint = nullptr;
     kpsr::high_performance::EventLoopMiddlewareProvider<32> * restEventloopProvider = nullptr;
     kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32> * adminProvider = nullptr;
@@ -65,23 +70,23 @@ int main(int argc, char *argv[])
 
             restEndpoint = new kpsr::restapi::RestEndpoint(noThreads, restPort);
         }
-        spdlog::info("starting the admin container now...");
+        spdlog::nfo("starting the admin container now...");
         restEventloopProvider = new kpsr::high_performance::EventLoopMiddlewareProvider<32>(nullptr);
         adminProvider = new kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32>(*restEndpoint, * restEventloopProvider, &environment, "BST_Container");
         container = &adminProvider->getContainer();
     }
 
-    kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
-    kpsr::bst::mem::BstClientServerEventLoopProvider<256> bstClientServerMemProvider(eventloopProvider);
+    kpsr::high_performance::EventLoopMiddlewareProvider<2048> eventloopProvider(container);
+    kpsr::bst::mem::BstClientServerEventLoopProvider<2048> bstClientServerMemProvider(eventloopProvider);
 
     kpsr::bst::BstServer bstServer(container, &environment, &bstClientServerMemProvider);
 
-    kpsr::bst::BstClientEventloopProvider<256> bstClientProvider(container,
-                                                                 &environment,
-                                                                 eventloopProvider,
-                                                                 &bstClientServerMemProvider);
+    kpsr::bst::BstClientEventloopProvider<2048> bstClientProvider(container,
+                                                                  &environment,
+                                                                  eventloopProvider,
+                                                                  &bstClientServerMemProvider);
     kpsr::trajectory::bst::BstTrajectoryDataProvider * trajectoryProvider = nullptr;
-    kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<256> * trajectoryMonitoring = nullptr;
+    kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<2048> * trajectoryMonitoring = nullptr;
 
     bool enableTrajectoryMonitoring;
     environment.getPropertyBool("trajectory_monitor_enable", enableTrajectoryMonitoring);
@@ -104,7 +109,7 @@ int main(int argc, char *argv[])
                     bstClientServerMemProvider.getBstWaypointCommandMessageSubscriber(),
                     bstClientServerMemProvider.getBstRequestMessageSubscriber(), true);
 
-        trajectoryMonitoring = new kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<256>(
+        trajectoryMonitoring = new kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<2048>(
                     * restEndpoint, eventloopProvider, trajectoryProvider, &environment,
                     "bst_mem_sf_client_server");
     }
@@ -114,7 +119,7 @@ int main(int argc, char *argv[])
     eventloopProvider.start();
     bstClientServerMemProvider.start();
     if (enableAdminContainer) {
-	    restEventloopProvider->start();
+        restEventloopProvider->start();
         adminProvider->start();
     }
 
