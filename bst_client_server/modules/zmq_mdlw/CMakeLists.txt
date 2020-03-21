@@ -59,21 +59,21 @@ ADD_EXECUTABLE(kpsr_zmq_bst_proxy src/bst_kpsr_zmq_proxy_server.cpp )
 
 # Link libraries with Project
 #---------------------------------------------------#
+if(KPSR_WITH_ADMIN)
+  list(APPEND KPSR_ALL_ADMIN_LIBRARIES ${KPSR_ADMIN_CORE_LIBRARIES} ${KPSR_ADMIN_REST_LIBRARIES} "pistache")
+endif()
+
 TARGET_LINK_LIBRARIES(kpsr_zmq_bst_client 
     kpsr_${PROJ_MAIN_NAME} 
     kpsr_bst_comms
     kpsr_zmq_bst_comms
-    kpsr_trajectory_monitoring
-    kpsr_mem_trajectory_monitoring
     ${KLEPSYDRA_CORE_LIBRARIES}
     ${KLEPSYDRA_ZMQ_LIBRARIES}
-    ${KPSR_ADMIN_CORE_LIBRARIES}
-    ${KPSR_ADMIN_REST_LIBRARIES}
+    ${KPSR_ALL_ADMIN_LIBRARIES}
     ${BST_LIBRARY_CORE} 
     ${BST_LIBRARY_NETUAS} 
     cppzmq 
     yaml-cpp 
-    pistache 
     atomic 
     rt
     ${CMAKE_THREAD_LIBS_INIT})
@@ -82,17 +82,13 @@ TARGET_LINK_LIBRARIES(kpsr_zmq_bst_server
     kpsr_${PROJ_MAIN_NAME} 
     kpsr_bst_comms
     kpsr_zmq_bst_comms
-    kpsr_trajectory_monitoring
-    kpsr_mem_trajectory_monitoring
     ${KLEPSYDRA_CORE_LIBRARIES}
     ${KLEPSYDRA_ZMQ_LIBRARIES}
-    ${KPSR_ADMIN_CORE_LIBRARIES}
-    ${KPSR_ADMIN_REST_LIBRARIES}
+    ${KPSR_ALL_ADMIN_LIBRARIES}
     ${BST_LIBRARY_CORE} 
     ${BST_LIBRARY_NETUAS} 
     cppzmq 
     yaml-cpp 
-    pistache 
     atomic 
     rt
     ${CMAKE_THREAD_LIBS_INIT})

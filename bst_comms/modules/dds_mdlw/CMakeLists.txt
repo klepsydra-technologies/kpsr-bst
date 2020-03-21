@@ -32,7 +32,7 @@ add_definitions (
 file(REMOVE_RECURSE ${CMAKE_CURRENT_SOURCE_DIR}/gen)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/gen)
 
-file(GLOB idls "./idl/*.idl" "${${PROJ_MAIN_NAME}_PATH_MAIN}/gen/dds/idl/*.idl")
+file(GLOB idls  "./idl/*.idl" "${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/dds/idl/*.idl")
 FOREACH(idl ${idls})
         Connext_IDLGEN (${idl} ${CMAKE_CURRENT_SOURCE_DIR})
         GET_FILENAME_COMPONENT(nfile ${idl} NAME)
