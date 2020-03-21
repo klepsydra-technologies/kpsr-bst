@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
             restEndpoint = new kpsr::restapi::RestEndpoint(noThreads, restPort);
         }
-        spdlog::nfo("starting the admin container now...");
+        spdlog::info("starting the admin container now...");
         restEventloopProvider = new kpsr::high_performance::EventLoopMiddlewareProvider<32>(nullptr);
         adminProvider = new kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32>(*restEndpoint, * restEventloopProvider, &environment, "BST_Container");
         container = &adminProvider->getContainer();
