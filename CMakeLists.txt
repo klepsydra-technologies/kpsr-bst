@@ -80,10 +80,12 @@ include(GNUInstallDirs)
 SET(BUILD_SHARED_LIBS "ON" FORCE)
 
 find_package(Klepsydra REQUIRED)
-find_package(KlepsydraAdmin REQUIRED)
+if(KPSR_WITH_ADMIN)
+  ADD_DEFINITIONS(-DKPSR_WITH_ADMIN=${KPSR_WITH_ADMIN})
+  find_package(KlepsydraAdmin REQUIRED)
+  find_package(Pistache REQUIRED)
+endif()
 find_package(KlepsydraRobotics REQUIRED)
-
-find_package(Pistache REQUIRED)
 
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFileCXX)
@@ -160,7 +162,9 @@ find_package(Threads REQUIRED)
 # ADD SUB FOLDERS
 ######################################################################################
 ADD_SUBDIRECTORY(bst_comms)
-ADD_SUBDIRECTORY(trajectory_monitoring)
+if(KPSR_WITH_ADMIN)
+  ADD_SUBDIRECTORY(trajectory_monitoring)
+endif()
 ADD_SUBDIRECTORY(bst_client_server)
 
 if (KPSR_RUNTIME)

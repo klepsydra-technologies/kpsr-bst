@@ -19,7 +19,7 @@
 
 * kpsr-core
 * kpsr-robotics
-* kpsr-admin
+* kpsr-admin (optional)
 
 ## Installation
 
@@ -41,6 +41,7 @@ This will install the klespydra vision-ocv in
 	/opt/klepsydra	
 
 The cmake has the following options:
+* -DKPSR_WITH_ADMIN=true for real-time performance and trajectory monitoring tool
 * -DKPSR_WITH_DDS=true for building the DDS binding
 * -DKPSR_WITH_ZMQ=true for building the ZMQ binding
 * -DKPSR_INSTALL_PATH for specifying the Klepsydra installation location (/opt/klepsydra by default)

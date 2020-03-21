@@ -22,7 +22,7 @@ PROJECT(${PROJ_MAIN_NAME})
 
 if (NOT KPSR_CODEGEN_DISABLED)
     include(${KLEPSYDRA_CODE_GENERATOR})
-    KpsrEventGenerator("${CMAKE_CURRENT_SOURCE_DIR}/kidl" "${CMAKE_CURRENT_SOURCE_DIR}/gen" "klepsydra/bst_comms" "True" "False" "True" "True")
+    KpsrEventGenerator("${CMAKE_CURRENT_SOURCE_DIR}/kidl" "${CMAKE_CURRENT_SOURCE_DIR}/gen" "klepsydra/bst_comms" "True" "False" "False" "True")
 endif()
 
 ######################################################################################
