@@ -102,8 +102,9 @@ protected:
             _frontend.recv(&message);
             _frontend.getsockopt( ZMQ_RCVMORE, &more, &more_size);
             _backend.send(message, more? ZMQ_SNDMORE: 0);
-            if (!more)
+            if (!more) {
                 break;      //  Last message part
+            }
         }
     }
 };
@@ -165,6 +166,12 @@ int main(int argc, char *argv[])
     std::string fileName = kpsr::bst::BstMainHelper::getConfFileFromParams(argc, argv);
 
     kpsr::YamlEnvironment yamlEnv(fileName);
+
+    std::string logFileName;
+    yamlEnv.getPropertyString("log_file_path", logFileName);
+    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    kpsrLogger->set_level(spdlog::level::debug);
+    spdlog::set_default_logger(kpsrLogger);
 
     std::string serverPublishUrl; // frontend
     std::string serverSubscribeUrl; // backend

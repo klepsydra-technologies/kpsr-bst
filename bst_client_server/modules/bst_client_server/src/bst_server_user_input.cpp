@@ -21,8 +21,7 @@
 #include <unistd.h>
 #include <functional>
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <spdlog/spdlog.h>
 
 #include <klepsydra/core/time_utils.h>
 
@@ -47,9 +46,9 @@ void BstServerUserInput::run() {
 }
 
 void BstServerUserInput::printTestHelp() {
-    spdlog::info("Keys:");
-    spdlog::info("  q   : Quit");
-    spdlog::info("  p   : Print help");
+    printf("Keys:\n");
+    printf("  q   : Quit\n");
+    printf("  p   : Print help\n");
 }
 
 void BstServerUserInput::initializeServer() {

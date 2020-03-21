@@ -57,26 +57,26 @@ void BstTestClient::run() {
 }
 
 void BstTestClient::printTestHelp() {
-    spdlog::info("Keys:");
-    spdlog::info("  h   : Send payload heartbeat");
-    spdlog::info("  r   : Send payload ready comannd ");
-    spdlog::info("  o   : Send payload off comannd ");
-    spdlog::info("  s   : Send payload shutdown comannd ");
-    spdlog::info("");
-    spdlog::info("  t   : Send launch / land comannd ");
-    spdlog::info("");
-    spdlog::info("  i   : Send vel_x=1");
-    spdlog::info("  k   : Send vel_x=-1");
-    spdlog::info("  j   : Send vel_y=-1");
-    spdlog::info("  l   : Send vel_y=1");
-    spdlog::info("");
-    spdlog::info("  u   : Send vrate=1");
-    spdlog::info("  d   : Send vrate=-1");
-    spdlog::info("");
-    spdlog::info("  f   : Send simple flight plan consisting of waypoint 80");
-    spdlog::info("  w   : Command aircraft to go to waypoint 80");
-    spdlog::info("");
-    spdlog::info("  p   : print this help");
+    printf("Keys:\n");
+    printf("  h   : Send payload heartbeat\n");
+    printf("  r   : Send payload ready comannd\n");
+    printf("  o   : Send payload off comannd\n");
+    printf("  s   : Send payload shutdown comannd\n");
+    printf("\n");
+    printf("  t   : Send launch / land comannd\n");
+    printf("\n");
+    printf("  i   : Send vel_x=1\n");
+    printf("  k   : Send vel_x=-1\n");
+    printf("  j   : Send vel_y=-1\n");
+    printf("  l   : Send vel_y=1\n");
+    printf("\n");
+    printf("  u   : Send vrate=1\n");
+    printf("  d   : Send vrate=-1\n");
+    printf("\n");
+    printf("  f   : Send simple flight plan consisting of waypoint 80\n");
+    printf("  w   : Command aircraft to go to waypoint 80\n");
+    printf("\n");
+    printf("  p   : print this help\n");
 }
 
 void BstTestClient::initializeClient() {

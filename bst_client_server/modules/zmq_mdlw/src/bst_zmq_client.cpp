@@ -24,7 +24,6 @@
 
 /* KPSR LIBS */
 #include <klepsydra/serialization/void_caster_mapper.h>
-#include <klepsydra/serialization/json_cereal_mapper.h>
 
 #include <klepsydra/zmq_core/zmq_env.h>
 
@@ -58,6 +57,12 @@ int main(int argc, char *argv[])
     std::string fileName = kpsr::bst::BstMainHelper::getConfFileFromParams(argc, argv);
 
     kpsr::YamlEnvironment yamlEnv(fileName);
+
+    std::string logFileName;
+    yamlEnv.getPropertyString("log_file_path", logFileName);
+    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    kpsrLogger->set_level(spdlog::level::debug);
+    spdlog::set_default_logger(kpsrLogger);
 
     std::string configListenUrl;
     std::string configWriteUrl;
