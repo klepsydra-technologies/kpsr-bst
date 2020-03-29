@@ -68,9 +68,18 @@ SET(CMAKE_MODULE_PATH            ${KPSR_BUILD_PATH}/cmake)
 SET(LIBRARY_OUTPUT_PATH          ${PROJECT_BINARY_DIR}/bin                   CACHE PATH "Library output" FORCE)
 SET(EXECUTABLE_OUTPUT_PATH       ${PROJECT_BINARY_DIR}/bin                   CACHE PATH "Executable output" FORCE)
 SET(BST_INCLUDE_PATH             ${bst_home}/include)
+SET(BST_SOURCE_PATH              ${bst_home}/src)
 SET(BST_LIBRARY_PATH             ${bst_home}/lib)
-SET(BST_LIBRARY_CORE             libblack_swift_mr.a)
+SET(BST_LIBRARY_CORE             libbstmr_lib.a)
 SET(BST_LIBRARY_NETUAS           libnetuas_lib.a)
+
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_core )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_can )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/modules )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/messages )
+INCLUDE_DIRECTORIES( ${BST_LIBRARY_PATH} )
 
 # Must use GNUInstallDirs to install libraries into correct
 # locations on all platforms.
@@ -85,7 +94,6 @@ if(KPSR_WITH_ADMIN)
   find_package(KlepsydraAdmin REQUIRED)
   find_package(Pistache REQUIRED)
 endif()
-find_package(KlepsydraRobotics REQUIRED)
 
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFileCXX)
