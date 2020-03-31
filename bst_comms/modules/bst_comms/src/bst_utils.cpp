@@ -23,7 +23,7 @@
 
 SystemInitialize_t system_initialize;
 
-double start_time = 0.0;
+float start_time = 0.0;
 
 float getElapsedTime() {
 #ifdef __APPLE__
@@ -37,7 +37,7 @@ float getElapsedTime() {
 #else
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
-	double current_time = (double)now.tv_sec + (double)now.tv_nsec / SEC_TO_NSEC;
+	float current_time = (float)now.tv_sec + (float)now.tv_nsec / SEC_TO_NSEC;
 #endif
 	return current_time - start_time;
 }

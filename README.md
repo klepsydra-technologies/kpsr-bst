@@ -28,6 +28,7 @@ Given ```$KLEPSYDRA_HOME```, for example ```$HOME/klepsydra```:
 ```
 git clone https://bitbucket.org/kpsr-devs/kpsr-bst.git
 cd kpsr-bst
+git submodule update --init
 mkdir build
 cd build
 cmake ..
@@ -38,7 +39,7 @@ sudo make install
 
 This will install the klespydra bst in
 
-	/opt/klepsydra
+	/usr/local/
 
 The cmake has the following options:
 * -DKPSR_WITH_DDS=true for building the DDS binding
@@ -57,15 +58,17 @@ cmake -DKPSR_WITH_ZMQ=true -DBST_SDK_HOME=/home/pablogh/development/swiftpilot/A
 Besides the API libraries for the use of KPSR-BST, several executables are included in this repo:
 
 
-In memory Eventloop client server. Example of use:
+In memory **Eventloop** client server. Example of use:
 ```
-./bin/bst_mem_el_client_server -f ../stages/memstg/bst_mem_el_client_server/conf/bst_mem_el_client_server.yaml
+cd build
+./bin/kpsr_mem_bst_client_server_el -f ./../bst_client_server/modules/mem_mdlw/conf/bst_mem_el_client_server.yaml
+```
 
-ZMQ Executables: BST server, client and proxy:
+**ZMQ** Executables: BST server, client and proxy:
 ```
-./bin/bst_zmq_server -f ../stages/zmqstg/bst_zmq_client_server/conf/bst_zmq_server.yaml
-./bin/bst_zmq_client -f ../stages/zmqstg/bst_zmq_client_server/conf/bst_zmq_client.yaml
-./bin/bst_kpsr_zmq_proxy_server -f ../stages/zmqstg/bst_zmq_client_server/conf/bst_zmq_proxy_server.yaml
+./bin/kpsr_zmq_bst_server -f ./../bst_client_server/modules/zmq_mdlw/conf/bst_zmq_server.yaml
+./bin/kpsr_zmq_bst_client -f ./../bst_client_server/modules/zmq_mdlw/conf/bst_zmq_client.yaml
+./bin/kpsr_zmq_bst_proxy -f ./../bst_client_server/modules/zmq_mdlw/conf/bst_zmq_proxy_server.yaml
 ```
 
 ## Documentation
