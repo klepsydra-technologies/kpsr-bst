@@ -43,8 +43,6 @@ INCLUDE_DIRECTORIES( ${Connext_INCLUDE_DIRS} )
 INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
 # TODO: Fix this absolute path with find package.
 INCLUDE_DIRECTORIES( /usr/local/include/klepsydra/gen_dds_geometry/ )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/netuas_lib )
 
 # Source
 #---------------------------------------------------#

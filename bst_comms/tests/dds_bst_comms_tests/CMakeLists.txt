@@ -37,8 +37,6 @@ INCLUDE_DIRECTORIES( ${KPSR_INSTALL_PATH}/include/klepsydra/gen_dds_serializatio
 INCLUDE_DIRECTORIES( ${KPSR_INSTALL_PATH}/include/klepsydra/gen_dds_core )
 INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
 INCLUDE_DIRECTORIES( ${Connext_INCLUDE_DIRS} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/netuas_lib )
 
 # Source
 #---------------------------------------------------#

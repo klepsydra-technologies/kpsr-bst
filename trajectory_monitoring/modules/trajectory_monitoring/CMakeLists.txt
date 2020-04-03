@@ -28,8 +28,6 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/serialization/inc
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/modules/bst_comms/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/gen/poco/include )
 INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/netuas_lib )
 
 # Source
 #---------------------------------------------------#

@@ -139,9 +139,9 @@ int main(int argc, char *argv[])
     kpsr::zmq_mdlw::FromZmqMiddlewareProvider fromZmqMiddlewareProvider;
     kpsr::zmq_mdlw::ToZMQMiddlewareProvider toZmqMiddlewareProvider(container, bstServerPublisher);
 
-    kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
+    kpsr::high_performance::EventLoopMiddlewareProvider<4096> eventloopProvider(container);
 
-    kpsr::bst::zmq_mdlw::BstServerZMQProvider<256> bstServerZmqProvider(eventloopProvider,
+    kpsr::bst::zmq_mdlw::BstServerZMQProvider<4096> bstServerZmqProvider(eventloopProvider,
                                                                         fromZmqMiddlewareProvider,
                                                                         toZmqMiddlewareProvider,
                                                                         * bstClientSubscribers[0].get(),

@@ -31,8 +31,6 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trajectory_monitoring/modules/trajector
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trajectory_monitoring/modules/mem_mdlw/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trajectory_monitoring/gen/poco/include )
 INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/netuas_lib )
 
 # Source
 #---------------------------------------------------#
