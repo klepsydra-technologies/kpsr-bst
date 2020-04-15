@@ -53,7 +53,7 @@ public:
 
 private:
 
-    void sendControlCommandAndUpdateOnAck(unsigned char id, float value, std::string eventPrefix);
+    void sendControlCommandAndUpdateOnAck(unsigned char id, float value, const std::string & eventPrefix);
     void checkAndWaitUntilFlightMode(std::vector<FlightMode_t> validFlyingModes, std::string listenerName,
                                      std::string validModeEvent, std::string notValidModeEvent);
     void addActionsOnReadyState();

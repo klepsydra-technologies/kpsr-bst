@@ -38,7 +38,7 @@
 
 class ZmqProxy {
 public:
-    ZmqProxy(std::string frontendUrl, std::string backendUrl, bool bindFrontend)
+    ZmqProxy(const std::string & frontendUrl, const std::string & backendUrl, bool bindFrontend)
         : _running(false)
         , _context(1)
         , _frontend(_context, ZMQ_SUB)
@@ -87,7 +87,7 @@ protected:
 
 class ZmqBasicProxy : public ZmqProxy {
 public:
-    ZmqBasicProxy(std::string frontendUrl, std::string backendUrl)
+    ZmqBasicProxy(const std::string & frontendUrl, const std::string & backendUrl)
         : ZmqProxy(frontendUrl, backendUrl, false)
     {}
 
@@ -111,7 +111,7 @@ protected:
 
 class ZmqLvcProxy : public ZmqProxy {
 public:
-    ZmqLvcProxy(std::string frontendUrl, std::string backendUrl, int timeout)
+    ZmqLvcProxy(const std::string & frontendUrl, const std::string & backendUrl, int timeout)
         : ZmqProxy(frontendUrl, backendUrl, true)
         , _timeout(timeout)
     {}
