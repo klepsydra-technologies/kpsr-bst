@@ -58,7 +58,11 @@ void kpsr::bst::BstClient::start() {
 }
 
 void kpsr::bst::BstClient::stop() {
-    _bstClientMiddlewareProvider->getScheduler()->stopScheduledTask("BST_CLIENT_HEARTBEAT");
+    int period;
+    _environment->getPropertyInt("bst_client_heartbeat_period_microsecs", period);
+    if (period > 0) {
+        _bstClientMiddlewareProvider->getScheduler()->stopScheduledTask("BST_CLIENT_HEARTBEAT");
+    }
     _clientStateMachine.stop();
     _clientStateMachineSubscriber->removeListener("BST_CLIENT");
 }
