@@ -62,7 +62,7 @@ void kpsr::bst::ClientStateMachine::start() {
 }
 
 void kpsr::bst::ClientStateMachine::sendControlCommandAndUpdateOnAck(unsigned char type, float value,
-                                                                     std::string eventPrefix) {
+                                                                     const std::string & eventPrefix) {
     kpsr::bst::BstRequestMessage message;
     message.id = CONTROL_COMMAND;
     message.type = type;

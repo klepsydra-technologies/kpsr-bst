@@ -132,6 +132,11 @@ endif()
 add_definitions(-std=c++11)
 enable_testing()
 
+add_definitions(-faligned-new)
+add_definitions(-fno-strict-overflow)
+add_definitions(-Wno-deprecated-declarations)
+add_definitions(-Wno-comment)
+
 if (KPSR_WITH_CODE_METRICS)
    # Code Coverage
    IF (CMAKE_BUILD_TYPE MATCHES Debug)
