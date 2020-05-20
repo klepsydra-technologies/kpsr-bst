@@ -131,7 +131,7 @@ protected:
             spdlog::info("{}new message received from server. Topic {}. Contents: {}", __PRETTY_FUNCTION__, topic, contents);
             _cache[topic] = contents;
             s_sendmore (_backend, topic);
-            s_send (_backend, contents.c_str());
+            s_send (_backend, contents);
         }
 
         if (items [1].revents & ZMQ_POLLIN) {
