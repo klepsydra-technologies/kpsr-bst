@@ -12,6 +12,7 @@
 * Cmake 3.5.1 or above
 * gcc for C++11 5.4.0 or above.
 * BST SDK (https://gitlab.com/bstaero/sdk)
+* Pistache (optional)
 * Doxygen (optional)
 * Moxygen (https://github.com/sourcey/moxygen) (optional)
 
@@ -44,13 +45,13 @@ This will install the klespydra bst in
 The cmake has the following options:
 * -DKPSR_WITH_DDS=true for building the DDS binding
 * -DKPSR_WITH_ZMQ=true for building the ZeroMQ binding.
-* -DBST_SDK_HOME. Location of BST sdk repo
+* -DBST_SDK_HOME. Location of BST sdk repo. E.g. if the BST repo is installed in $HOME/development/swiftpilot/sdk.
 * -DCMAKE_PREFIX_PATH for the Pistache install path (pistache/build)
 Example:
 
 
 ```
-cmake -DKPSR_WITH_ZMQ=true -DBST_SDK_HOME=/home/pablogh/development/swiftpilot/Autopilot/sdk -DCMAKE_PREFIX_PATH=/home/pablogh/development/pistache/build ..
+cmake -DKPSR_WITH_ZMQ=true -DBST_SDK_HOME=$HOME/development/swiftpilot/sdk ..
 ```
 
 ### Installation packages.
