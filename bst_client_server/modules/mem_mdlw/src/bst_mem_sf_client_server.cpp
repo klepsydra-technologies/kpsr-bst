@@ -26,14 +26,13 @@
 
 #include <klepsydra/mem_core/mem_env.h>
 
+#ifdef KPSR_WITH_ADMIN
 #include <klepsydra/rest_interface/basic_rest_admin_container_provider.h>
+#include <klepsydra/trajectory_monitoring/bst_trajectory_data_provider.h>
+#include <klepsydra/mem_trajectory_monitoring/sf_rest_traj_mon_container_provider.h>
+#endif
 
 #include <klepsydra/mem_bst_comms/bst_client_server_mem_provider.h>
-
-#include <klepsydra/trajectory_monitoring/bst_trajectory_data_provider.h>
-
-#include <klepsydra/mem_trajectory_monitoring/sf_rest_traj_mon_container_provider.h>
-
 #include <klepsydra/bst_client_server/bst_test_client.h>
 #include <klepsydra/bst_client_server/bst_server.h>
 #include <klepsydra/bst_client_server/bst_main_helper.h>
@@ -48,9 +47,15 @@ int main(int argc, char *argv[])
 
     kpsr::YamlEnvironment environment(fileName);
 
+    std::string logFileName;
+    environment.getPropertyString("log_file_path", logFileName);
+    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    spdlog::set_default_logger(kpsrLogger);
+
+    kpsr::Container * container = nullptr;
+#ifdef KPSR_WITH_ADMIN
     kpsr::restapi::RestEndpoint * restEndpoint = nullptr;
     kpsr::admin::restapi::BasicRestAdminContainerProvider * adminProvider = nullptr;
-    kpsr::Container * container = nullptr;
 
     bool enableAdminContainer;
     environment.getPropertyBool("admin_container_enable", enableAdminContainer);
@@ -68,6 +73,7 @@ int main(int argc, char *argv[])
         adminProvider = new kpsr::admin::restapi::BasicRestAdminContainerProvider(*restEndpoint, &environment, "BST_Container");
         container = &adminProvider->getContainer();
     }
+#endif
 
     kpsr::bst::mem::BstClientServerMemProvider bstClientServerMemProvider(container);
 
@@ -80,6 +86,7 @@ int main(int argc, char *argv[])
                                                                 eventloopProvider,
                                                                 &bstClientServerMemProvider);
 
+#ifdef KPSR_WITH_ADMIN
     kpsr::trajectory::bst::BstTrajectoryDataProvider * trajectoryProvider = nullptr;
     kpsr::trajectory::restapi::BasicRestTrajectoryContainerProvider * trajectoryMonitoring = nullptr;
 
@@ -108,11 +115,13 @@ int main(int argc, char *argv[])
                     * restEndpoint, trajectoryProvider, &environment,
                     "bst_mem_sf_client_server");
     }
+#endif
 
     BstTestClient bstTestClient(bstClientProvider.getBstClient());
 
     eventloopProvider.start();
     bstClientServerMemProvider.start();
+#ifdef KPSR_WITH_ADMIN
     if (enableAdminContainer) {
         adminProvider->start();
     }
@@ -125,6 +134,7 @@ int main(int argc, char *argv[])
     if (restEndpoint != nullptr) {
         restEndpoint->start();
     }
+#endif
 
     bstServer.startup();
     bstClientProvider.start();
@@ -134,6 +144,7 @@ int main(int argc, char *argv[])
     bstClientProvider.stop();
     bstServer.shutdown();
 
+#ifdef KPSR_WITH_ADMIN
     if (restEndpoint != nullptr) {
         restEndpoint->shutdown();
     }
@@ -146,6 +157,7 @@ int main(int argc, char *argv[])
     if (enableAdminContainer) {
         adminProvider->stop();
     }
+#endif
 
     bstClientServerMemProvider.stop();
     eventloopProvider.stop();

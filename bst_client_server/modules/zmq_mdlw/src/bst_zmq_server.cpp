@@ -24,13 +24,14 @@
 
 /* KPSR LIBS */
 #include <klepsydra/serialization/void_caster_mapper.h>
-#include <klepsydra/serialization/json_cereal_mapper.h>
 
 #include <klepsydra/zmq_core/zmq_env.h>
 
 #include <klepsydra/zmq_geometry/pose_event_data_serializer.h>
 
+#ifdef KPSR_WITH_ADMIN
 #include <klepsydra/rest_interface/hp_rest_admin_container_provider.h>
+#endif
 
 #include <klepsydra/zmq_bst_comms/bst_server_zmq_provider.h>
 
@@ -50,6 +51,12 @@ int main(int argc, char *argv[])
     std::string fileName = kpsr::bst::BstMainHelper::getConfFileFromParams(argc, argv);
 
     kpsr::YamlEnvironment yamlEnv(fileName);
+
+    std::string logFileName;
+    yamlEnv.getPropertyString("log_file_path", logFileName);
+    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    kpsrLogger->set_level(spdlog::level::debug);
+    spdlog::set_default_logger(kpsrLogger);
 
     std::string configListenUrl;
     std::string configWriteUrl;
@@ -104,10 +111,11 @@ int main(int argc, char *argv[])
         bstClientSubscribers[i]->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
+    kpsr::Container * container = nullptr;
+#ifdef KPSR_WITH_ADMIN
     kpsr::restapi::RestEndpoint * restEndpoint = nullptr;
     kpsr::high_performance::EventLoopMiddlewareProvider<32> * restEventloopProvider = nullptr;
     kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32> * adminProvider = nullptr;
-    kpsr::Container * container = nullptr;
 
     bool enableAdminContainer;
     environment.getPropertyBool("admin_container_enable", enableAdminContainer);
@@ -126,21 +134,22 @@ int main(int argc, char *argv[])
         adminProvider = new kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32>(*restEndpoint, * restEventloopProvider, &environment, "BST_Container");
         container = &adminProvider->getContainer();
     }
+#endif
 
     kpsr::zmq_mdlw::FromZmqMiddlewareProvider fromZmqMiddlewareProvider;
     kpsr::zmq_mdlw::ToZMQMiddlewareProvider toZmqMiddlewareProvider(container, bstServerPublisher);
 
-    kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
+    kpsr::high_performance::EventLoopMiddlewareProvider<4096> eventloopProvider(container);
 
-    kpsr::bst::zmq_mdlw::BstServerZMQProvider<256> bstServerZmqProvider(eventloopProvider,
+    kpsr::bst::zmq_mdlw::BstServerZMQProvider<4096> bstServerZmqProvider(eventloopProvider,
                                                                         fromZmqMiddlewareProvider,
                                                                         toZmqMiddlewareProvider,
                                                                         * bstClientSubscribers[0].get(),
-                                                                        * bstClientSubscribers[1].get(),
-                                                                        * bstServerSubscribers[0].get(),
-                                                                        * bstServerSubscribers[1].get(),
-                                                                        * bstServerSubscribers[2].get(),
-                                                                        100);
+            * bstClientSubscribers[1].get(),
+            * bstServerSubscribers[0].get(),
+            * bstServerSubscribers[1].get(),
+            * bstServerSubscribers[2].get(),
+            100);
 
     kpsr::bst::BstServer bstServer(container, &environment, &bstServerZmqProvider);
 
@@ -148,6 +157,7 @@ int main(int argc, char *argv[])
 
     eventloopProvider.start();
     bstServerZmqProvider.start();
+#ifdef KPSR_WITH_ADMIN
     if (enableAdminContainer) {
         restEventloopProvider->start();
         adminProvider->start();
@@ -156,11 +166,13 @@ int main(int argc, char *argv[])
     if (restEndpoint != nullptr) {
         restEndpoint->start();
     }
+#endif
 
     bstServer.startup();
     bstServerUserInput.run();
     bstServer.shutdown();
 
+#ifdef KPSR_WITH_ADMIN
     if (restEndpoint != nullptr) {
         restEndpoint->shutdown();
     }
@@ -169,6 +181,8 @@ int main(int argc, char *argv[])
         adminProvider->stop();
         restEventloopProvider->stop();
     }
+#endif
+
     bstServerZmqProvider.stop();
     eventloopProvider.stop();
 

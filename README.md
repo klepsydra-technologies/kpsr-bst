@@ -7,67 +7,28 @@
 ## System dependencies
 
 * Ubuntu 14.04 or above
-* ConcurrentQueue (https://github.com/klepsydra-technologies/concurrentqueue)
-* Cereal (https://github.com/klepsydra-technologies/cereal)
-* ROS Indigo or above (optional)
+* ZMQ (optional)
 * DDS (optional)
 * Cmake 3.5.1 or above
 * gcc for C++11 5.4.0 or above.
+* BST SDK (https://gitlab.com/bstaero/sdk)
 * Doxygen (optional)
 * Moxygen (https://github.com/sourcey/moxygen) (optional)
-* Open CV
-* Ros Vision Package
 
 ## Klepsydra dependencies
 
-* kpsr-serialization
 * kpsr-core
-
-## System installation
-
-	sudo apt install build-essentials
-	sudo apt install git
-	sudo apt install cmake
-	git clone https://github.com/google/googletest.git
-
-### Google Test
-
-Google-Tests has to be at the level of the part of the folder where Klepsydra core will be installed. For example, if Klepsydra is installed in:
-	$KLEPSYDRA_HOME/kpsr-core
-
-Then google tests has to be installed in:
-	$KLEPSYDRA_HOME/../googletest
-
-These locations can be overridden by including the variables `GTEST_PATH` and `THIRDPARTIES_PATH` in the kpsr-core cmake invocation.
-
-### Cereal
-	git clone https://github.com/klepsydra-technologies/cereal
-	sudo mkdir $THIRDPARTIES_PATH/include
-	sudo cp cereal/include/* $THIRDPARTIES_PATH/include
-
-By default, we choose the location of installation for Cereal to be /opt/klepsydra/thirdparties.
-This location can be overridden by including the variable
-
-	THIRDPARTIES_PATH
-
-### Concurrent queue
-
-	git clone https://github.com/klepsydra-technologies/concurrentqueue
-	sudo mkdir $THIRDPARTIES_PATH/include
-	sudo cp concurrentqueue/*.h $THIRDPARTIES_PATH/include
-
-By default, we choose the location of installation for ConcurrentQueue to be /opt/klepsydra/thirdparties.
-This location can be overridden by including the variable
-
-	THIRDPARTIES_PATH
+* kpsr-robotics
+* kpsr-admin (optional)
 
 ## Installation
 
 Given ```$KLEPSYDRA_HOME```, for example ```$HOME/klepsydra```:
 
 ```
-git clone https://github.com/kpsr-devs/kpsr-vision-ocv.git
-cd kpsr-vision-ocv
+git clone https://bitbucket.org/kpsr-devs/kpsr-bst.git
+cd kpsr-bst
+git submodule update --init
 mkdir build
 cd build
 cmake ..
@@ -76,39 +37,43 @@ make test
 sudo make install
 ```
 
-This will install the klespydra vision-ocv in
+This will install the klespydra bst in
 
-	/opt/klepsydra	
+	/usr/local/
 
 The cmake has the following options:
 * -DKPSR_WITH_DDS=true for building the DDS binding
-* -DKPSR_INSTALL_PATH for specifying the Klepsydra installation location (/opt/klepsydra by default)
-* -DGTEST_PATH for the google test path (default is ../../googletest)
-* -DTHIRDPARTIES_PATH for the ConcurrentQueue and Cereal path (default is /opt/klepsydra/thirdparties)
-* -DKPSR_BUILD_PATH location of the ```kpsr-build``` repository
-* -DKPSR_WITH_DOXYGEN to allow generation of documentation
+* -DKPSR_WITH_ZMQ=true for building the ZeroMQ binding.
+* -DBST_SDK_HOME. Location of BST sdk repo
+* -DCMAKE_PREFIX_PATH for the Pistache install path (pistache/build)
+Example:
 
-### ROS installation
-
-In case of a new project:
 
 ```
-mkdir -p YOUR_ROS_PROJECT
-cd YOUR_ROS_PROJECT
-source /opt/ros/melodic/setup.bash
-catkin_init_workspace
+cmake -DKPSR_WITH_ZMQ=true -DBST_SDK_HOME=/home/pablogh/development/swiftpilot/Autopilot/sdk -DCMAKE_PREFIX_PATH=/home/pablogh/development/pistache/build ..
 ```
 
-Then add the Klepsydra ROS sensors project to the ROS project:
+### Installation packages.
 
+Besides the API libraries for the use of KPSR-BST, several executables are included in this repo:
+
+
+In memory **Eventloop** client server. Example of use:
 ```
-cd YOUR_ROS_PROJECT
-ln -s ../../robotics_utils/kpsr-vision-ocv/modules/ros_mdlw/kpsr_ros_vision_ocv
+cd build
+./bin/kpsr_mem_bst_client_server_el -f ./../bst_client_server/modules/mem_mdlw/conf/bst_mem_el_client_server.yaml
 ```
 
-# Documentation
+**ZMQ** Executables: BST server, client and proxy:
+```
+./bin/kpsr_zmq_bst_server -f ./../bst_client_server/modules/zmq_mdlw/conf/bst_zmq_server.yaml
+./bin/kpsr_zmq_bst_client -f ./../bst_client_server/modules/zmq_mdlw/conf/bst_zmq_client.yaml
+./bin/kpsr_zmq_bst_proxy -f ./../bst_client_server/modules/zmq_mdlw/conf/bst_zmq_proxy_server.yaml
+```
 
-## Documentation generation
+## Documentation
+
+### Documentation generation
 
 ```
 make doc
@@ -116,7 +81,7 @@ make doc
 
 ### Location of documentation
 
-The last built documentation is available in [Klepsydra Robotics API DOC](./api-doc/)
+The last built documentation is available in [Klepsydra BST API DOC](./api-doc/)
 
 
 #  License
@@ -130,3 +95,4 @@ Limited and its licensees. All rights reserved. See [license file](./LICENSE.md)
 
 https://www.klepsydra.com
 support@klepsydra.com
+

@@ -23,7 +23,10 @@
 #include <getopt.h>
 
 /* KPSR LIBS */
+
+#ifdef KPSR_WITH_ADMIN
 #include <klepsydra/rest_interface/hp_rest_admin_container_provider.h>
+#endif
 
 #include <klepsydra/dds_core/dds_env.h>
 
@@ -118,10 +121,11 @@ int main(int argc, char *argv[])
     dds::topic::Topic<kpsr_dds_bst::BstPacketData> payloadControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_PAYLOAD_CONTROL);
     dds::sub::DataReader<kpsr_dds_bst::BstPacketData> payloadControlReader(subscriber, payloadControlTopic);
 
+    kpsr::Container * container = nullptr;
+#ifdef KPSR_WITH_ADMIN
     kpsr::restapi::RestEndpoint * restEndpoint = nullptr;
     kpsr::high_performance::EventLoopMiddlewareProvider<32> * restEventloopProvider = nullptr;
     kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32> * adminProvider = nullptr;
-    kpsr::Container * container = nullptr;
 
     bool enableAdminContainer;
     environment.getPropertyBool("admin_container_enable", enableAdminContainer);
@@ -140,6 +144,7 @@ int main(int argc, char *argv[])
         adminProvider = new kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32>(*restEndpoint, * restEventloopProvider, &environment, "BST_Container");
         container = &adminProvider->getContainer();
     }
+#endif
 
     kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
     kpsr::bst::dds_mdlw::BstClientDDSProvider<256> bstClientDdsProvider(container,
@@ -169,6 +174,7 @@ int main(int argc, char *argv[])
 
     eventloopProvider.start();
     bstClientDdsProvider.start();
+#ifdef KPSR_WITH_ADMIN
     if (enableAdminContainer) {
         restEventloopProvider->start();
         adminProvider->start();
@@ -177,6 +183,7 @@ int main(int argc, char *argv[])
     if (restEndpoint != nullptr) {
         restEndpoint->start();
     }
+#endif
 
     bstClientProvider.start();
 
@@ -184,6 +191,7 @@ int main(int argc, char *argv[])
 
     bstClientProvider.stop();
 
+#ifdef KPSR_WITH_ADMIN
     if (restEndpoint != nullptr) {
         restEndpoint->shutdown();
     }
@@ -192,6 +200,7 @@ int main(int argc, char *argv[])
         adminProvider->stop();
         restEventloopProvider->stop();
     }
+#endif
 
     bstClientDdsProvider.stop();
     eventloopProvider.stop();

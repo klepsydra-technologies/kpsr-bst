@@ -18,8 +18,7 @@
 #include <thread>
 #include <inttypes.h>
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <spdlog/spdlog.h>
 
 #include <klepsydra/bst_comms/comm_interface_service.h>
 

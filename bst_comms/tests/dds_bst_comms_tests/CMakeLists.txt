@@ -31,14 +31,12 @@ add_definitions (
 #---------------------------------------------------#
 INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include )
-INCLUDE_DIRECTORIES( ${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/dds_mdlw/include )
-INCLUDE_DIRECTORIES( ${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/dds_mdlw/gen )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/dds_mdlw/include )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/dds_mdlw/gen )
 INCLUDE_DIRECTORIES( ${KPSR_INSTALL_PATH}/include/klepsydra/gen_dds_serialization )
 INCLUDE_DIRECTORIES( ${KPSR_INSTALL_PATH}/include/klepsydra/gen_dds_core )
 INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
 INCLUDE_DIRECTORIES( ${Connext_INCLUDE_DIRS} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/netuas_lib )
 
 # Source
 #---------------------------------------------------#

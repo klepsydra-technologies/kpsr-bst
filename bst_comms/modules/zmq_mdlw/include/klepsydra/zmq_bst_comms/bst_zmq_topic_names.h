@@ -26,23 +26,23 @@ namespace bst
 {
 namespace zmq_mdlw
 {
-static const std::string ZMQ_TOPIC_NAME_BST_REQUEST = ZMQ_TOPIC_NAME_BST_REQUEST;
-static const std::string ZMQ_TOPIC_NAME_BST_REPLY = ZMQ_TOPIC_NAME_BST_REPLY;
-static const std::string ZMQ_TOPIC_NAME_BST_WP_CMD = ZMQ_TOPIC_NAME_BST_WP_CMD;
-static const std::string ZMQ_TOPIC_NAME_POSE_EVENT = ZMQ_TOPIC_NAME_POSE_EVENT;
-static const std::string ZMQ_TOPIC_NAME_SYSTEM_INIT = ZMQ_TOPIC_NAME_SYSTEM_INIT;
-static const std::string ZMQ_TOPIC_NAME_TELEMETRY_POS = ZMQ_TOPIC_NAME_TELEMETRY_POS;
-static const std::string ZMQ_TOPIC_NAME_TELEMETRY_ORI = ZMQ_TOPIC_NAME_TELEMETRY_ORI;
-static const std::string ZMQ_TOPIC_NAME_SENSOR = ZMQ_TOPIC_NAME_SENSOR;
-static const std::string ZMQ_TOPIC_NAME_CALIBRATE = ZMQ_TOPIC_NAME_CALIBRATE;
-static const std::string ZMQ_TOPIC_NAME_CONTROL_CMD = ZMQ_TOPIC_NAME_CONTROL_CMD;
-static const std::string ZMQ_TOPIC_NAME_CONTROL_PID = ZMQ_TOPIC_NAME_CONTROL_PID;
-static const std::string ZMQ_TOPIC_NAME_SYSTEM = ZMQ_TOPIC_NAME_SYSTEM;
-static const std::string ZMQ_TOPIC_NAME_TELEMETRY_SYS = ZMQ_TOPIC_NAME_TELEMETRY_SYS;
-static const std::string ZMQ_TOPIC_NAME_TELEMETRY_PRES = ZMQ_TOPIC_NAME_TELEMETRY_PRES;
-static const std::string ZMQ_TOPIC_NAME_TELEMETRY_CTRL = ZMQ_TOPIC_NAME_TELEMETRY_CTRL;
-static const std::string ZMQ_TOPIC_NAME_TELEMETRY_GCS = ZMQ_TOPIC_NAME_TELEMETRY_GCS;
-static const std::string ZMQ_TOPIC_NAME_PAYLOAD_CONTROL = ZMQ_TOPIC_NAME_PAYLOAD_CONTROL;
+static const std::string ZMQ_TOPIC_NAME_BST_REQUEST = "BST_REQUEST";
+static const std::string ZMQ_TOPIC_NAME_BST_REPLY = "BST_REPLY";
+static const std::string ZMQ_TOPIC_NAME_BST_WP_CMD = "BST_WP_CMD";
+static const std::string ZMQ_TOPIC_NAME_POSE_EVENT = "POSE_EVENT";
+static const std::string ZMQ_TOPIC_NAME_SYSTEM_INIT = "SYSTEM_INIT";
+static const std::string ZMQ_TOPIC_NAME_TELEMETRY_POS = "TELEMETRY_POS";
+static const std::string ZMQ_TOPIC_NAME_TELEMETRY_ORI = "TELEMETRY_ORI";
+static const std::string ZMQ_TOPIC_NAME_SENSOR = "SENSOR";
+static const std::string ZMQ_TOPIC_NAME_CALIBRATE = "CALIBRATE";
+static const std::string ZMQ_TOPIC_NAME_CONTROL_CMD = "CONTROL_CMD";
+static const std::string ZMQ_TOPIC_NAME_CONTROL_PID = "CONTROL_PID";
+static const std::string ZMQ_TOPIC_NAME_SYSTEM = "SYSTEM";
+static const std::string ZMQ_TOPIC_NAME_TELEMETRY_SYS = "TELEMETRY_SYS";
+static const std::string ZMQ_TOPIC_NAME_TELEMETRY_PRES = "TELEMETRY_PRES";
+static const std::string ZMQ_TOPIC_NAME_TELEMETRY_CTRL = "TELEMETRY_CTRL";
+static const std::string ZMQ_TOPIC_NAME_TELEMETRY_GCS = "TELEMETRY_GCS";
+static const std::string ZMQ_TOPIC_NAME_PAYLOAD_CONTROL = "PAYLOAD_CONTROL";
 }
 }
 }

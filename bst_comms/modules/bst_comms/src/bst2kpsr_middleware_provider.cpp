@@ -19,8 +19,7 @@
 
 #include <klepsydra/bst_comms/bst2kpsr_middleware_provider.h>
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <spdlog/spdlog.h>
 
 kpsr::high_performance::EventLoopMiddlewareProvider<256> bst2KpsrInternalMessageProvider(nullptr);
 

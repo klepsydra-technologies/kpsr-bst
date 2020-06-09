@@ -18,8 +18,7 @@
 *****************************************************************************/
 #include <algorithm>
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <spdlog/spdlog.h>
 
 #include <klepsydra/bst_client_server/client_state_machine.h>
 
@@ -63,7 +62,7 @@ void kpsr::bst::ClientStateMachine::start() {
 }
 
 void kpsr::bst::ClientStateMachine::sendControlCommandAndUpdateOnAck(unsigned char type, float value,
-                                                                     std::string eventPrefix) {
+                                                                     const std::string & eventPrefix) {
     kpsr::bst::BstRequestMessage message;
     message.id = CONTROL_COMMAND;
     message.type = type;

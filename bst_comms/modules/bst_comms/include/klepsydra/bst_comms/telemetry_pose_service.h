@@ -19,7 +19,6 @@
 #define TELEMETRY_POSE_SERVICE_H
 
 /* BST */
-#include "bst_serial.h"
 #include "netuas_socket.h"
 #include "bst_module_basic.h"
 #include "bst_protocol.h"

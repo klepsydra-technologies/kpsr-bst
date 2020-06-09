@@ -38,7 +38,7 @@
 
 class ZmqProxy {
 public:
-    ZmqProxy(std::string frontendUrl, std::string backendUrl, bool bindFrontend)
+    ZmqProxy(const std::string & frontendUrl, const std::string & backendUrl, bool bindFrontend)
         : _running(false)
         , _context(1)
         , _frontend(_context, ZMQ_SUB)
@@ -87,7 +87,7 @@ protected:
 
 class ZmqBasicProxy : public ZmqProxy {
 public:
-    ZmqBasicProxy(std::string frontendUrl, std::string backendUrl)
+    ZmqBasicProxy(const std::string & frontendUrl, const std::string & backendUrl)
         : ZmqProxy(frontendUrl, backendUrl, false)
     {}
 
@@ -102,15 +102,16 @@ protected:
             _frontend.recv(&message);
             _frontend.getsockopt( ZMQ_RCVMORE, &more, &more_size);
             _backend.send(message, more? ZMQ_SNDMORE: 0);
-            if (!more)
+            if (!more) {
                 break;      //  Last message part
+            }
         }
     }
 };
 
 class ZmqLvcProxy : public ZmqProxy {
 public:
-    ZmqLvcProxy(std::string frontendUrl, std::string backendUrl, int timeout)
+    ZmqLvcProxy(const std::string & frontendUrl, const std::string & backendUrl, int timeout)
         : ZmqProxy(frontendUrl, backendUrl, true)
         , _timeout(timeout)
     {}
@@ -130,7 +131,7 @@ protected:
             spdlog::info("{}new message received from server. Topic {}. Contents: {}", __PRETTY_FUNCTION__, topic, contents);
             _cache[topic] = contents;
             s_sendmore (_backend, topic);
-            s_send (_backend, contents.c_str());
+            s_send (_backend, contents);
         }
 
         if (items [1].revents & ZMQ_POLLIN) {
@@ -165,6 +166,12 @@ int main(int argc, char *argv[])
     std::string fileName = kpsr::bst::BstMainHelper::getConfFileFromParams(argc, argv);
 
     kpsr::YamlEnvironment yamlEnv(fileName);
+
+    std::string logFileName;
+    yamlEnv.getPropertyString("log_file_path", logFileName);
+    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    kpsrLogger->set_level(spdlog::level::debug);
+    spdlog::set_default_logger(kpsrLogger);
 
     std::string serverPublishUrl; // frontend
     std::string serverSubscribeUrl; // backend

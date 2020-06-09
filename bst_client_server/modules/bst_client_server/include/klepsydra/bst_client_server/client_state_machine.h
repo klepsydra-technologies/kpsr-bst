@@ -32,8 +32,7 @@
 
 #include <klepsydra/bst_client_server/client_state_machine_conf.h>
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <spdlog/spdlog.h>
 
 namespace kpsr {
 namespace bst {
@@ -54,7 +53,7 @@ public:
 
 private:
 
-    void sendControlCommandAndUpdateOnAck(unsigned char id, float value, std::string eventPrefix);
+    void sendControlCommandAndUpdateOnAck(unsigned char id, float value, const std::string & eventPrefix);
     void checkAndWaitUntilFlightMode(std::vector<FlightMode_t> validFlyingModes, std::string listenerName,
                                      std::string validModeEvent, std::string notValidModeEvent);
     void addActionsOnReadyState();

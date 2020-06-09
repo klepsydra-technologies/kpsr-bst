@@ -68,9 +68,18 @@ SET(CMAKE_MODULE_PATH            ${KPSR_BUILD_PATH}/cmake)
 SET(LIBRARY_OUTPUT_PATH          ${PROJECT_BINARY_DIR}/bin                   CACHE PATH "Library output" FORCE)
 SET(EXECUTABLE_OUTPUT_PATH       ${PROJECT_BINARY_DIR}/bin                   CACHE PATH "Executable output" FORCE)
 SET(BST_INCLUDE_PATH             ${bst_home}/include)
+SET(BST_SOURCE_PATH              ${bst_home}/src)
 SET(BST_LIBRARY_PATH             ${bst_home}/lib)
-SET(BST_LIBRARY_CORE             libblack_swift_mr.a)
+SET(BST_LIBRARY_CORE             libbstmr_lib.a)
 SET(BST_LIBRARY_NETUAS           libnetuas_lib.a)
+
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_core )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_can )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/modules )
+INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/messages )
+INCLUDE_DIRECTORIES( ${BST_LIBRARY_PATH} )
 
 # Must use GNUInstallDirs to install libraries into correct
 # locations on all platforms.
@@ -80,10 +89,11 @@ include(GNUInstallDirs)
 SET(BUILD_SHARED_LIBS "ON" FORCE)
 
 find_package(Klepsydra REQUIRED)
-find_package(KlepsydraAdmin REQUIRED)
-find_package(KlepsydraRobotics REQUIRED)
-
-find_package(Pistache REQUIRED)
+if(KPSR_WITH_ADMIN)
+  ADD_DEFINITIONS(-DKPSR_WITH_ADMIN=${KPSR_WITH_ADMIN})
+  find_package(KlepsydraAdmin REQUIRED)
+  find_package(Pistache REQUIRED)
+endif()
 
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFileCXX)
@@ -121,6 +131,11 @@ endif()
 
 add_definitions(-std=c++11)
 enable_testing()
+
+add_definitions(-faligned-new)
+add_definitions(-fno-strict-overflow)
+add_definitions(-Wno-deprecated-declarations)
+add_definitions(-Wno-comment)
 
 if (KPSR_WITH_CODE_METRICS)
    # Code Coverage
@@ -160,7 +175,9 @@ find_package(Threads REQUIRED)
 # ADD SUB FOLDERS
 ######################################################################################
 ADD_SUBDIRECTORY(bst_comms)
-ADD_SUBDIRECTORY(trajectory_monitoring)
+if(KPSR_WITH_ADMIN)
+  ADD_SUBDIRECTORY(trajectory_monitoring)
+endif()
 ADD_SUBDIRECTORY(bst_client_server)
 
 if (KPSR_RUNTIME)
