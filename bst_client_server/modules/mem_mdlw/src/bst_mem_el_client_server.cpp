@@ -78,19 +78,19 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    kpsr::high_performance::EventLoopMiddlewareProvider<2048> eventloopProvider(container);
-    kpsr::bst::mem::BstClientServerEventLoopProvider<2048> bstClientServerMemProvider(eventloopProvider);
+    kpsr::high_performance::EventLoopMiddlewareProvider<4096> eventloopProvider(container);
+    kpsr::bst::mem::BstClientServerEventLoopProvider<4096> bstClientServerMemProvider(eventloopProvider);
 
     kpsr::bst::BstServer bstServer(container, &environment, &bstClientServerMemProvider);
 
-    kpsr::bst::BstClientEventloopProvider<2048> bstClientProvider(container,
+    kpsr::bst::BstClientEventloopProvider<4096> bstClientProvider(container,
                                                                   &environment,
                                                                   eventloopProvider,
                                                                   &bstClientServerMemProvider);
 
 #ifdef KPSR_WITH_ADMIN
     kpsr::trajectory::bst::BstTrajectoryDataProvider * trajectoryProvider = nullptr;
-    kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<2048> * trajectoryMonitoring = nullptr;
+    kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<4096> * trajectoryMonitoring = nullptr;
 
     bool enableTrajectoryMonitoring;
     environment.getPropertyBool("trajectory_monitor_enable", enableTrajectoryMonitoring);
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
                     bstClientServerMemProvider.getBstWaypointCommandMessageSubscriber(),
                     bstClientServerMemProvider.getBstRequestMessageSubscriber(), true);
 
-        trajectoryMonitoring = new kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<2048>(
+        trajectoryMonitoring = new kpsr::trajectory::restapi::EventLoopRestTrajectoryContainerProvider<4096>(
                     * restEndpoint, eventloopProvider, trajectoryProvider, &environment,
                     "bst_mem_sf_client_server");
     }

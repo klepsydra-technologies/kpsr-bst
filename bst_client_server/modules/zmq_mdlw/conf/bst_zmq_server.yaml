@@ -17,7 +17,7 @@ bst_host: 'localhost'
 bst_port: '55553'
 
 # Kpsr BST Server conf
-bst_server_period_microsecs: 1000
+bst_server_period_microsecs: 10000
 
 # ZMQ Conf
 bst_server_publish_url: 'tcp://*:8100'

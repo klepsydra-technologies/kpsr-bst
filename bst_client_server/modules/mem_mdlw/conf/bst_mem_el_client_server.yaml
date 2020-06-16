@@ -20,9 +20,9 @@ bst_host: 'localhost'
 bst_port: '55553'
 
 # Kpsr BST Server conf
-bst_server_period_microsecs: 1000
+bst_server_period_microsecs: 10000
 
 # Kpsr BST Client conf
-bst_client_heartbeat_period_microsecs: 1000
-bst_client_run_period_microsecs: 1000
+bst_client_heartbeat_period_microsecs: 10000
+bst_client_run_period_microsecs: 10000
 bst_client_flight_mode_attempts: 10
