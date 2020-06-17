@@ -137,8 +137,8 @@ int main(int argc, char *argv[])
     kpsr::zmq_mdlw::FromZmqMiddlewareProvider fromZmqMiddlewareProvider;
     kpsr::zmq_mdlw::ToZMQMiddlewareProvider toZmqMiddlewareProvider(container, bstClientPublisher);
 
-    kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
-    kpsr::bst::zmq_mdlw::BstClientZMQProvider<256> bstClientZmqProvider(eventloopProvider,
+    kpsr::high_performance::EventLoopMiddlewareProvider<1024> eventloopProvider(container);
+    kpsr::bst::zmq_mdlw::BstClientZMQProvider<1024> bstClientZmqProvider(eventloopProvider,
                                                                         fromZmqMiddlewareProvider,
                                                                         toZmqMiddlewareProvider,
                                                                         * bstServerSubscribers[0].get(),
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
             * bstServerSubscribers[14].get(),
             100);
 
-    kpsr::bst::BstClientEventloopProvider<256> bstClientProvider(container, &environment,
+    kpsr::bst::BstClientEventloopProvider<1024> bstClientProvider(container, &environment,
                                                                  eventloopProvider,
                                                                  &bstClientZmqProvider);
     BstTestClient bstTestClient(bstClientProvider.getBstClient());
