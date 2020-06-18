@@ -60,6 +60,7 @@ public:
 
     void stop() {
         _bstClientMiddlewareProvider->getScheduler()->stopScheduledTask("BST_CLIENT_EXEC");
+        _bstClientMiddlewareProvider->getScheduler()->stopScheduledService(&_bstClient);
         _bstClient.shutdown();
     }
 

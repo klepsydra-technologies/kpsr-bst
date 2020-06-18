@@ -152,7 +152,7 @@ public:
      * @return
      */
     kpsr::Publisher<kpsr::geometry::PoseEventData> * getPoseEventDataPublisher() override {
-        return _eventloopProvider.template getPublisher<kpsr::geometry::PoseEventData>(EVENT_NAME_POSE_EVENT, 10, nullptr, nullptr);
+        return _eventloopProvider.template getPublisher<kpsr::geometry::PoseEventData>(EVENT_NAME_POSE_EVENT, 100, nullptr, nullptr);
     }
 
     /**
