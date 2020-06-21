@@ -86,6 +86,7 @@ void kpsr::bst::BstServer::execute() {
 
 void kpsr::bst::BstServer::stop() {
     scheduler.stopScheduledTask("BST_SERVER");
+    scheduler.stopScheduledService(this);
 
     _commInterfaceService->shutdown();
     _bst2KpsrAdaptorService->shutdown();

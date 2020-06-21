@@ -70,7 +70,9 @@ void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstReque
     switch (eventData.type) {
     case TELEMETRY_HEARTBEAT:
         spdlog::debug("{} TelemetryHeartbeat", __PRETTY_FUNCTION__);
-        _commHandler->send(TELEMETRY_HEARTBEAT, NULL, 0, NULL);
+        if (!_commHandler) {
+            _commHandler->send(TELEMETRY_HEARTBEAT, NULL, 0, NULL);
+        }
         break;
     case ::bst::comms::multicopter::CMD_X_VEL:
     case ::bst::comms::multicopter::CMD_Y_VEL:
@@ -79,12 +81,13 @@ void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstReque
         Command_t payLoadActiveCommand;
         payLoadActiveCommand.id = CMD_PAYLOAD_CONTROL;
         payLoadActiveCommand.value = PAYLOAD_CTRL_ACTIVE;
-        _commHandler->sendCommand(CONTROL_COMMAND, (uint8_t *)&payLoadActiveCommand, sizeof(Command_t), NULL);
-
+        if (!_commHandler) {
+            _commHandler->sendCommand(CONTROL_COMMAND, (uint8_t *)&payLoadActiveCommand, sizeof(Command_t), NULL);
         Command_t command;
         command.id = eventData.type;
         command.value = eventData.value;
         _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
+        }
         break;
     }
     case SENSORS_GYROSCOPE: {
@@ -92,7 +95,9 @@ void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstReque
         CalibrateSensor_t calibrateSensor;
         calibrateSensor.sensor = GYROSCOPE;
         calibrateSensor.state = static_cast<CalibrationState_t>(eventData.value);
-        _commHandler->sendCommand(eventData.id, (uint8_t *)&calibrateSensor, sizeof(CalibrateSensor_t), NULL);
+        if (!_commHandler) {
+            _commHandler->sendCommand(eventData.id, (uint8_t *)&calibrateSensor, sizeof(CalibrateSensor_t), NULL);
+        }
         break;
     }
     default: {
@@ -100,7 +105,9 @@ void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstReque
         Command_t command;
         command.id = eventData.type;
         command.value = eventData.value;
-        _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
+        if (!_commHandler) {
+            _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
+        }
         break;
     }
     }
