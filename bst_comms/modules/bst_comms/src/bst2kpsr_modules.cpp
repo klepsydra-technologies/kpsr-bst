@@ -33,11 +33,14 @@
 
 void kpsr::bst::Bst2KpsrModules::BasicModule::receive(uint8_t type, void * data, uint16_t size, const void * parameter)
 {
-    spdlog::debug("{}receive: type={}", __PRETTY_FUNCTION__, type);
+    spdlog::debug("{}receive: type={} size={}", __PRETTY_FUNCTION__, type, size);
 
     unsigned char *charBuf = (unsigned char*)data;
     /* create a vector by copying out the contents of charBuf */
     std::vector<unsigned char> dataVector(charBuf, charBuf + size);
+    for (int i = 0; i < size; i ++) {
+        spdlog::debug("{}. data[{}] = {} / {}", __PRETTY_FUNCTION__, i, (int) charBuf[i], (int) dataVector[i]);
+    }
 
     kpsr::bst::Bst2KpsrInternalMessageBuilder builder;
     std::shared_ptr<Bst2KpsrInternalMessage> message = builder.withCommsModule(kpsr::bst::COMMS_MODULE::BASIC)
@@ -48,7 +51,6 @@ void kpsr::bst::Bst2KpsrModules::BasicModule::receive(uint8_t type, void * data,
             .withReceivedParameter(parameter).build();
 
     kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessagePublisher()->publish(message);
-    spdlog::debug("{}receive after publish.", __PRETTY_FUNCTION__);
 }
 
 uint8_t kpsr::bst::Bst2KpsrModules::BasicModule::receiveCommand(uint8_t type, void * data, uint16_t size, const void * parameter)
@@ -68,7 +70,6 @@ uint8_t kpsr::bst::Bst2KpsrModules::BasicModule::receiveCommand(uint8_t type, vo
             .withReceivedParameter(parameter).build();
 
     kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessagePublisher()->publish(message);
-    spdlog::debug("{}receiveCommand after publish.", __PRETTY_FUNCTION__);
 
     //FIXME: return real value
     return true;
@@ -92,7 +93,6 @@ void kpsr::bst::Bst2KpsrModules::BasicModule::receiveReply(uint8_t type, void * 
             .withReceivedParameter(parameter).build();
 
     kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessagePublisher()->publish(message);
-    spdlog::debug("{}receiveReply after publish.", __PRETTY_FUNCTION__);
 }
 
 bool kpsr::bst::Bst2KpsrModules::BasicModule::publish(uint8_t type, uint8_t param)
@@ -105,7 +105,6 @@ bool kpsr::bst::Bst2KpsrModules::BasicModule::publish(uint8_t type, uint8_t para
             .withPublishParam(param).build();
 
     kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessagePublisher()->publish(message);
-    spdlog::debug("{}publish after publish.", __PRETTY_FUNCTION__);
 
     //FIXME: return real value
     return false;

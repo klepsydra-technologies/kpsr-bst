@@ -114,7 +114,7 @@ void BstTestClient::updateClient() {
         case 'z': {
             kpsr::bst::BstRequestMessage message;
             message.id = SENSORS_CALIBRATE;
-            message.type = SENSORS_GYROSCOPE;
+            message.type = GYROSCOPE;
             message.value = SENT;
             spdlog::info("Sending calibrate sensor command");
             _bstClient.sendCommand(message);
@@ -247,7 +247,7 @@ void BstTestClient::updateClient() {
                 _bstClient.sendWaypoints(waypointComand);
             }
             else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+                spdlog::info("Cannot send the add single waypoint command. Client is in {}", _bstClient.getCurrentState());
             }
 
             break;
