@@ -152,6 +152,9 @@ void kpsr::bst::CommInterfaceService::bstCommunicationsInit () {
 
     // get handler
     _commHandler = new BSTProtocol();
+    if(serialComm){
+        _commHandler->setAddressing(false);
+    }
 
     // set interface
     if(serialComm) {
