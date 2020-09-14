@@ -23,6 +23,7 @@ bst_port: '55553'
 bst_server_period_microsecs: 10000
 
 # Kpsr BST Client conf
-bst_client_heartbeat_period_microsecs: 10000
+bst_client_heartbeat_period_microsecs: 500000
+bst_client_control_period_microsecs: 50000
 bst_client_run_period_microsecs: 10000
 bst_client_flight_mode_attempts: 10

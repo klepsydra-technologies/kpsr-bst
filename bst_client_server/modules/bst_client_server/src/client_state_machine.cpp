@@ -44,7 +44,7 @@ kpsr::bst::ClientStateMachine::ClientStateMachine(Environment * environment,
 {}
 
 void kpsr::bst::ClientStateMachine::start() {
-    _stateMachine->registerObserver(std::bind(&kpsr::bst::ClientStateMachine::updateCurrentState, this, std::placeholders::_1));
+    _stateMachine->registerObserver(std::bind(&kpsr::bst::ClientStateMachine::updateCurrentState, this, std::placeholders::_1, std::placeholders::_2));
     _stateMachine->registerObserver(_clientStateMachineListener.getObserverFunc());
     _stateMachine->start();
 
@@ -85,42 +85,44 @@ void kpsr::bst::ClientStateMachine::stop() {
     _stateMachine->stop();
 }
 
-void kpsr::bst::ClientStateMachine::updateCurrentState(const std::string &currentState) {
-    _clientStateMachinePublisher->publish(currentState);
+void kpsr::bst::ClientStateMachine::updateCurrentState(const std::string &currentState, bool stateChanged) {
+    if (stateChanged) {
+        _clientStateMachinePublisher->publish(currentState);
 
-    if (currentState == "bstClientStateMachine:payloadControlReady" || currentState == "bstClientStateMachine:error") {
-        try {
-            _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_payloadcontrol");
-        } catch (const std::logic_error& e) {
-            spdlog::info("{}. Could not remove event listener: bst_state_machine_payloadcontrol.", __PRETTY_FUNCTION__);
+        if (currentState == "bstClientStateMachine:payloadControlReady" || currentState == "bstClientStateMachine:error") {
+            try {
+                _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_payloadcontrol");
+            } catch (const std::logic_error& e) {
+                spdlog::info("{}. Could not remove event listener: bst_state_machine_payloadcontrol.", __PRETTY_FUNCTION__);
+            }
         }
-    }
-    else if (currentState == "bstClientStateMachine:launchModeReq" || currentState == "bstClientStateMachine:error") {
-        try {
-            _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_preflight");
-        } catch (const std::logic_error& e) {
-            spdlog::info("{}. Could not remove event listener: bst_state_machine_preflight.", __PRETTY_FUNCTION__);
+        else if (currentState == "bstClientStateMachine:launchModeReq" || currentState == "bstClientStateMachine:error") {
+            try {
+                _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_preflight");
+            } catch (const std::logic_error& e) {
+                spdlog::info("{}. Could not remove event listener: bst_state_machine_preflight.", __PRETTY_FUNCTION__);
+            }
         }
-    }
-    else if (currentState == "bstClientStateMachine:enableEngineReq" || currentState == "bstClientStateMachine:error") {
-        try {
-            _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_launch_mode");
-        } catch (const std::logic_error& e) {
-            spdlog::info("{}. Could not remove event listener: bst_state_machine_launch_mode.", __PRETTY_FUNCTION__);
+        else if (currentState == "bstClientStateMachine:enableEngineReq" || currentState == "bstClientStateMachine:error") {
+            try {
+                _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_launch_mode");
+            } catch (const std::logic_error& e) {
+                spdlog::info("{}. Could not remove event listener: bst_state_machine_launch_mode.", __PRETTY_FUNCTION__);
+            }
         }
-    }
-    else if (currentState == "bstClientStateMachine:flying" || currentState == "bstClientStateMachine:error") {
-        try {
-            _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_launch");
-        } catch (const std::logic_error& e) {
-            spdlog::info("{}. Could not remove event listener: bst_state_machine_launch.", __PRETTY_FUNCTION__);
+        else if (currentState == "bstClientStateMachine:flying" || currentState == "bstClientStateMachine:error") {
+            try {
+                _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->removeListener("bst_state_machine_launch");
+            } catch (const std::logic_error& e) {
+                spdlog::info("{}. Could not remove event listener: bst_state_machine_launch.", __PRETTY_FUNCTION__);
+            }
         }
     }
 }
 
 void kpsr::bst::ClientStateMachine::addActionsOnReadyState() {
     _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->registerListener("bst_state_machine", [this](const TelemetrySystem_t & event) {
-            spdlog::debug("{}. launchReq. TelemetrySystem Received: {}", __PRETTY_FUNCTION__, event.flight_mode);
+        spdlog::debug("{}. launchReq. TelemetrySystem Received: {}", __PRETTY_FUNCTION__, event.flight_mode);
     });
 
     _clientStateMachineListener.addAction("payloadControlReadyReq", [this](const std::string & eventId) {
@@ -152,8 +154,10 @@ void kpsr::bst::ClientStateMachine::addActionsOnReadyState() {
     _clientStateMachineListener.addAction("launchModeReq", [this](const std::string & eventId) {
         spdlog::info("{}. launch mode requested.", __PRETTY_FUNCTION__);
         if (_telemetrySystemEventListener->getLastReceivedEvent()->flight_mode == FLIGHT_MODE_PREFLIGHT) {
+            spdlog::debug("{}. launch mode requested. sendControlCommandAndUpdateOnAck", __PRETTY_FUNCTION__);
             sendControlCommandAndUpdateOnAck(CMD_FLIGHT_MODE, FLIGHT_MODE_LAUNCH, "launchModeReq");
         } else if (_telemetrySystemEventListener->getLastReceivedEvent()->flight_mode == FLIGHT_MODE_LAUNCH) {
+            spdlog::debug("{}. launch mode requested. already on FLIGHT_MODE_LAUNCH.", __PRETTY_FUNCTION__);
             _stateMachine->enqueueEvent("alreadyLaunchMode");
         }
     });
@@ -196,6 +200,7 @@ void kpsr::bst::ClientStateMachine::addActionsOnReadyState() {
 
 void kpsr::bst::ClientStateMachine::sendCommand(const kpsr::bst::BstRequestMessage command) {
     if (command.id != CONTROL_COMMAND) {
+        spdlog::debug("{}. NON-CONTROL_COMMAND command.id: {}", __PRETTY_FUNCTION__, command.id);
         _callbackHandler.requestAndReply(command, [this](const kpsr::bst::BstReplyMessage & reply) {
             if (reply.ack) {
                 spdlog::info("{}. Command ACK received.", __PRETTY_FUNCTION__);
@@ -207,6 +212,7 @@ void kpsr::bst::ClientStateMachine::sendCommand(const kpsr::bst::BstRequestMessa
     }
 
     _clientStateMachineListener.addOneOffAction("controlCommandReq", [this, command](const std::string & eventId) {
+        spdlog::debug("{}. CONTROL_COMMAND command.id: {}", __PRETTY_FUNCTION__, command.id);
         _callbackHandler.requestAndReply(command, [this](const kpsr::bst::BstReplyMessage & reply) {
             if (reply.ack) {
                 _stateMachine->enqueueEvent("controlCommandReqAckRx");
@@ -246,12 +252,16 @@ void kpsr::bst::ClientStateMachine::checkAndWaitUntilFlightMode(std::vector<Flig
     _bstClientMiddlewareProvider->getTelemetrySystemSubscriber()->registerListener(
                 listenerName, [this, counter, validFlyingModes, listenerName, validModeEvent, notValidModeEvent]
                 (const TelemetrySystem_t & event) {
+        spdlog::debug("{}. TelemetrySystem_t received with flight mode: {}", __PRETTY_FUNCTION__, event.flight_mode);
         if (counter->alive) {
             if(std::find(validFlyingModes.begin(), validFlyingModes.end(), event.flight_mode) != validFlyingModes.end()) {
+                spdlog::debug("{}. TelemetrySystem_t event is valid!", __PRETTY_FUNCTION__);
                 _stateMachine->enqueueEvent(validModeEvent);
                 counter->alive = false;
             } else {
+                spdlog::debug("{}. TelemetrySystem_t event is NOT valid!", __PRETTY_FUNCTION__);
                 if (!counter->increaseAndCheck()) {
+                    spdlog::warn("{}. Counter reached!", __PRETTY_FUNCTION__);
                     _stateMachine->enqueueEvent(notValidModeEvent);
                     counter->alive = false;
                 }

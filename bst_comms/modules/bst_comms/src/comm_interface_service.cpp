@@ -40,11 +40,12 @@ kpsr::bst::CommInterfaceService::CommInterfaceService(Environment *_environment,
 
 void kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived(const WaypointCommandMessage & eventData) {
     std::lock_guard<std::mutex> lock (_mutex);
-    spdlog::debug("{}", __PRETTY_FUNCTION__);
+    spdlog::debug("{}. Recemved a set of {} waypoints.", __PRETTY_FUNCTION__, eventData.plan.size());
     uint8_t num_points = 0;
     _flightPlan.reset();
 
     for (size_t i = 0; i < eventData.plan.size(); i ++) {
+        spdlog::debug("{} Adding waypoint {} to map.", __PRETTY_FUNCTION__, eventData.plan[i].num);
         _tempWaypoints[i].num = eventData.plan[i].num;
         _tempWaypoints[i].next = eventData.plan[i].next;
         _tempWaypoints[i].latitude = eventData.plan[i].latitude;
@@ -60,53 +61,59 @@ void kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived(const 
     memcpy(&_flightPlanMap,_flightPlan.getMap(),sizeof(FlightPlanMap_t));
     _flightPlanMap.mode = eventData.mode;
 
-    spdlog::debug("{} sendCommand", __PRETTY_FUNCTION__);
+    spdlog::debug("{} sendCommand for {} waypoints.", __PRETTY_FUNCTION__, num_points);
     _commHandler->sendCommand(FLIGHT_PLAN, (uint8_t *)_tempWaypoints, num_points, &_flightPlanMap);
 }
 
 void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstRequestMessage  & eventData) {
     std::lock_guard<std::mutex> lock (_mutex);
-    spdlog::debug("{}", __PRETTY_FUNCTION__);
-    switch (eventData.type) {
-    case TELEMETRY_HEARTBEAT:
-        spdlog::debug("{} TelemetryHeartbeat", __PRETTY_FUNCTION__);
-        if (!_commHandler) {
-            _commHandler->send(TELEMETRY_HEARTBEAT, NULL, 0, NULL);
-        }
-        break;
-    case ::bst::comms::multicopter::CMD_X_VEL:
-    case ::bst::comms::multicopter::CMD_Y_VEL:
-    case CMD_VRATE: {
-        spdlog::debug("{} velocity command", __PRETTY_FUNCTION__);
-        Command_t payLoadActiveCommand;
-        payLoadActiveCommand.id = CMD_PAYLOAD_CONTROL;
-        payLoadActiveCommand.value = PAYLOAD_CTRL_ACTIVE;
-        if (!_commHandler) {
+    spdlog::trace("{}, eventData.id: {}, eventData.type: {}, eventData.value: {}", __PRETTY_FUNCTION__, eventData.id, eventData.type, eventData.value);
+    switch (eventData.id) {
+    case CONTROL_COMMAND: {
+        switch (eventData.type) {
+        case ::bst::comms::multicopter::CMD_X_VEL:
+        case ::bst::comms::multicopter::CMD_Y_VEL:
+        case CMD_VRATE: {
+            spdlog::debug("{} velocity command", __PRETTY_FUNCTION__);
+            Command_t payLoadActiveCommand;
+            payLoadActiveCommand.id = CMD_PAYLOAD_CONTROL;
+            payLoadActiveCommand.value = PAYLOAD_CTRL_ACTIVE;
             _commHandler->sendCommand(CONTROL_COMMAND, (uint8_t *)&payLoadActiveCommand, sizeof(Command_t), NULL);
-        Command_t command;
-        command.id = eventData.type;
-        command.value = eventData.value;
-        _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
-        }
-        break;
-    }
-    case SENSORS_GYROSCOPE: {
-        spdlog::debug("{} calibrate sensor command", __PRETTY_FUNCTION__);
-        CalibrateSensor_t calibrateSensor;
-        calibrateSensor.sensor = GYROSCOPE;
-        calibrateSensor.state = static_cast<CalibrationState_t>(eventData.value);
-        if (!_commHandler) {
-            _commHandler->sendCommand(eventData.id, (uint8_t *)&calibrateSensor, sizeof(CalibrateSensor_t), NULL);
-        }
-        break;
-    }
-    default: {
-        spdlog::debug("{} default", __PRETTY_FUNCTION__);
-        Command_t command;
-        command.id = eventData.type;
-        command.value = eventData.value;
-        if (!_commHandler) {
+            Command_t command;
+            command.id = eventData.type;
+            command.value = eventData.value;
             _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
+            break;
+        }
+        default: {
+            Command_t command;
+            command.id = eventData.type;
+            command.value = eventData.value;
+            spdlog::debug("{} default. eventData.type: {}. eventData.id: {}. eventData.value: {}", __PRETTY_FUNCTION__, eventData.type, eventData.id, eventData.value);
+            _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
+            break;
+        }
+        }
+        break;
+    }
+    case TELEMETRY_HEARTBEAT:
+        spdlog::trace("{} TelemetryHeartbeat", __PRETTY_FUNCTION__);
+        _commHandler->send(TELEMETRY_HEARTBEAT, NULL, 0, NULL);
+        break;
+    case SENSORS_AGL:
+        spdlog::trace("{} SensorsAgl", __PRETTY_FUNCTION__);
+        _commHandler->request(SENSORS_AGL, 0);
+        break;
+    case SENSORS_CALIBRATE: {
+        switch (eventData.type) {
+        case GYROSCOPE: {
+            spdlog::debug("{} calibrate sensor command. eventData.type: {}. eventData.id: {}. eventData.value: {}", __PRETTY_FUNCTION__, eventData.type, eventData.id, eventData.value);
+            CalibrateSensor_t calibrateSensor;
+            calibrateSensor.sensor = GYROSCOPE;
+            calibrateSensor.state = static_cast<CalibrationState_t>(eventData.value);
+            _commHandler->sendCommand(eventData.id, (uint8_t *)&calibrateSensor, sizeof(CalibrateSensor_t), NULL);
+            break;
+        }
         }
         break;
     }
@@ -145,6 +152,9 @@ void kpsr::bst::CommInterfaceService::bstCommunicationsInit () {
 
     // get handler
     _commHandler = new BSTProtocol();
+    if(serialComm){
+        _commHandler->setAddressing(false);
+    }
 
     // set interface
     if(serialComm) {
@@ -203,7 +213,10 @@ void kpsr::bst::CommInterfaceService::stop() {
 void kpsr::bst::CommInterfaceService::execute() {
     std::lock_guard<std::mutex> lock (_mutex);
     if(_commInterface->isConnected()) {
+        spdlog::debug("{}. Communication Handler Update.", __PRETTY_FUNCTION__);
         _commHandler->update();
+    } else {
+        spdlog::warn("{}. _commInterface disconnected.", __PRETTY_FUNCTION__);
     }
 }
 

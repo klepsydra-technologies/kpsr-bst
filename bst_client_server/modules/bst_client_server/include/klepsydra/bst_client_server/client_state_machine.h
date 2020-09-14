@@ -47,7 +47,7 @@ public:
     void start() override;
     void stop() override;
     void execute() override;
-    void updateCurrentState(const std::string &currentState);
+    void updateCurrentState(const std::string &currentState, bool stateChanged);
 
     void sendCommand(const BstRequestMessage command);
 

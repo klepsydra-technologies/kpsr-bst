@@ -43,25 +43,45 @@ kpsr::bst::BstClient::BstClient(kpsr::Container * container,
 
 void kpsr::bst::BstClient::start() {
     _clientStateMachineSubscriber->registerListener("BST_CLIENT", _clientStateMachineListener.cacheListenerFunction);
+    _clientStateMachineSubscriber->registerListener("BST_CLIENT_DEBUG", [](const std::string & state){
+        spdlog::debug("{}. clienStateMachine state received: {}", __PRETTY_FUNCTION__, state);
+    });
     _clientStateMachine.start();
 
-    int period;
-    _environment->getPropertyInt("bst_client_heartbeat_period_microsecs", period);
-    if (period > 0) {
+    int heartbeatPeriod;
+    _environment->getPropertyInt("bst_client_heartbeat_period_microsecs", heartbeatPeriod);
+    if (heartbeatPeriod > 0) {
         std::shared_ptr<std::function<void ()>> task = std::make_shared<std::function<void ()>>([this]() {
             kpsr::bst::BstRequestMessage heartbeatMessage;
-            heartbeatMessage.type = TELEMETRY_HEARTBEAT;
+            heartbeatMessage.id = TELEMETRY_HEARTBEAT;
             _bstClientMiddlewareProvider->getBstRequestMessagePublisher()->publish(heartbeatMessage);
         });
-        _bstClientMiddlewareProvider->getScheduler()->startScheduledTask("BST_CLIENT_HEARTBEAT", period, true, task);
+        _bstClientMiddlewareProvider->getScheduler()->startScheduledTask("BST_CLIENT_HEARTBEAT", heartbeatPeriod, true, task);
+    }
+
+    int controlPeriod;
+    _environment->getPropertyInt("bst_client_control_period_microsecs", controlPeriod);
+    if (controlPeriod > 0) {
+        std::shared_ptr<std::function<void ()>> task = std::make_shared<std::function<void ()>>([this]() {
+            kpsr::bst::BstRequestMessage controlMessage;
+            controlMessage.id = SENSORS_AGL;
+            _bstClientMiddlewareProvider->getBstRequestMessagePublisher()->publish(controlMessage);
+        });
+        _bstClientMiddlewareProvider->getScheduler()->startScheduledTask("BST_CLIENT_CONTROL_BEAT", controlPeriod, true, task);
     }
 }
 
 void kpsr::bst::BstClient::stop() {
-    int period;
-    _environment->getPropertyInt("bst_client_heartbeat_period_microsecs", period);
-    if (period > 0) {
+    int heartbeatPeriod;
+    _environment->getPropertyInt("bst_client_heartbeat_period_microsecs", heartbeatPeriod);
+    if (heartbeatPeriod > 0) {
         _bstClientMiddlewareProvider->getScheduler()->stopScheduledTask("BST_CLIENT_HEARTBEAT");
+    }
+
+    int controlPeriod;
+    _environment->getPropertyInt("bst_client_control_period_microsecs", controlPeriod);
+    if (controlPeriod > 0) {
+        _bstClientMiddlewareProvider->getScheduler()->stopScheduledTask("BST_CLIENT_CONTROL_BEAT");
     }
     _clientStateMachine.stop();
     _clientStateMachineSubscriber->removeListener("BST_CLIENT");
@@ -72,7 +92,9 @@ void kpsr::bst::BstClient::execute() {
 }
 
 bool kpsr::bst::BstClient::acquirePayloadControl() {
+    spdlog::debug("{}", __PRETTY_FUNCTION__);
     if (* _clientStateMachineListener.getLastReceivedEvent().get() == "bstClientStateMachine:ready") {
+        spdlog::debug("{}. Sending request to state machine", __PRETTY_FUNCTION__);
         _clientStateMachineExtPublisher->publish("payloadControlReqRx");
         return true;
     }
@@ -105,11 +127,8 @@ bool kpsr::bst::BstClient::land() {
 }
 
 bool kpsr::bst::BstClient::sendCommand(const BstRequestMessage command) {
-    if (* _clientStateMachineListener.getLastReceivedEvent().get() == "bstClientStateMachine:flying") {
-        _clientStateMachine.sendCommand(command);
-        return true;
-    }
-    return false;
+    _clientStateMachine.sendCommand(command);
+    return true;
 }
 
 bool kpsr::bst::BstClient::sendWaypoints(const WaypointCommandMessage command) {

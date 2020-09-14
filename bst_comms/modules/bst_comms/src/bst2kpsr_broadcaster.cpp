@@ -178,9 +178,13 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
     }
 
     case TELEMETRY_SYSTEM: {
-        spdlog::debug("{}TELEMETRY_SYSTEM", __PRETTY_FUNCTION__);
+        spdlog::debug("{}TELEMETRY_SYSTEM, size: {}", __PRETTY_FUNCTION__, size);
         ::bst::comms::TelemetrySystem_t telemetrySystem;
         memcpy(&telemetrySystem, data.data(), sizeof(TelemetrySystem_t));
+        for (int i = 0; i < size; i ++) {
+            spdlog::debug("{}. data[{}] = {}", __PRETTY_FUNCTION__, i, (int) data[i]);
+        }
+        spdlog::debug("{}\tflight_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.flight_mode);
         spdlog::debug("{}\tautopilot_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.autopilot_mode);
         spdlog::debug("{}\tbatt_percent:\t{}", __PRETTY_FUNCTION__, telemetrySystem.batt_percent);
         spdlog::debug("{}\tsatellites:\t{}", __PRETTY_FUNCTION__, telemetrySystem.satellites);
