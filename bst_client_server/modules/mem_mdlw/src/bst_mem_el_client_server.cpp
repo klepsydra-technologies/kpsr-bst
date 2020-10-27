@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
     spdlog::set_default_logger(kpsrLogger);
     spdlog::set_pattern("[%c] [%H:%M:%S %f] [%n] [%l] [%t] %v");
-    spdlog::set_level(spdlog::level::info); // Set global log level to info
+    spdlog::set_level(spdlog::level::debug); // Set global log level to info
 
     kpsr::Container * container = nullptr;
 #ifdef KPSR_WITH_ADMIN

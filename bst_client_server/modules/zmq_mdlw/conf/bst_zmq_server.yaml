@@ -10,9 +10,9 @@ admin_container_enable: true
 
 # BST connection conf
 bst_serial_number: 0x1234 
-bst_serial_enable: false
+bst_serial_enable: true
 bst_serial_port: '/dev/ttyUSB0' 
-bst_baud_rate: '9600'
+bst_baud_rate: '460800'
 bst_host: 'localhost'
 bst_port: '55553'
 
