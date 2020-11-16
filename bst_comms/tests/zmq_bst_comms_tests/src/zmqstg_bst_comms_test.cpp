@@ -39,7 +39,6 @@
 #include <klepsydra/core/event_emitter_middleware_provider.h>
 #include <klepsydra/core/cache_listener.h>
 
-#include <klepsydra/zmq_core/zhelpers.hpp>
 #include <klepsydra/zmq_core/from_zmq_middleware_provider.h>
 #include <klepsydra/zmq_core/to_zmq_middleware_provider.h>
 
