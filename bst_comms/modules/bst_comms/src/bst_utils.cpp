@@ -25,21 +25,22 @@ SystemInitialize_t system_initialize;
 
 float start_time = 0.0;
 
-float getElapsedTime() {
+extern "C" {
+    float getElapsedTime() {
 #ifdef __APPLE__
-	uint64_t now = mach_absolute_time();
-	float conversion  = 0.0;
-	mach_timebase_info_data_t info;
-	kern_return_t err = mach_timebase_info( &info );
-	if( err == 0  )
-		conversion = 1e-9 * (float) info.numer / (float) info.denom;
-	float current_time = conversion * (float) now;
+        uint64_t now = mach_absolute_time();
+        float conversion  = 0.0;
+        mach_timebase_info_data_t info;
+        kern_return_t err = mach_timebase_info( &info );
+        if( err == 0  )
+            conversion = 1e-9 * (float) info.numer / (float) info.denom;
+        float current_time = conversion * (float) now;
 #else
-	struct timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	float current_time = (float)now.tv_sec + (float)now.tv_nsec / SEC_TO_NSEC;
+        struct timespec now;
+        clock_gettime(CLOCK_MONOTONIC, &now);
+        float current_time = (float)now.tv_sec + (float)now.tv_nsec / SEC_TO_NSEC;
 #endif
-	return current_time - start_time;
+        return current_time - start_time;
+    }
+
 }
-
-
