@@ -271,9 +271,8 @@ TEST(BstClientTest, InvalidActions) {
         bool validAction = bstClient.land();
         ASSERT_FALSE(validAction);
     }
-
     bstClient.execute();
 
-    ASSERT_EQ(testStateMachineListener.counter, 2);
+    ASSERT_EQ(testStateMachineListener.counter, 1);
     ASSERT_EQ(bstClient.getCurrentState(), "bstClientStateMachine:idle");
 }

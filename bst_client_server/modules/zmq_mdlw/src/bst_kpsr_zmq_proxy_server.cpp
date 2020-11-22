@@ -28,11 +28,9 @@
 /* KPSR LIBS */
 #include <klepsydra/core/yaml_environment.h>
 
-#include <klepsydra/zmq_core/zhelpers.hpp>
-
 #include <klepsydra/bst_client_server/bst_server_user_input.h>
 #include <klepsydra/bst_client_server/bst_main_helper.h>
-
+#include <zmq.hpp>
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
@@ -126,12 +124,16 @@ protected:
             return;              //  Interrupted
 
         if (items[0].revents & ZMQ_POLLIN) {
-            std::string topic = s_recv (_frontend);
-            std::string contents = s_recv (_frontend);
-            spdlog::info("{}new message received from server. Topic {}. Contents: {}", __PRETTY_FUNCTION__, topic, contents);
-            _cache[topic] = contents;
-            s_sendmore (_backend, topic);
-            s_send (_backend, contents);
+            zmq::message_t topicMsg;
+            zmq::message_t content;
+            _frontend.recv(topicMsg);
+            _frontend.recv(content);
+            std::string topic(static_cast<char*>(topicMsg.data()), topicMsg.size());
+            std::string contentString(static_cast<char*>(content.data()), content.size());
+            spdlog::info("{}new message received from server. Topic {}. Contents: {}", __PRETTY_FUNCTION__, topic, contentString);
+            _cache[topic] = contentString;
+            _backend.send(topicMsg, zmq::send_flags::sndmore);
+            _backend.send(content);
         }
 
         if (items [1].revents & ZMQ_POLLIN) {
@@ -147,8 +149,9 @@ protected:
                 std::map<std::string, std::string>::iterator it;
                 it = _cache.find(topic);
                 if (it != _cache.end()) {
-                    s_sendmore (_backend, topic);
-                    s_send (_backend, it->second);
+                    _backend.send(zmq::const_buffer(topic.data(), topic.size()), zmq::send_flags::sndmore);
+                    zmq::message_t secondElem(it->second.c_str(), it->second.size());
+                    _backend.send(secondElem);
                     spdlog::info("{}new subcriber connected for topic {}. Sending contents: {}", __PRETTY_FUNCTION__, topic, it->second);
                 }
             }
