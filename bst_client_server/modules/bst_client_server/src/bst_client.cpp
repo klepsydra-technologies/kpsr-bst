@@ -126,17 +126,14 @@ bool kpsr::bst::BstClient::land() {
     return false;
 }
 
-bool kpsr::bst::BstClient::sendCommand(const BstRequestMessage command) {
+bool kpsr::bst::BstClient::sendCommand(const BstRequestMessage & command) {
     _clientStateMachine.sendCommand(command);
     return true;
 }
 
-bool kpsr::bst::BstClient::sendWaypoints(const WaypointCommandMessage command) {
-    if (* _clientStateMachineListener.getLastReceivedEvent().get() == "bstClientStateMachine:flying") {
-        _bstClientMiddlewareProvider->getBstWaypointCommandMessagePublisher()->publish(command);
-        return true;
-    }
-    return false;
+bool kpsr::bst::BstClient::sendWaypoints(const WaypointCommandMessage & command) {
+    _clientStateMachine.sendWaypoints(command);
+    return true;
 }
 
 std::string kpsr::bst::BstClient::getCurrentState() {

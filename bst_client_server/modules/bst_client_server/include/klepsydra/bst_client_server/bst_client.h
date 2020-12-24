@@ -51,9 +51,9 @@ public:
 
     bool land();
 
-    bool sendCommand(const BstRequestMessage command);
+    bool sendCommand(const BstRequestMessage & command);
 
-    bool sendWaypoints(const WaypointCommandMessage command);
+    bool sendWaypoints(const WaypointCommandMessage & command);
 
     std::string getCurrentState();
 

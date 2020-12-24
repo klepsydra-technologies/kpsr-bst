@@ -20,7 +20,7 @@
 
 kpsr::bst::ClientStateMachineConfiguration::ClientStateMachineConfiguration() {
     stateMachineConf.id = "bstClientStateMachine";
-    stateMachineConf.states.resize(19);
+    stateMachineConf.states.resize(20);
 
     stateMachineConf.states[0].id = "idle";
     stateMachineConf.states[0].transitions.resize(1);
@@ -107,45 +107,54 @@ kpsr::bst::ClientStateMachineConfiguration::ClientStateMachineConfiguration() {
     stateMachineConf.states[11].transitions[1].destinationId = "error";
 
     stateMachineConf.states[12].id = "flying";
-    stateMachineConf.states[12].transitions.resize(2);
+    stateMachineConf.states[12].transitions.resize(3);
     stateMachineConf.states[12].transitions[0].event = "landReqRx";
     stateMachineConf.states[12].transitions[0].destinationId = "landReq";
     stateMachineConf.states[12].transitions[1].event = "controlCommandRx";
     stateMachineConf.states[12].transitions[1].destinationId = "controlCommandReq";
+    stateMachineConf.states[12].transitions[2].event = "flightPlanRx";
+    stateMachineConf.states[12].transitions[2].destinationId = "flightPlanReq";
 
     stateMachineConf.states[13].id = "controlCommandReq";
     stateMachineConf.states[13].transitions.resize(2);
     stateMachineConf.states[13].transitions[0].event = "controlCommandReqAckRx";
     stateMachineConf.states[13].transitions[0].destinationId = "flying";
     stateMachineConf.states[13].transitions[1].event = "controlCommandReqNackRx";
-    stateMachineConf.states[13].transitions[1].destinationId = "flying";
+    stateMachineConf.states[13].transitions[1].destinationId = "error";
 
-    stateMachineConf.states[14].id = "landReq";
+    stateMachineConf.states[14].id = "flightPlanReq";
     stateMachineConf.states[14].transitions.resize(2);
-    stateMachineConf.states[14].transitions[0].event = "landReqAckRx";
-    stateMachineConf.states[14].transitions[0].destinationId = "landReqAccepted";
-    stateMachineConf.states[14].transitions[1].event = "landReqNackRx";
-    stateMachineConf.states[14].transitions[1].destinationId = "landReqAccepted";
+    stateMachineConf.states[14].transitions[0].event = "flightPlanReqAckRx";
+    stateMachineConf.states[14].transitions[0].destinationId = "flying";
+    stateMachineConf.states[14].transitions[1].event = "flightPlanReqNackRx";
+    stateMachineConf.states[14].transitions[1].destinationId = "error";
 
-    stateMachineConf.states[15].id = "landReqAccepted";
+    stateMachineConf.states[15].id = "landReq";
     stateMachineConf.states[15].transitions.resize(2);
-    stateMachineConf.states[15].transitions[0].event = "landingModeRx";
-    stateMachineConf.states[15].transitions[0].destinationId = "landed";
-    stateMachineConf.states[15].transitions[1].event = "notLandingModeRx";
-    stateMachineConf.states[15].transitions[1].destinationId = "error";
+    stateMachineConf.states[15].transitions[0].event = "landReqAckRx";
+    stateMachineConf.states[15].transitions[0].destinationId = "landReqAccepted";
+    stateMachineConf.states[15].transitions[1].event = "landReqNackRx";
+    stateMachineConf.states[15].transitions[1].destinationId = "landReqAccepted";
 
-    stateMachineConf.states[16].id = "landed";
-    stateMachineConf.states[16].transitions.resize(1);
-    stateMachineConf.states[16].transitions[0].event = "payloadControlOffReqRx";
-    stateMachineConf.states[16].transitions[0].destinationId = "payloadControlOffReq";
+    stateMachineConf.states[16].id = "landReqAccepted";
+    stateMachineConf.states[16].transitions.resize(2);
+    stateMachineConf.states[16].transitions[0].event = "landingModeRx";
+    stateMachineConf.states[16].transitions[0].destinationId = "landed";
+    stateMachineConf.states[16].transitions[1].event = "notLandingModeRx";
+    stateMachineConf.states[16].transitions[1].destinationId = "error";
 
-    stateMachineConf.states[17].id = "payloadControlOffReq";
-    stateMachineConf.states[17].transitions.resize(2);
-    stateMachineConf.states[17].transitions[0].event = "payloadControlOffAckRx";
-    stateMachineConf.states[17].transitions[0].destinationId = "ready";
-    stateMachineConf.states[17].transitions[1].event = "payloadControlOffNackRx";
-    stateMachineConf.states[17].transitions[1].destinationId = "error";
+    stateMachineConf.states[17].id = "landed";
+    stateMachineConf.states[17].transitions.resize(1);
+    stateMachineConf.states[17].transitions[0].event = "payloadControlOffReqRx";
+    stateMachineConf.states[17].transitions[0].destinationId = "payloadControlOffReq";
 
-    stateMachineConf.states[18].id = "error";
-    stateMachineConf.states[18].transitions.resize(0);
+    stateMachineConf.states[18].id = "payloadControlOffReq";
+    stateMachineConf.states[18].transitions.resize(2);
+    stateMachineConf.states[18].transitions[0].event = "payloadControlOffAckRx";
+    stateMachineConf.states[18].transitions[0].destinationId = "ready";
+    stateMachineConf.states[18].transitions[1].event = "payloadControlOffNackRx";
+    stateMachineConf.states[18].transitions[1].destinationId = "error";
+
+    stateMachineConf.states[19].id = "error";
+    stateMachineConf.states[19].transitions.resize(0);
 }

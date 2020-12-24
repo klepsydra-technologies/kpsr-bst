@@ -68,7 +68,6 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_KPSR_GEN_HEADERS
 
 # Create Library
 #---------------------------------------------------#
-LINK_DIRECTORIES()
 ADD_LIBRARY (kpsr_dds_${PROJ_MAIN_NAME}_datamodel SHARED ${Connext_DATAMODEL})
 
 # Link libraries with Project
