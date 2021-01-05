@@ -51,9 +51,12 @@ int main(int argc, char *argv[])
     std::string fileName = kpsr::bst::BstMainHelper::getConfFileFromParams(argc, argv);
 
     kpsr::YamlEnvironment yamlEnv(fileName);
+    std::string logFileName, currentDateTime;
 
-    std::string logFileName;
+    currentDateTime = kpsr::bst::BstMainHelper::currentDateTime();
     yamlEnv.getPropertyString("log_file_path", logFileName);
+    logFileName = logFileName + currentDateTime + ".log";
+
     auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
     kpsrLogger->set_level(spdlog::level::debug);
     spdlog::set_default_logger(kpsrLogger);

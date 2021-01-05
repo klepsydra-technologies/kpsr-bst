@@ -38,9 +38,10 @@ void kpsr::bst::Bst2KpsrModules::BasicModule::receive(uint8_t type, void * data,
     unsigned char *charBuf = (unsigned char*)data;
     /* create a vector by copying out the contents of charBuf */
     std::vector<unsigned char> dataVector(charBuf, charBuf + size);
+    /*
     for (int i = 0; i < size; i ++) {
         spdlog::debug("{}. data[{}] = {} / {}", __PRETTY_FUNCTION__, i, (int) charBuf[i], (int) dataVector[i]);
-    }
+    }*/
 
     kpsr::bst::Bst2KpsrInternalMessageBuilder builder;
     std::shared_ptr<Bst2KpsrInternalMessage> message = builder.withCommsModule(kpsr::bst::COMMS_MODULE::BASIC)
