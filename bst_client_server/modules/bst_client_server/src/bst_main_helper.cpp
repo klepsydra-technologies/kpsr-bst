@@ -41,3 +41,12 @@ void kpsr::bst::BstMainHelper::printHelp() {
     printf("    -f <configuration file> : default null\n");
     exit(0);
 }
+
+std::string kpsr::bst::BstMainHelper::currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    strftime(buf, sizeof(buf), "%Y-%m-%d_%H-%M-%S", &tstruct);
+    return buf;
+}

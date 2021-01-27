@@ -54,6 +54,7 @@ public:
      * @return
      */
     static std::string getConfFileFromParams(int argc, char *argv[]);
+    static std::string currentDateTime();
 private:
     void static printHelp();
 };

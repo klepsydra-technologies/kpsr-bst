@@ -19,6 +19,7 @@
 #include <algorithm>
 
 #include <spdlog/spdlog.h>
+#include <iostream>
 
 #include <klepsydra/bst_client_server/client_state_machine.h>
 
@@ -87,6 +88,7 @@ void kpsr::bst::ClientStateMachine::stop() {
 
 void kpsr::bst::ClientStateMachine::updateCurrentState(const std::string &currentState, bool stateChanged) {
     if (stateChanged) {
+        std::cout << " #  bstClientStateMachine -->  " << currentState << std::endl;
         _clientStateMachinePublisher->publish(currentState);
 
         if (currentState == "bstClientStateMachine:payloadControlReady" || currentState == "bstClientStateMachine:error") {
@@ -203,8 +205,10 @@ void kpsr::bst::ClientStateMachine::sendCommand(const kpsr::bst::BstRequestMessa
         spdlog::debug("{}. NON-CONTROL_COMMAND command.id: {}", __PRETTY_FUNCTION__, command.id);
         _callbackHandler.requestAndReply(command, [this](const kpsr::bst::BstReplyMessage & reply) {
             if (reply.ack) {
+                std::cout << " Command ACK received." << std::endl;
                 spdlog::info("{}. Command ACK received.", __PRETTY_FUNCTION__);
             } else {
+                std::cout << " Command NACK received." << std::endl;
                 spdlog::info("{}. Command NACK received.", __PRETTY_FUNCTION__);
             }
         });

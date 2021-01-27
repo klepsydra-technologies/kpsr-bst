@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <functional>
+#include <iostream>
 
 /* BST */
 #include "bst_module_basic.h"
@@ -62,6 +63,7 @@ void BstTestClient::printTestHelp() {
     printf("  r   : Send payload ready comannd\n");
     printf("  o   : Send payload off comannd\n");
     printf("  s   : Send payload shutdown comannd\n");
+    printf("  z   : Send calibration\n");
     printf("\n");
     printf("  t   : Send launch / land comannd\n");
     printf("\n");
@@ -74,6 +76,7 @@ void BstTestClient::printTestHelp() {
     printf("  d   : Send vrate=-1\n");
     printf("\n");
     printf("  f   : Send simple flight plan consisting of waypoint 80\n");
+    printf("  F   : Send plan of 4 waypoints (80, 81, 82, 83)\n");
     printf("  w   : Command aircraft to go to waypoint 80\n");
     printf("\n");
     printf("  p   : print this help\n");
@@ -100,7 +103,7 @@ void BstTestClient::initializeClient() {
 
 void BstTestClient::updateClient() {
     char input = getchar();
-
+    std::cout << "previous bstClientState: " << _bstClient.getCurrentState() << std::endl;
     if(input > 0) {
         switch(input) {
         case 'r':
@@ -117,6 +120,7 @@ void BstTestClient::updateClient() {
             message.type = GYROSCOPE;
             message.value = SENT;
             spdlog::info("Sending calibrate sensor command");
+            std::cout << "Sending calibrate sensor command" << std::endl;
             _bstClient.sendCommand(message);
             break;
         }
@@ -236,9 +240,9 @@ void BstTestClient::updateClient() {
 
             waypointComand.plan[0].num = 80;
             waypointComand.plan[0].next = 80;
-            waypointComand.plan[0].latitude = 40.021801;  // [deg]
-            waypointComand.plan[0].longitude = -105.21730804;  // [deg]
-            waypointComand.plan[0].altitude = 1700.020752;  // [m]
+            waypointComand.plan[0].latitude = 43.238407;  // [deg]
+            waypointComand.plan[0].longitude = -1.973326;  // [deg]
+            waypointComand.plan[0].altitude = 168.0;  // [m]
             waypointComand.plan[0].radius = 0.0;  // [m]
 
             waypointComand.mode = ADD;
@@ -258,32 +262,63 @@ void BstTestClient::updateClient() {
             kpsr::bst::WaypointCommandMessage waypointComand;
             waypointComand.plan.resize(4);
 
+            /***      GAZEBO
             waypointComand.plan[0].num = 80;
             waypointComand.plan[0].next = 81;
-            waypointComand.plan[0].latitude = 40.021904;  // [deg]
-            waypointComand.plan[0].longitude = -105.217194;  // [deg]
-            waypointComand.plan[0].altitude = 1620.0;  // [m]
+            waypointComand.plan[0].latitude = 40.133057;  // [deg]
+            waypointComand.plan[0].longitude = -105.069714;  // [deg]
+            waypointComand.plan[0].altitude = 1575.0;  // [m]
             waypointComand.plan[0].radius = 0.0;  // [m]
 
             waypointComand.plan[1].num = 81;
             waypointComand.plan[1].next = 82;
-            waypointComand.plan[1].latitude = 40.021904;  // [deg]
-            waypointComand.plan[1].longitude = -105.216980;  // [deg]
-            waypointComand.plan[1].altitude = 1620.0;  // [m]
+            waypointComand.plan[1].latitude = 40.133057;  // [deg]
+            waypointComand.plan[1].longitude = -105.070368;  // [deg]
+            waypointComand.plan[1].altitude = 1575.0;  // [m]
             waypointComand.plan[1].radius = 0.0;  // [m]
 
             waypointComand.plan[2].num = 82;
             waypointComand.plan[2].next = 83;
-            waypointComand.plan[2].latitude = 40.021759;  // [deg]
-            waypointComand.plan[2].longitude = -105.216980;  // [deg]
-            waypointComand.plan[2].altitude = 1620.0;  // [m]
+            waypointComand.plan[2].latitude = 40.132384;  // [deg]
+            waypointComand.plan[2].longitude = -105.070368;  // [deg]
+            waypointComand.plan[2].altitude = 1575.0;  // [m]
             waypointComand.plan[2].radius = 0.0;  // [m]
 
             waypointComand.plan[3].num = 83;
             waypointComand.plan[3].next = 80;
-            waypointComand.plan[3].latitude = 40.021759;  // [deg]
-            waypointComand.plan[3].longitude = -105.217194;  // [deg]
-            waypointComand.plan[3].altitude = 1620.0;  // [m]
+            waypointComand.plan[3].latitude = 40.132384;  // [deg]
+            waypointComand.plan[3].longitude = -105.069714;  // [deg]
+            waypointComand.plan[3].altitude = 1575.0;  // [m]
+            waypointComand.plan[3].radius = 0.0;  // [m]
+            ***/
+
+           /***      URNIETA        ***/
+            waypointComand.plan[0].num = 80;
+            waypointComand.plan[0].next = 81;
+            waypointComand.plan[0].latitude = 43.238407;  // [deg]
+            waypointComand.plan[0].longitude = -1.973326;  // [deg]
+            waypointComand.plan[0].altitude = 168.0;  // [m]
+            waypointComand.plan[0].radius = 0.0;  // [m]
+
+            waypointComand.plan[1].num = 81;
+            waypointComand.plan[1].next = 82;
+            waypointComand.plan[1].latitude = 43.238785;  // [deg]
+            waypointComand.plan[1].longitude = -1.973626;  // [deg]
+            waypointComand.plan[1].altitude = 174.0;  // [m]
+            waypointComand.plan[1].radius = 0.0;  // [m]
+
+            waypointComand.plan[2].num = 82;
+            waypointComand.plan[2].next = 83;
+            waypointComand.plan[2].latitude = 43.238945;  // [deg]
+            waypointComand.plan[2].longitude = -1.974063;  // [deg]
+            waypointComand.plan[2].altitude = 168.0;  // [m]
+            waypointComand.plan[2].radius = 0.0;  // [m]
+
+            waypointComand.plan[3].num = 83;
+            waypointComand.plan[3].next = 80;
+            waypointComand.plan[3].latitude = 43.238365;  // [deg]
+            waypointComand.plan[3].longitude = -1.973876;  // [deg]
+            waypointComand.plan[3].altitude = 168.0;  // [m]
             waypointComand.plan[3].radius = 0.0;  // [m]
 
             waypointComand.mode = ADD;

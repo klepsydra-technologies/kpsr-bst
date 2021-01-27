@@ -1,5 +1,5 @@
 # Logger
-log_file_path: './kpsr_bst.log'
+log_file_path: '/var/tmp/kpsr_bst_EL_'
 
 # rest container conf
 rest_port: 9090
@@ -13,17 +13,17 @@ trajectory_monitor_enable: true
 
 # BST connection conf
 bst_serial_number: 0x1234 
-bst_serial_enable: true
+bst_serial_enable: false
 bst_serial_port: '/dev/ttyUSB0' 
-bst_baud_rate: '460800'
+bst_baud_rate: '9600'
 bst_host: 'localhost'
 bst_port: '55553'
 
 # Kpsr BST Server conf
-bst_server_period_microsecs: 10000
+bst_server_period_microsecs: 1000
 
 # Kpsr BST Client conf
 bst_client_heartbeat_period_microsecs: 500000
-bst_client_control_period_microsecs: 50000
+bst_client_control_period_microsecs: 500000
 bst_client_run_period_microsecs: 10000
 bst_client_flight_mode_attempts: 10

@@ -18,6 +18,7 @@
 #include <iomanip>
 
 #include <spdlog/spdlog.h>
+#include <iostream>
 
 #include <klepsydra/bst_comms/bst2kpsr_broadcaster.h>
 
@@ -184,6 +185,7 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         for (int i = 0; i < size; i ++) {
             spdlog::debug("{}. data[{}] = {}", __PRETTY_FUNCTION__, i, (int) data[i]);
         }
+        std::cout << "bst_flight_mode = " << telemetrySystem.flight_mode << std::endl;
         spdlog::debug("{}\tflight_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.flight_mode);
         spdlog::debug("{}\tautopilot_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.autopilot_mode);
         spdlog::debug("{}\tbatt_percent:\t{}", __PRETTY_FUNCTION__, telemetrySystem.batt_percent);
