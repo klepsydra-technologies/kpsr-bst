@@ -40,7 +40,7 @@ kpsr::bst::CommInterfaceService::CommInterfaceService(Environment *_environment,
 
 void kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived(const WaypointCommandMessage & eventData) {
     std::lock_guard<std::mutex> lock (_mutex);
-    spdlog::debug("{}. Recemved a set of {} waypoints.", __PRETTY_FUNCTION__, eventData.plan.size());
+    spdlog::debug("{}. Received a set of {} waypoints.", __PRETTY_FUNCTION__, eventData.plan.size());
     uint8_t num_points = 0;
     _flightPlan.reset();
 

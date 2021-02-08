@@ -238,8 +238,10 @@ bool kpsr::bst::ClientStateMachine::sendWaypoints(const WaypointCommandMessage &
         spdlog::debug("{}. Flight Plan requested.id: {}", __PRETTY_FUNCTION__, command.id);
         _flightPlanCallbackHandler.requestAndReply(command, [this](const kpsr::bst::BstReplyMessage & reply) {
             if (reply.ack) {
+                spdlog::warn("Flight Plan reply.ack: {}", reply.ack);
                 _stateMachine->enqueueEvent("flightPlanReqAckRx");
             } else {
+                spdlog::warn("Flight Plan reply.ack: {}", reply.ack);
                 _stateMachine->enqueueEvent("flightPlanReqNackRx");
             }
         });

@@ -1,77 +1,115 @@
 /*****************************************************************************
-*                           Klepsydra Core Modules
-*              Copyright (C) 2019-2020  Klepsydra Technologies GmbH
-*                            All Rights Reserved.
-*
-*  This file is subject to the terms and conditions defined in
-*  file 'LICENSE.md', which is part of this source code package.
-*
-*  NOTICE:  All information contained herein is, and remains the property of Klepsydra
-*  Technologies GmbH and its suppliers, if any. The intellectual and technical concepts
-*  contained herein are proprietary to Klepsydra Technologies GmbH and its suppliers and
-*  may be covered by Swiss and Foreign Patents, patents in process, and are protected by
-*  trade secret or copyright law. Dissemination of this information or reproduction of
-*  this material is strictly forbidden unless prior written permission is obtained from
-*  Klepsydra Technologies GmbH.
-*
-*****************************************************************************/
+ *                           Klepsydra Core Modules
+ *              Copyright (C) 2019-2020  Klepsydra Technologies GmbH
+ *                            All Rights Reserved.
+ *
+ *  This file is subject to the terms and conditions defined in
+ *  file 'LICENSE.md', which is part of this source code package.
+ *
+ *  NOTICE:  All information contained herein is, and remains the property of Klepsydra
+ *  Technologies GmbH and its suppliers, if any. The intellectual and technical concepts
+ *  contained herein are proprietary to Klepsydra Technologies GmbH and its suppliers and
+ *  may be covered by Swiss and Foreign Patents, patents in process, and are protected by
+ *  trade secret or copyright law. Dissemination of this information or reproduction of
+ *  this material is strictly forbidden unless prior written permission is obtained from
+ *  Klepsydra Technologies GmbH.
+ *
+ *****************************************************************************/
 #include <iomanip>
 
-#include <spdlog/spdlog.h>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 #include <klepsydra/bst_comms/bst2kpsr_broadcaster.h>
 
-kpsr::bst::Bst2KpsrBroadcaster::Bst2KpsrBroadcaster(Publisher<Sensors_t> * sensorPublisher,
-                                                    Publisher<CalibrateSensor_t> * calibratePublisher,
-                                                    Publisher<Command_t> * controlCommandPublisher,
-                                                    Publisher<PID_t> * controlPidPublisher,
-                                                    Publisher<uint8_t> * systemPublisher,
-                                                    Publisher<SystemInitialize_t> * systemInitializePublisher,
-                                                    Publisher<TelemetryPosition_t> * telemetryPositionPublisher,
-                                                    Publisher<TelemetryOrientation_t> * telemetryOrientationPublisher,
-                                                    Publisher<TelemetrySystem_t> * telemetrySystemPublisher,
-                                                    Publisher<TelemetryPressure_t> * telemetryPressurePublisher,
-                                                    Publisher<::bst::comms::TelemetryControl_t> * telemetryControlPublisher,
-                                                    Publisher<gcs::TelemetryGCS_t> * telemetryGCSPublisher,
-                                                    Publisher<PayloadControl_t> * payloadControlPublisher,
-                                                    Publisher<BstReplyMessage> * bst2KpsrReplyMessagePublisher,
-                                                    uint32_t serialNumber)
-    : _sensorPublisher(sensorPublisher)
-    , _calibratePublisher(calibratePublisher)
-    , _controlCommandPublisher(controlCommandPublisher)
-    , _controlPidPublisher(controlPidPublisher)
-    , _systemPublisher(systemPublisher)
-    , _systemInitializePublisher(systemInitializePublisher)
-    , _telemetryPositionPublisher(telemetryPositionPublisher)
-    , _telemetryOrientationPublisher(telemetryOrientationPublisher)
-    , _telemetrySystemPublisher(telemetrySystemPublisher)
-    , _telemetryPressurePublisher(telemetryPressurePublisher)
-    , _telemetryControlPublisher(telemetryControlPublisher)
-    , _telemetryGCSPublisher(telemetryGCSPublisher)
-    , _payloadControlPublisher(payloadControlPublisher)
-    , _bst2KpsrReplyMessagePublisher(bst2KpsrReplyMessagePublisher)
-    , _payloadCurrentState(PAYLOAD_CTRL_OFF)
-    , _serialNumber(serialNumber)
-{}
+kpsr::bst::Bst2KpsrBroadcaster::Bst2KpsrBroadcaster(
+    Publisher<Sensors_t> *sensorPublisher, Publisher<CalibrateSensor_t> *calibratePublisher,
+    Publisher<Command_t> *controlCommandPublisher, Publisher<PID_t> *controlPidPublisher,
+    Publisher<uint8_t> *systemPublisher, Publisher<SystemInitialize_t> *systemInitializePublisher,
+    Publisher<TelemetryPosition_t> *telemetryPositionPublisher,
+    Publisher<TelemetryOrientation_t> *telemetryOrientationPublisher,
+    Publisher<TelemetrySystem_t> *telemetrySystemPublisher, Publisher<TelemetryPressure_t> *telemetryPressurePublisher,
+    Publisher<::bst::comms::TelemetryControl_t> *telemetryControlPublisher,
+    Publisher<gcs::TelemetryGCS_t> *telemetryGCSPublisher, Publisher<PayloadControl_t> *payloadControlPublisher,
+    Publisher<BstReplyMessage> *bst2KpsrReplyMessagePublisher, uint32_t serialNumber)
+    : _sensorPublisher(sensorPublisher), _calibratePublisher(calibratePublisher),
+      _controlCommandPublisher(controlCommandPublisher), _controlPidPublisher(controlPidPublisher),
+      _systemPublisher(systemPublisher), _systemInitializePublisher(systemInitializePublisher),
+      _telemetryPositionPublisher(telemetryPositionPublisher),
+      _telemetryOrientationPublisher(telemetryOrientationPublisher),
+      _telemetrySystemPublisher(telemetrySystemPublisher), _telemetryPressurePublisher(telemetryPressurePublisher),
+      _telemetryControlPublisher(telemetryControlPublisher), _telemetryGCSPublisher(telemetryGCSPublisher),
+      _payloadControlPublisher(payloadControlPublisher), _bst2KpsrReplyMessagePublisher(bst2KpsrReplyMessagePublisher),
+      _payloadCurrentState(PAYLOAD_CTRL_OFF), _serialNumber(serialNumber) {}
 
-void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned char> data, uint16_t size, const void * parameter) {
-    switch(type) {
+void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned char> data, uint16_t size,
+                                             const void *parameter) {
+    switch (type) {
     /* SENSORS */
-    case SENSORS_GPS:
-    case SENSORS_ACCELEROMETER:
-    case SENSORS_GYROSCOPE:
-    case SENSORS_MAGNETOMETER:
-    case SENSORS_IMU:
-    case SENSORS_DYNAMIC_PRESSURE:
-    case SENSORS_STATIC_PRESSURE:
-    case SENSORS_AIR_TEMPERATURE:
-    case SENSORS_AGL: {
+    case SENSORS_GPS: {
         spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
         ::bst::comms::Sensors_t sensors;
-        memcpy(&sensors, data.data(), sizeof(::bst::comms::Sensors_t));
+        memcpy(&sensors.gps, data.data(), sizeof(::bst::comms::GPS_t));
         _sensorPublisher->publish(sensors);
         break;
+    }
+    case SENSORS_ACCELEROMETER: {
+        spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+        ::bst::comms::Sensors_t sensors;
+        memcpy(&sensors.imu.accelerometer, data.data(), sizeof(::bst::comms::ThreeAxisSensor_t));
+        _sensorPublisher->publish(sensors);
+        break;
+    }
+    case SENSORS_GYROSCOPE: {
+        spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+        ::bst::comms::Sensors_t sensors;
+        memcpy(&sensors.imu.gyroscope, data.data(), sizeof(::bst::comms::ThreeAxisSensor_t));
+        _sensorPublisher->publish(sensors);
+        break;
+    }
+    case SENSORS_MAGNETOMETER: {
+        spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+        ::bst::comms::Sensors_t sensors;
+        memcpy(&sensors.imu.magnetometer, data.data(), sizeof(::bst::comms::ThreeAxisSensor_t));
+        _sensorPublisher->publish(sensors);
+        break;
+    }
+    case SENSORS_IMU: {
+        spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+        ::bst::comms::Sensors_t sensors;
+        memcpy(&sensors.imu, data.data(), sizeof(::bst::comms::IMU_t));
+        _sensorPublisher->publish(sensors);
+        break;
+    }
+    case SENSORS_DYNAMIC_PRESSURE: {
+        spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+        ::bst::comms::Sensors_t sensors;
+        memcpy(&sensors.dynamic_pressure, data.data(), sizeof(::bst::comms::Pressure_t));
+        _sensorPublisher->publish(sensors);
+        break;
+    }
+    case SENSORS_STATIC_PRESSURE: {
+        spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+        ::bst::comms::Sensors_t sensors;
+        memcpy(&sensors.static_pressure, data.data(), sizeof(::bst::comms::Pressure_t));
+        _sensorPublisher->publish(sensors);
+        break;
+    }
+    case SENSORS_AIR_TEMPERATURE: {
+        spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+        ::bst::comms::Sensors_t sensors;
+        memcpy(&sensors.air_temperature, data.data(), sizeof(::bst::comms::SingleValueSensor_t));
+        _sensorPublisher->publish(sensors);
+        break;
+    }
+    case SENSORS_AGL: {
+        {
+            spdlog::debug("{}Sensor packet received", __PRETTY_FUNCTION__);
+            ::bst::comms::Sensors_t sensors;
+            memcpy(&sensors.agl, data.data(), sizeof(::bst::comms::SingleValueSensor_t));
+            _sensorPublisher->publish(sensors);
+            break;
+        }
     }
     case SENSORS_CALIBRATE: {
         spdlog::debug("{}SENSORS_CALIBRATE received", __PRETTY_FUNCTION__);
@@ -182,8 +220,8 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}TELEMETRY_SYSTEM, size: {}", __PRETTY_FUNCTION__, size);
         ::bst::comms::TelemetrySystem_t telemetrySystem;
         memcpy(&telemetrySystem, data.data(), sizeof(TelemetrySystem_t));
-        for (int i = 0; i < size; i ++) {
-            spdlog::debug("{}. data[{}] = {}", __PRETTY_FUNCTION__, i, (int) data[i]);
+        for (int i = 0; i < size; i++) {
+            spdlog::debug("{}. data[{}] = {}", __PRETTY_FUNCTION__, i, (int)data[i]);
         }
         std::cout << "bst_flight_mode = " << telemetrySystem.flight_mode << std::endl;
         spdlog::debug("{}\tflight_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.flight_mode);
@@ -229,21 +267,22 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
     }
 }
 
-uint8_t kpsr::bst::Bst2KpsrBroadcaster::receiveCommand(uint8_t type, std::vector<unsigned char> data, uint16_t size, const void * parameter) {
+uint8_t kpsr::bst::Bst2KpsrBroadcaster::receiveCommand(uint8_t type, std::vector<unsigned char> data, uint16_t size,
+                                                       const void *parameter) {
     // validate this is a command
-    if( size != sizeof(Command_t) ) {
+    if (size != sizeof(Command_t)) {
         spdlog::debug("{}receiveCommand: invlid data size - size={}", __PRETTY_FUNCTION__, size);
         return false;
     }
 
-    Command_t *command = (Command_t*)data.data();
+    Command_t *command = (Command_t *)data.data();
 
-    switch(command->id) {
+    switch (command->id) {
     /* PAYLOAD */
     case CMD_PAYLOAD_CONTROL: {
         PayloadControl_t payloadControl = (PayloadControl_t)command->value;
         _payloadControlPublisher->publish(payloadControl);
-        switch((uint8_t)command->value) {
+        switch ((uint8_t)command->value) {
         case PAYLOAD_CTRL_OFF:
             spdlog::debug("{}CMD:PAYLOAD_CTRL_OFF", __PRETTY_FUNCTION__);
             _payloadCurrentState = PAYLOAD_CTRL_OFF;
@@ -251,7 +290,7 @@ uint8_t kpsr::bst::Bst2KpsrBroadcaster::receiveCommand(uint8_t type, std::vector
 
         case PAYLOAD_CTRL_ACTIVE:
             spdlog::debug("{}CMD:PAYLOAD_CTRL_ACTIVE", __PRETTY_FUNCTION__);
-            if( _payloadCurrentState != PAYLOAD_CTRL_READY )
+            if (_payloadCurrentState != PAYLOAD_CTRL_READY)
                 return false;
 
             _payloadCurrentState = PAYLOAD_CTRL_ACTIVE;
@@ -272,31 +311,26 @@ uint8_t kpsr::bst::Bst2KpsrBroadcaster::receiveCommand(uint8_t type, std::vector
     return false;
 }
 
-void kpsr::bst::Bst2KpsrBroadcaster::receiveReply(uint8_t type, std::vector<unsigned char> data, uint16_t size, bool ack, const void * parameter)
-{
-    spdlog::info("{}: type={}, data={}, ack: {}", __PRETTY_FUNCTION__, (int) type, (int) data[0], (ack ? "ACK" : "NACK"));
+void kpsr::bst::Bst2KpsrBroadcaster::receiveReply(uint8_t type, std::vector<unsigned char> data, uint16_t size,
+                                                  bool ack, const void *parameter) {
+    spdlog::info("{}: type={}, data={}, ack: {}", __PRETTY_FUNCTION__, (int)type, (int)data[0], (ack ? "ACK" : "NACK"));
 
     kpsr::bst::BstReplyMessageBuilder builder;
-    std::shared_ptr<BstReplyMessage> message = builder
-            .withType(data[0])
-            .withId(type)
-            .withAck(ack).build();
+    std::shared_ptr<BstReplyMessage> message = builder.withType(data[0]).withId(type).withAck(ack).build();
     _bst2KpsrReplyMessagePublisher->publish(message);
 }
 
-bool kpsr::bst::Bst2KpsrBroadcaster::publish(uint8_t type, uint8_t param)
-{
+bool kpsr::bst::Bst2KpsrBroadcaster::publish(uint8_t type, uint8_t param) {
     spdlog::debug("{}publish: type={}", __PRETTY_FUNCTION__, type);
 
     // do some with status request
-    switch(type) {
-    case SYSTEM_INITIALIZE:
-    {
+    switch (type) {
+    case SYSTEM_INITIALIZE: {
         spdlog::debug("{}SYSTEM_INITIALIZE", __PRETTY_FUNCTION__);
         ::bst::comms::SystemInitialize_t systemInitialize;
         // initialize system_init packet
         systemInitialize.vehicle_type = PAYLOAD_NODE;
-        systemInitialize.serial_num   = _serialNumber;
+        systemInitialize.serial_num = _serialNumber;
         _systemInitializePublisher->publish(systemInitialize);
         break;
     }
