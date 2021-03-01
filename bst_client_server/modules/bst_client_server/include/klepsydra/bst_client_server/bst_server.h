@@ -20,7 +20,8 @@
 #define BST_SERVER_H
 
 #include <string>
-
+#include <unistd.h>
+#include <spdlog/spdlog.h>
 #include <klepsydra/mem_core/basic_scheduler.h>
 
 #include <klepsydra/bst_comms/comm_interface_service.h>

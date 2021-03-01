@@ -39,9 +39,7 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
 
 # Create Library
 #---------------------------------------------------#
-LINK_DIRECTORIES( ${BST_LIBRARY_PATH} )
-
-ADD_LIBRARY(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIB_TYPE} ${${PROJ_NAME}_SRC} )
+ADD_LIBRARY(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIB_TYPE} ${${PROJ_NAME}_SRC} ${${PROJ_NAME}_HEADERS})
 
 # Link libraries with Project
 #---------------------------------------------------#

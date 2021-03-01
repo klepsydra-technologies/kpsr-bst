@@ -262,7 +262,7 @@ void BstTestClient::updateClient() {
             kpsr::bst::WaypointCommandMessage waypointComand;
             waypointComand.plan.resize(4);
 
-            /***      GAZEBO
+            /***      GAZEBO          ***/
             waypointComand.plan[0].num = 80;
             waypointComand.plan[0].next = 81;
             waypointComand.plan[0].latitude = 40.133057;  // [deg]
@@ -290,9 +290,8 @@ void BstTestClient::updateClient() {
             waypointComand.plan[3].longitude = -105.069714;  // [deg]
             waypointComand.plan[3].altitude = 1575.0;  // [m]
             waypointComand.plan[3].radius = 0.0;  // [m]
-            ***/
 
-           /***      URNIETA        ***/
+           /***      URNIETA
             waypointComand.plan[0].num = 80;
             waypointComand.plan[0].next = 81;
             waypointComand.plan[0].latitude = 43.238407;  // [deg]
@@ -320,11 +319,13 @@ void BstTestClient::updateClient() {
             waypointComand.plan[3].longitude = -1.973876;  // [deg]
             waypointComand.plan[3].altitude = 168.0;  // [m]
             waypointComand.plan[3].radius = 0.0;  // [m]
+            ***/
 
             waypointComand.mode = ADD;
 
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending a single waypoint");
+                waypointComand.id = 128;
                 _bstClient.sendWaypoints(waypointComand);
             }
             else {

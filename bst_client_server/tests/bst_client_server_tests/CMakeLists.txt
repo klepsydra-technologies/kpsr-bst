@@ -36,8 +36,6 @@ FILE(GLOB ${PROJ_NAME}_SRC
 
 # Create Library
 #---------------------------------------------------#
-LINK_DIRECTORIES( ${BST_LIBRARY_PATH} )
-
 ADD_EXECUTABLE(${PROJ_NAME} ${${PROJ_NAME}_SRC} ) 
 
 # Link libraries with Project

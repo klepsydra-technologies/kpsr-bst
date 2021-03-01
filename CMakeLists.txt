@@ -81,6 +81,13 @@ INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/modules )
 INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/messages )
 INCLUDE_DIRECTORIES( ${BST_LIBRARY_PATH} )
 
+if(DEFINED CMAKE_PREFIX_PATH)
+   set(KPSR_LIBRARY_PATH ${CMAKE_PREFIX_PATH}/lib)
+   LINK_DIRECTORIES( ${BST_LIBRARY_PATH} ${KPSR_LIBRARY_PATH})
+else()
+   LINK_DIRECTORIES( ${BST_LIBRARY_PATH})
+endif()
+
 # Must use GNUInstallDirs to install libraries into correct
 # locations on all platforms.
 include(GNUInstallDirs)

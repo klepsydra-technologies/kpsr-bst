@@ -161,10 +161,62 @@ TEST(ClientStateMachineTest, BaseTest) {
     ASSERT_EQ(stateMachineListener.counter, 12);
     ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:flying");
 
-    stateMachineExtEventMiddlewareProvider.getPublisher()->publish("landReqRx");
+    {
+        kpsr::bst::WaypointCommandMessage message;
+        message.id = 100;
+
+        clientStateMachine.sendWaypoints(message);
+    }
+
     clientStateMachine.execute();
 
     ASSERT_EQ(stateMachineListener.counter, 13);
+    ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:flightPlanReq");
+
+    {
+        kpsr::bst::BstReplyMessageBuilder builder;
+        builder.withId(100)
+                .withAck(true);
+
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+    }
+
+    clientStateMachine.execute();
+
+    ASSERT_EQ(stateMachineListener.counter, 14);
+    ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:flying");
+
+    {
+        kpsr::bst::BstRequestMessageBuilder messageBuilder;
+        messageBuilder.withId(CONTROL_COMMAND)
+                .withType(CMD_WAYPOINT);
+
+        clientStateMachine.sendCommand(* messageBuilder.build());
+    }
+
+    clientStateMachine.execute();
+
+    ASSERT_EQ(stateMachineListener.counter, 15);
+    ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:controlCommandReq");
+
+    {
+        kpsr::bst::BstReplyMessageBuilder builder;
+        builder.withId(CONTROL_COMMAND)
+                .withType(CMD_WAYPOINT)
+                .withAck(true);
+
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+    }
+
+    clientStateMachine.execute();
+
+    ASSERT_EQ(stateMachineListener.counter, 16);
+    ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:flying");
+
+    stateMachineExtEventMiddlewareProvider.getPublisher()->publish("landReqRx");
+    clientStateMachine.execute();
+
+    ASSERT_EQ(stateMachineListener.counter, 17);
     ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:landReq");
 
     {
@@ -178,7 +230,7 @@ TEST(ClientStateMachineTest, BaseTest) {
 
     clientStateMachine.execute();
 
-    ASSERT_EQ(stateMachineListener.counter, 14);
+    ASSERT_EQ(stateMachineListener.counter, 18);
     ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:landReqAccepted");
 
     telemetrySystem.flight_mode = FLIGHT_MODE_LANDING;
@@ -186,13 +238,13 @@ TEST(ClientStateMachineTest, BaseTest) {
 
     clientStateMachine.execute();
 
-    ASSERT_EQ(stateMachineListener.counter, 15);
+    ASSERT_EQ(stateMachineListener.counter, 19);
     ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:landed");
 
     stateMachineExtEventMiddlewareProvider.getPublisher()->publish("payloadControlOffReqRx");
     clientStateMachine.execute();
 
-    ASSERT_EQ(stateMachineListener.counter, 16);
+    ASSERT_EQ(stateMachineListener.counter, 20);
     ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:payloadControlOffReq");
     {
         kpsr::bst::BstReplyMessageBuilder builder;
@@ -205,7 +257,7 @@ TEST(ClientStateMachineTest, BaseTest) {
 
     clientStateMachine.execute();
 
-    ASSERT_EQ(stateMachineListener.counter, 17);
+    ASSERT_EQ(stateMachineListener.counter, 21);
     ASSERT_EQ(* stateMachineListener.getLastReceivedEvent().get(), "bstClientStateMachine:ready");
 
     clientStateMachine.stop();

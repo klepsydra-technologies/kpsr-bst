@@ -44,8 +44,6 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
 
 # Create Library
 #---------------------------------------------------#
-LINK_DIRECTORIES( ${BST_LIBRARY_PATH} )
-
 ADD_EXECUTABLE(${PROJ_NAME}_el src/bst_mem_el_client_server.cpp )
 ADD_EXECUTABLE(${PROJ_NAME}_sf src/bst_mem_sf_client_server.cpp )
 

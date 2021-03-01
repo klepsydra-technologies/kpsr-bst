@@ -38,9 +38,13 @@ kpsr::bst::ClientStateMachine::ClientStateMachine(Environment * environment,
     , _clientStateMachineExtSubscriber(clientStateMachineExtSubscriber)
     , _clientStateMachineListener(_stateMachineConfiguration.stateMachineConf.id)
     , _correlator()
+    , _flightPlanCorrelator()
     , _callbackHandler("bst_test_client", _bstClientMiddlewareProvider->getBstRequestMessagePublisher(),
                        _bstClientMiddlewareProvider->getBst2KpsrReplyMessageSubscriber(),
                        _correlator.correlationFunction)
+    , _flightPlanCallbackHandler("bst_test_client", _bstClientMiddlewareProvider->getBstWaypointCommandMessagePublisher(),
+                                 _bstClientMiddlewareProvider->getBst2KpsrReplyMessageSubscriber(),
+                                 _flightPlanCorrelator.correlationFunction)
     , _telemetrySystemEventListener(telemetrySystemEventListener)
 {}
 
@@ -200,7 +204,7 @@ void kpsr::bst::ClientStateMachine::addActionsOnReadyState() {
     });
 }
 
-void kpsr::bst::ClientStateMachine::sendCommand(const kpsr::bst::BstRequestMessage command) {
+void kpsr::bst::ClientStateMachine::sendCommand(const kpsr::bst::BstRequestMessage & command) {
     if (command.id != CONTROL_COMMAND) {
         spdlog::debug("{}. NON-CONTROL_COMMAND command.id: {}", __PRETTY_FUNCTION__, command.id);
         _callbackHandler.requestAndReply(command, [this](const kpsr::bst::BstReplyMessage & reply) {
@@ -228,6 +232,24 @@ void kpsr::bst::ClientStateMachine::sendCommand(const kpsr::bst::BstRequestMessa
 
     _stateMachine->enqueueEvent("controlCommandRx");
 }
+
+bool kpsr::bst::ClientStateMachine::sendWaypoints(const WaypointCommandMessage & command) {
+    _clientStateMachineListener.addOneOffAction("flightPlanReq", [this, command] (const std::string & eventId) {
+        spdlog::debug("{}. Flight Plan requested.id: {}", __PRETTY_FUNCTION__, command.id);
+        _flightPlanCallbackHandler.requestAndReply(command, [this](const kpsr::bst::BstReplyMessage & reply) {
+            if (reply.ack) {
+                spdlog::warn("Flight Plan reply.ack: {}", reply.ack);
+                _stateMachine->enqueueEvent("flightPlanReqAckRx");
+            } else {
+                spdlog::warn("Flight Plan reply.ack: {}", reply.ack);
+                _stateMachine->enqueueEvent("flightPlanReqNackRx");
+            }
+        });
+    });
+
+    _stateMachine->enqueueEvent("flightPlanRx");
+}
+
 void kpsr::bst::ClientStateMachine::checkAndWaitUntilFlightMode(std::vector<FlightMode_t> validFlyingModes,
                                                                 std::string listenerName,
                                                                 std::string validModeEvent,

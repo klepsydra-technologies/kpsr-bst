@@ -46,7 +46,6 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_GEN_HEADERS
 
 # Create Library
 #---------------------------------------------------#
-LINK_DIRECTORIES( ${BST_LIBRARY_PATH})
 
 ADD_LIBRARY(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIB_TYPE}  ${${PROJ_NAME}_SRC} )
 

@@ -56,8 +56,6 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
 
 # Create Library
 #---------------------------------------------------#
-LINK_DIRECTORIES( ${BST_LIBRARY_PATH})
-
 ADD_EXECUTABLE(kpsr_dds_bst_client src/bst_dds_client.cpp  )
 ADD_EXECUTABLE(kpsr_dds_bst_server src/bst_dds_server.cpp  )
 

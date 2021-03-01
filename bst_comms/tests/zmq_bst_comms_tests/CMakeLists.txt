@@ -40,7 +40,6 @@ FILE(GLOB ${PROJ_NAME}_HEADERS
 
 # Link libraries with Project
 #---------------------------------------------------#
-LINK_DIRECTORIES( ${BST_LIBRARY_PATH} )
 ADD_EXECUTABLE(${PROJ_NAME} ${${PROJ_NAME}_SRC} ) 
 
 #---------------------------------------------------#

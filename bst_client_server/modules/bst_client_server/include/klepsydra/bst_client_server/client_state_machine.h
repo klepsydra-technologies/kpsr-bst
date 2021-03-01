@@ -49,7 +49,9 @@ public:
     void execute() override;
     void updateCurrentState(const std::string &currentState, bool stateChanged);
 
-    void sendCommand(const BstRequestMessage command);
+    void sendCommand(const BstRequestMessage & command);
+
+    bool sendWaypoints(const WaypointCommandMessage & command);
 
 private:
 
@@ -67,7 +69,9 @@ private:
     Subscriber<std::string> * _clientStateMachineExtSubscriber;
     kpsr::fsm::StateMachineListener _clientStateMachineListener;
     kpsr::bst::RequestReplyCorrelation _correlator;
+    kpsr::bst::FlightPlantReplyCorrelation _flightPlanCorrelator;
     kpsr::MultiThreadCallbackHandler<kpsr::bst::BstRequestMessage, kpsr::bst::BstReplyMessage> _callbackHandler;
+    kpsr::MultiThreadCallbackHandler<kpsr::bst::WaypointCommandMessage, kpsr::bst::BstReplyMessage> _flightPlanCallbackHandler;
     kpsr::mem::CacheListener<TelemetrySystem_t> * _telemetrySystemEventListener;
 };
 }

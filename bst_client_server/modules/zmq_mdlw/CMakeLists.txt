@@ -49,8 +49,6 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
 
 # Create Library
 #---------------------------------------------------#
-LINK_DIRECTORIES( ${BST_LIBRARY_PATH} )
-
 ADD_EXECUTABLE(kpsr_zmq_bst_client src/bst_zmq_client.cpp  )
 ADD_EXECUTABLE(kpsr_zmq_bst_server src/bst_zmq_server.cpp  )
 ADD_EXECUTABLE(kpsr_zmq_bst_proxy src/bst_kpsr_zmq_proxy_server.cpp )

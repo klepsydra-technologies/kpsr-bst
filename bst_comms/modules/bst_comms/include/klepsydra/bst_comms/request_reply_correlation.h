@@ -23,6 +23,8 @@
 #include <klepsydra/bst_comms/bst_request_message.h>
 #include <klepsydra/bst_comms/bst_reply_message.h>
 
+#include <klepsydra/bst_comms/waypoint_command_message.h>
+
 namespace kpsr
 {
 namespace bst
@@ -61,6 +63,43 @@ public:
      * @brief correlationFunction
      */
     std::function<bool(const BstRequestMessage &, const BstReplyMessage &)> correlationFunction;
+
+};
+
+/**
+ * @brief The RequestReplyCorrelation class
+ *
+ * @copyright Klepsydra Robotics 2017-2018.
+ *
+ * @version 2.0.1
+ *
+ * @ingroup kpsr-bst-public
+ *
+ * @details Request reply correlation facility.
+ */
+class FlightPlantReplyCorrelation {
+public:
+    /**
+     * @brief RequestReplyCorrelation
+     */
+    FlightPlantReplyCorrelation()
+        : correlationFunction(std::bind(&FlightPlantReplyCorrelation::match, this, std::placeholders::_1, std::placeholders::_2))
+    {}
+
+    /**
+     * @brief match
+     * @param request
+     * @param reply
+     * @return
+     */
+    bool match(const WaypointCommandMessage & request, const BstReplyMessage & reply) {
+        return (request.id == reply.id);
+    }
+
+    /**
+     * @brief correlationFunction
+     */
+    std::function<bool(const WaypointCommandMessage &, const BstReplyMessage &)> correlationFunction;
 
 };
 }
