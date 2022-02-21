@@ -51,7 +51,7 @@ void kpsr::bst::BstClient::start() {
     int heartbeatPeriod;
     _environment->getPropertyInt("bst_client_heartbeat_period_microsecs", heartbeatPeriod);
     if (heartbeatPeriod > 0) {
-        std::shared_ptr<std::function<void ()>> task = std::make_shared<std::function<void ()>>([this]() {
+        std::function<void ()> task = std::function<void ()>([this]() {
             kpsr::bst::BstRequestMessage heartbeatMessage;
             heartbeatMessage.id = TELEMETRY_HEARTBEAT;
             _bstClientMiddlewareProvider->getBstRequestMessagePublisher()->publish(heartbeatMessage);
@@ -62,7 +62,7 @@ void kpsr::bst::BstClient::start() {
     int controlPeriod;
     _environment->getPropertyInt("bst_client_control_period_microsecs", controlPeriod);
     if (controlPeriod > 0) {
-        std::shared_ptr<std::function<void ()>> task = std::make_shared<std::function<void ()>>([this]() {
+        std::function<void ()> task = std::function<void ()>([this]() {
             kpsr::bst::BstRequestMessage controlMessage;
             controlMessage.id = SENSORS_AGL;
             _bstClientMiddlewareProvider->getBstRequestMessagePublisher()->publish(controlMessage);
