@@ -248,6 +248,7 @@ bool kpsr::bst::ClientStateMachine::sendWaypoints(const WaypointCommandMessage &
     });
 
     _stateMachine->enqueueEvent("flightPlanRx");
+    return true;
 }
 
 void kpsr::bst::ClientStateMachine::checkAndWaitUntilFlightMode(std::vector<FlightMode_t> validFlyingModes,
