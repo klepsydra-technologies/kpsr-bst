@@ -5,3 +5,5 @@ Config.cmake
 **/**/config.h
 gen/**
 gen
+.vscode/**
+**/.vscode
