@@ -102,14 +102,17 @@ TARGET_LINK_LIBRARIES(kpsr_zmq_bst_proxy
 INSTALL(TARGETS kpsr_zmq_bst_client
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    libs
 )
 INSTALL(TARGETS kpsr_zmq_bst_server
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT libs
 )
 INSTALL(TARGETS kpsr_zmq_bst_proxy
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT libs
 )
 
 add_zmq_export_target(kpsr_zmq_bst_client)
