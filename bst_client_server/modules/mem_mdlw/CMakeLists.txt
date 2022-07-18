@@ -84,10 +84,12 @@ TARGET_LINK_LIBRARIES(${PROJ_NAME}_sf
 INSTALL(TARGETS ${PROJ_NAME}_el
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT libs
 )
 INSTALL(TARGETS ${PROJ_NAME}_sf
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT libs
 )
 
 add_core_export_target(${PROJ_NAME}_el)
