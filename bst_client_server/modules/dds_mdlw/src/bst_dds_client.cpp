@@ -20,10 +20,6 @@
 
 /* KPSR LIBS */
 
-#ifdef KPSR_WITH_ADMIN
-#include <klepsydra/rest_interface/hp_rest_admin_container_provider.h>
-#endif
-
 #include <klepsydra/dds_core/dds_env.h>
 
 #include <klepsydra/dds_bst_comms/bst_client_dds_provider.h>
@@ -118,29 +114,6 @@ int main(int argc, char *argv[])
     dds::sub::DataReader<kpsr_dds_bst::BstPacketData> payloadControlReader(subscriber, payloadControlTopic);
 
     kpsr::Container * container = nullptr;
-#ifdef KPSR_WITH_ADMIN
-    kpsr::restapi::RestEndpoint * restEndpoint = nullptr;
-    kpsr::high_performance::EventLoopMiddlewareProvider<32> * restEventloopProvider = nullptr;
-    kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32> * adminProvider = nullptr;
-
-    bool enableAdminContainer;
-    environment.getPropertyBool("admin_container_enable", enableAdminContainer);
-    if (enableAdminContainer) {
-        if (restEndpoint == nullptr) {
-            int restPort;
-            environment.getPropertyInt("rest_port", restPort);
-
-            int noThreads;
-            environment.getPropertyInt("rest_number_threads", noThreads);
-
-            restEndpoint = new kpsr::restapi::RestEndpoint(noThreads, restPort);
-        }
-        spdlog::info("starting the admin container now...");
-        restEventloopProvider = new kpsr::high_performance::EventLoopMiddlewareProvider<32>(nullptr);
-        adminProvider = new kpsr::admin::restapi::EventLoopRestAdminContainerProvider<32>(*restEndpoint, * restEventloopProvider, &environment, "BST_Container");
-        container = &adminProvider->getContainer();
-    }
-#endif
 
     kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
     kpsr::bst::dds_mdlw::BstClientDDSProvider<256> bstClientDdsProvider(container,
@@ -170,33 +143,12 @@ int main(int argc, char *argv[])
 
     eventloopProvider.start();
     bstClientDdsProvider.start();
-#ifdef KPSR_WITH_ADMIN
-    if (enableAdminContainer) {
-        restEventloopProvider->start();
-        adminProvider->start();
-    }
-
-    if (restEndpoint != nullptr) {
-        restEndpoint->start();
-    }
-#endif
 
     bstClientProvider.start();
 
     bstTestClient.run();
 
     bstClientProvider.stop();
-
-#ifdef KPSR_WITH_ADMIN
-    if (restEndpoint != nullptr) {
-        restEndpoint->shutdown();
-    }
-
-    if (enableAdminContainer) {
-        adminProvider->stop();
-        restEventloopProvider->stop();
-    }
-#endif
 
     bstClientDdsProvider.stop();
     eventloopProvider.stop();

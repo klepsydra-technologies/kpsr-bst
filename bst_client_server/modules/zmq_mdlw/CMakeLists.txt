@@ -19,20 +19,6 @@ PROJECT(${PROJ_NAME})
 #find cppzmq wrapper, installed by make of cppzmq
 find_package(cppzmq REQUIRED)
 
-# Include directories with headers
-#---------------------------------------------------#
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/modules/bst_comms/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/modules/zmq_mdlw/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/gen/poco/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/gen/serialization/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trajectory_monitoring/modules/trajectory_monitoring/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trajectory_monitoring/modules/mem_mdlw/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/trajectory_monitoring/gen/poco/include )
-INCLUDE_DIRECTORIES( ${cppzmq_INCLUDE_DIR})
-INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
-
 # Source
 #---------------------------------------------------#
 FILE(GLOB ${PROJ_NAME}_SRC
@@ -49,56 +35,54 @@ ADD_EXECUTABLE(kpsr_zmq_bst_client src/bst_zmq_client.cpp  )
 ADD_EXECUTABLE(kpsr_zmq_bst_server src/bst_zmq_server.cpp  )
 ADD_EXECUTABLE(kpsr_zmq_bst_proxy src/bst_kpsr_zmq_proxy_server.cpp )
 
+target_include_directories(
+  kpsr_zmq_bst_client
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
+target_include_directories(
+  kpsr_zmq_bst_server
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
+target_include_directories(
+  kpsr_zmq_bst_proxy
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  )
 # Link libraries with Project
 #---------------------------------------------------#
-if(KPSR_WITH_ADMIN)
-  list(APPEND KPSR_ALL_ADMIN_LIBRARIES ${KPSR_ADMIN_CORE_LIBRARIES} ${KPSR_ADMIN_REST_LIBRARIES} "pistache")
-endif()
-
-TARGET_LINK_LIBRARIES(kpsr_zmq_bst_client 
-    kpsr_${PROJ_MAIN_NAME} 
-    kpsr_bst_comms
-    kpsr_zmq_bst_comms
-    ${KLEPSYDRA_CORE_LIBRARIES}
-    ${KLEPSYDRA_ZMQ_LIBRARIES}
-    ${KPSR_ALL_ADMIN_LIBRARIES}
-    ${BST_LIBRARY_CORE} 
-    ${BST_LIBRARY_NETUAS} 
-    cppzmq 
-    yaml-cpp 
-    atomic 
-    rt
-    ${CMAKE_THREAD_LIBS_INIT})
+TARGET_LINK_LIBRARIES(kpsr_zmq_bst_client
+  PRIVATE
+  kpsr_${PROJ_MAIN_NAME} 
+  kpsr_zmq_bst_comms
+  ${KLEPSYDRA_ZMQ_LIBRARIES}
+  ${KPSR_ROBOTICS_ZMQ_LIBRARIES}
+)
 
 TARGET_LINK_LIBRARIES(kpsr_zmq_bst_server
-    kpsr_${PROJ_MAIN_NAME} 
-    kpsr_bst_comms
-    kpsr_zmq_bst_comms
-    ${KLEPSYDRA_CORE_LIBRARIES}
-    ${KLEPSYDRA_ZMQ_LIBRARIES}
-    ${KPSR_ALL_ADMIN_LIBRARIES}
-    ${BST_LIBRARY_CORE} 
-    ${BST_LIBRARY_NETUAS} 
-    cppzmq 
-    yaml-cpp 
-    atomic 
-    rt
-    ${CMAKE_THREAD_LIBS_INIT})
+  PRIVATE
+  kpsr_${PROJ_MAIN_NAME} 
+  kpsr_zmq_bst_comms
+  ${KLEPSYDRA_ZMQ_LIBRARIES}
+  ${KPSR_ROBOTICS_ZMQ_LIBRARIES}
+)
 
 TARGET_LINK_LIBRARIES(kpsr_zmq_bst_proxy 
-    kpsr_${PROJ_MAIN_NAME} 
-    ${KLEPSYDRA_CORE_LIBRARIES}
-    cppzmq 
-    yaml-cpp 
-    czmq
-    ${CMAKE_THREAD_LIBS_INIT})
+  PRIVATE
+  czmq
+  kpsr_${PROJ_MAIN_NAME} 
+  kpsr_zmq_bst_comms
+  ${KLEPSYDRA_ZMQ_LIBRARIES}
+  ${KPSR_ROBOTICS_ZMQ_LIBRARIES}
+)
 
 # Install
 #---------------------------------------------------#
 INSTALL(TARGETS kpsr_zmq_bst_client
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    libs
+    COMPONENT libs
 )
 INSTALL(TARGETS kpsr_zmq_bst_server
     EXPORT KlepsydraBstTargets

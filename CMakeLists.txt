@@ -15,7 +15,7 @@
 
 # Main header: Project name & Configuration
 # ------------------------------------------------------------------------------------------------------
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 SET(PROJ_MAIN_NAME "bst")
 PROJECT("kpsr-bst")
@@ -41,8 +41,9 @@ message(STATUS "Thirdparties install path: " ${THIRDPARTIES_PATH})
 
 if(DEFINED BST_SDK_HOME)
    SET(bst_home ${BST_SDK_HOME})
-else()
+ else()
    SET(bst_home "${CMAKE_SOURCE_DIR}/../../bst_sdk/v2.1.0a/sdk/v2.1.0")
+   message("BST_SDK_HOME not provided. Using the value ${bst_home} to look for BST libs and headers")
 endif()
 
 IF(DEFINED GTEST_PATH)
@@ -63,40 +64,53 @@ message(STATUS "kpsr-build path: " ${KPSR_BUILD_PATH})
 SET(CMAKE_MODULE_PATH            ${KPSR_BUILD_PATH}/cmake)
 SET(LIBRARY_OUTPUT_PATH          ${PROJECT_BINARY_DIR}/bin                   CACHE PATH "Library output" FORCE)
 SET(EXECUTABLE_OUTPUT_PATH       ${PROJECT_BINARY_DIR}/bin                   CACHE PATH "Executable output" FORCE)
+
 SET(BST_INCLUDE_PATH             ${bst_home}/include)
 SET(BST_SOURCE_PATH              ${bst_home}/src)
 SET(BST_LIBRARY_PATH             ${bst_home}/lib)
-SET(BST_LIBRARY_CORE             libbstmr_lib.a)
-SET(BST_LIBRARY_NETUAS           libnetuas_lib.a)
+SET(BST_LIBRARY_CORE_NAME        bstmr_lib)
+SET(BST_LIBRARY_NETUAS_NAME      netuas_lib)
 
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH} )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_core )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_can )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/modules )
-INCLUDE_DIRECTORIES( ${BST_INCLUDE_PATH}/bst_protocol/messages )
-INCLUDE_DIRECTORIES( ${BST_LIBRARY_PATH} )
+find_library(BST_LIBRARY_CORE NAMES ${BST_LIBRARY_CORE_NAME}
+  PATHS ${BST_LIBRARY_PATH} REQUIRED)
 
-if(DEFINED CMAKE_PREFIX_PATH)
-   set(KPSR_LIBRARY_PATH ${CMAKE_PREFIX_PATH}/lib)
-   LINK_DIRECTORIES( ${BST_LIBRARY_PATH} ${KPSR_LIBRARY_PATH})
-else()
-   LINK_DIRECTORIES( ${BST_LIBRARY_PATH})
-endif()
+find_library(BST_LIBRARY_NETUAS NAMES ${BST_LIBRARY_NETUAS_NAME}
+  PATHS ${BST_LIBRARY_PATH} REQUIRED)
+
+set(BST_INCLUDE_DIRS)
+list(APPEND BST_INCLUDE_DIRS
+  ${BST_INCLUDE_PATH}
+  ${BST_INCLUDE_PATH}/bst_core
+  ${BST_INCLUDE_PATH}/bst_can 
+  ${BST_INCLUDE_PATH}/bst_protocol 
+  ${BST_INCLUDE_PATH}/bst_protocol/modules 
+  ${BST_INCLUDE_PATH}/bst_protocol/messages
+  ${BST_LIBRARY_PATH}
+  )
+
+add_library(bst::core STATIC IMPORTED)
+set_target_properties(bst::core
+  PROPERTIES IMPORTED_LOCATION "${BST_LIBRARY_CORE}"
+  INTERFACE_INCLUDE_DIRECTORIES "${BST_INCLUDE_DIRS}")
+
+add_library(bst::netuas STATIC IMPORTED)
+set_target_properties(bst::netuas
+  PROPERTIES IMPORTED_LOCATION "${BST_LIBRARY_NETUAS}"
+  INTERFACE_INCLUDE_DIRECTORIES "${BST_INCLUDE_DIRS}")
+
+target_link_libraries(bst::netuas INTERFACE bst::core )
+
+add_library(bst::bst INTERFACE IMPORTED)
+set_property(TARGET bst::bst PROPERTY INTERFACE_LINK_LIBRARIES bst::netuas)
 
 # Must use GNUInstallDirs to install libraries into correct
 # locations on all platforms.
 include(GNUInstallDirs)
 
 # Build type
-SET(BUILD_SHARED_LIBS "ON" FORCE)
-
-find_package(Klepsydra REQUIRED)
-if(KPSR_WITH_ADMIN)
-  ADD_DEFINITIONS(-DKPSR_WITH_ADMIN=${KPSR_WITH_ADMIN})
-  find_package(KlepsydraAdmin REQUIRED)
-  find_package(Pistache REQUIRED)
-endif()
+set(BUILD_SHARED_LIBS
+  ON
+  CACHE BOOL "Build shared libraries" FORCE)
 
 include(CheckCXXCompilerFlag)
 include(CheckIncludeFileCXX)
@@ -107,6 +121,7 @@ if (HAS_CXX11)
 endif()
 
 if (NOT APPLE)
+    set(CMAKE_INSTALL_RPATH $ORIGIN)
     check_cxx_compiler_flag(-Wl,--no-undefined HAS_NO_UNDEFINED)
     if (HAS_NO_UNDEFINED)
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-undefined")
@@ -169,6 +184,8 @@ include(KlepsydraBuild)
 
 #Dependencies
 
+find_package(Klepsydra 7 REQUIRED)
+find_package(KlepsydraRobotics REQUIRED)
 find_package(Threads REQUIRED)
 
 # Project Logic
@@ -178,9 +195,6 @@ find_package(Threads REQUIRED)
 # ADD SUB FOLDERS
 ######################################################################################
 ADD_SUBDIRECTORY(bst_comms)
-if(KPSR_WITH_ADMIN)
-  ADD_SUBDIRECTORY(trajectory_monitoring)
-endif()
 ADD_SUBDIRECTORY(bst_client_server)
 
 if (KPSR_RUNTIME)
@@ -209,14 +223,6 @@ ENDIF()
 
 set(INSTALL_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/klepsydrabst)
 
-# Make relative paths absolute (needed later on)
-foreach(p LIB BIN INCLUDE CMAKE)
-  set(var INSTALL_${p}_DIR)
-  if(NOT IS_ABSOLUTE "${${var}}")
-    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
-  endif()
-endforeach()
-
 list (APPEND EXPORT_INCLUDE_DIRS ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 message ("CORE_EXPORT_TARGETS: " ${CORE_EXPORT_TARGETS})
 message ("DDS_EXPORT_TARGETS: " ${DDS_EXPORT_TARGETS})
@@ -229,14 +235,17 @@ export(TARGETS ${CORE_EXPORT_TARGETS} ${DDS_EXPORT_TARGETS} ${ZMQ_EXPORT_TARGETS
 export(PACKAGE bst)
 
 # Create the KlepsydraBstConfig.cmake and KlepsydraBstConfigVersion files
-configure_file(KlepsydraBstConfig.cmake.in
-  "${PROJECT_BINARY_DIR}/KlepsydraBstConfig.cmake" @ONLY)
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+  "KlepsydraBstConfig.cmake.in"
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/KlepsydraBstConfig.cmake"
+  INSTALL_DESTINATION "${INSTALL_CMAKE_DIR}"
+  PATH_VARS CMAKE_INSTALL_LIBDIR)
 
-configure_file(KlepsydraBstConfig.cmake.in
-  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/KlepsydraBstConfig.cmake" @ONLY)
-# ... for both
-configure_file(KlepsydraBstConfigVersion.cmake.in
-  "${PROJECT_BINARY_DIR}/KlepsydraBstConfigVersion.cmake" @ONLY)
+write_basic_package_version_file(
+  "${PROJECT_BINARY_DIR}/KlepsydraBstConfigVersion.cmake"
+  VERSION ${KPSR_BST_VERSION}
+  COMPATIBILITY SameMajorVersion)
 
 # Install the KlepsydraBstConfig.cmake and KlepsydraBstConfigVersion.cmake
 install(FILES

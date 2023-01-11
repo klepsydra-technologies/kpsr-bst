@@ -183,8 +183,9 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
 
     case TELEMETRY_POSITION: {
         spdlog::debug("{}TELEMETRY_POSITION", __PRETTY_FUNCTION__);
-        ::bst::comms::TelemetryPosition_t telemetryPosition;
-        memcpy(&telemetryPosition, data.data(), sizeof(::bst::comms::TelemetryPosition_t));
+        ::bst::comms::TelemetryPosition_t telemetryPositionPublish;
+        memcpy(&telemetryPositionPublish, data.data(), sizeof(::bst::comms::TelemetryPosition_t));
+        const ::bst::comms::TelemetryPosition_t& telemetryPosition = telemetryPositionPublish;
         spdlog::debug("{}\tLatitude:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.latitude);
         spdlog::debug("{}\tLongitude:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.longitude);
         spdlog::debug("{}\tAltitude:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.altitude);
@@ -197,7 +198,7 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}\tacceleration.x:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.acceleration.x);
         spdlog::debug("{}\tacceleration.y:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.acceleration.y);
         spdlog::debug("{}\tacceleration.z:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.acceleration.z);
-        _telemetryPositionPublisher->publish(telemetryPosition);
+        _telemetryPositionPublisher->publish(telemetryPositionPublish);
         break;
     }
 
@@ -215,8 +216,9 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
 
     case TELEMETRY_SYSTEM: {
         spdlog::debug("{}TELEMETRY_SYSTEM, size: {}", __PRETTY_FUNCTION__, size);
-        ::bst::comms::TelemetrySystem_t telemetrySystem;
-        memcpy(&telemetrySystem, data.data(), sizeof(TelemetrySystem_t));
+        ::bst::comms::TelemetrySystem_t telemetrySystemPublish;
+        memcpy(&telemetrySystemPublish, data.data(), sizeof(TelemetrySystem_t));
+        const ::bst::comms::TelemetrySystem_t& telemetrySystem = telemetrySystemPublish;
         for (int i = 0; i < size; i++) {
             spdlog::debug("{}. data[{}] = {}", __PRETTY_FUNCTION__, i, (int)data[i]);
         }
@@ -226,7 +228,7 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}\tbatt_percent:\t{}", __PRETTY_FUNCTION__, telemetrySystem.batt_percent);
         spdlog::debug("{}\tsatellites:\t{}", __PRETTY_FUNCTION__, telemetrySystem.satellites);
         spdlog::debug("{}\terror_code:\t{}", __PRETTY_FUNCTION__, telemetrySystem.error_code);
-        _telemetrySystemPublisher->publish(telemetrySystem);
+        _telemetrySystemPublisher->publish(telemetrySystemPublish);
         break;
     }
     case TELEMETRY_PRESSURE: {
