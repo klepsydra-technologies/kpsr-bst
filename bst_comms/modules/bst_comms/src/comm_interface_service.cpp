@@ -25,6 +25,8 @@
 
 #include <klepsydra/bst_comms/bst2kpsr_modules.h>
 
+char FLIGHT_PLAN_NAME[] = "KPSR_MAP";
+
 kpsr::bst::CommInterfaceService::CommInterfaceService(Environment *_environment,
                                                       Subscriber<BstRequestMessage> * bstRequestMessageSubscriber,
                                                       Subscriber<WaypointCommandMessage> * bstWaypointCommandtMessageSubscriber,
@@ -33,6 +35,7 @@ kpsr::bst::CommInterfaceService::CommInterfaceService(Environment *_environment,
     , _bstRequestMessageSubscriber(bstRequestMessageSubscriber)
     , _bstWaypointCommandtMessageSubscriber(bstWaypointCommandtMessageSubscriber)
     , _systemInitializeSubscriber(systemInitializeSubscriber)
+    , _flightPlanModule(FLIGHT_PLAN_NAME)
 {}
 
 void kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived(const WaypointCommandMessage & eventData) {

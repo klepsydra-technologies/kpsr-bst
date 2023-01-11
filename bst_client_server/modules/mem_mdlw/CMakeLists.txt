@@ -45,22 +45,11 @@ ADD_EXECUTABLE(${PROJ_NAME}_sf src/bst_mem_sf_client_server.cpp )
 
 # Link libraries with Project
 #---------------------------------------------------#
-if(KPSR_WITH_ADMIN)
-  list(APPEND KPSR_ALL_ADMIN_LIBRARIES "kpsr_trajectory_monitoring" "kpsr_mem_trajectory_monitoring" ${KPSR_ADMIN_CORE_LIBRARIES} ${KPSR_ADMIN_REST_LIBRARIES} "pistache")
-endif()
-
 TARGET_LINK_LIBRARIES(${PROJ_NAME}_el
     kpsr_${PROJ_MAIN_NAME} 
     kpsr_bst_comms
     kpsr_mem_bst_comms
-    ${KLEPSYDRA_CORE_LIBRARIES}
-    ${KPSR_ALL_ADMIN_LIBRARIES}
-    ${BST_LIBRARY_CORE} 
-    ${BST_LIBRARY_NETUAS} 
-    yaml-cpp 
-    atomic 
-    rt
-    ${CMAKE_THREAD_LIBS_INIT})
+)
 
 TARGET_LINK_LIBRARIES(${PROJ_NAME}_sf
     kpsr_${PROJ_MAIN_NAME} 

@@ -17,13 +17,6 @@ SET(PROJ_NAME kpsr_dds_${PROJ_MAIN_NAME})
 PROJECT(${PROJ_NAME})
 
 include (MacroConnext)
-find_package (Connext REQUIRED)
-SET (DEFINITIONS ${DEFINITIONS} " -DDDS_IMPLEMENTATION_${DDS_IMPLEMENTATION}")
-
-add_definitions (
-  ${Connext_DEFINITIONS}
-  ${DEFINITIONS}
-)
 
 file(REMOVE_RECURSE ${CMAKE_CURRENT_SOURCE_DIR}/gen)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/gen)
@@ -34,16 +27,6 @@ FOREACH(idl ${idls})
         GET_FILENAME_COMPONENT(nfile ${idl} NAME)
         Connext_GENDATAMODEL(${nfile} ${CMAKE_CURRENT_SOURCE_DIR})
 ENDFOREACH(idl)
-
-# Include directories with headers
-#---------------------------------------------------#
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/gen )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/gen/poco/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/gen/dds/include )
-INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
-INCLUDE_DIRECTORIES( ${Connext_INCLUDE_DIRS} )
 
 # Source
 #---------------------------------------------------#
@@ -66,13 +49,19 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_KPSR_GEN_HEADERS
 #---------------------------------------------------#
 ADD_LIBRARY (kpsr_dds_${PROJ_MAIN_NAME}_datamodel SHARED ${Connext_DATAMODEL})
 
+target_include_directories(
+    kpsr_dds_${PROJ_MAIN_NAME}_datamodel
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+           $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/dds/include>
+           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/gen>
+           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/klepsydra/gen_dds_${PROJ_MAIN_NAME}>)
+
 # Link libraries with Project
 #---------------------------------------------------#
 # TARGET_LINK_LIBRARIES(${PROJ_NAME})
-TARGET_LINK_LIBRARIES(kpsr_dds_${PROJ_MAIN_NAME}_datamodel
- ${Connext_LIBRARIES} 
- atomic )
-
+target_link_libraries(kpsr_dds_${PROJ_MAIN_NAME}_datamodel
+                      PUBLIC RTIConnextDDS::cpp2_api kpsr_${PROJ_MAIN_NAME} ${KLEPSYDRA_DDS_LIBRARIES} )
 # Install
 #---------------------------------------------------#
 INSTALL(TARGETS kpsr_dds_${PROJ_MAIN_NAME}_datamodel

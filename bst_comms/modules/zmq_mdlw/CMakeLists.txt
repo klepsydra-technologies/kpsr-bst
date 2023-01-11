@@ -19,14 +19,6 @@ PROJECT(${PROJ_NAME})
 #find cppzmq wrapper, installed by make of cppzmq
 find_package(cppzmq REQUIRED)
 
-# Include directories with headers
-#---------------------------------------------------#
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/poco/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include )
-INCLUDE_DIRECTORIES( ${cppzmq_INCLUDE_DIR})
-INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
-
 # Source
 #---------------------------------------------------#
 FILE(GLOB ${PROJ_NAME}_SRC
@@ -36,23 +28,27 @@ FILE(GLOB ${PROJ_NAME}_SRC
 FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
     "include/*.h"
 )
-FILE(GLOB_RECURSE ${PROJ_NAME}_GEN_HEADERS
-    "${${PROJ_MAIN_NAME}_PATH_MAIN}/modules/codegen/gen/serialization/include/*/h"
-)
 
 # Create Library
 #---------------------------------------------------#
 
 ADD_LIBRARY(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIB_TYPE}  ${${PROJ_NAME}_SRC} )
 
+target_include_directories(
+  ${PROJ_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/serialization/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
 # Link libraries with Project
 #---------------------------------------------------#
-TARGET_LINK_LIBRARIES(${PROJ_NAME} 
-    ${KLEPSYDRA_CORE_LIBRARIES}
-    kpsr_${PROJ_MAIN_NAME} 
-    cppzmq 
-    atomic 
-    ${CMAKE_THREAD_LIBS_INIT})
+TARGET_LINK_LIBRARIES(${PROJ_NAME}
+  PUBLIC
+  ${KLEPSYDRA_ZMQ_LIBRARIES}
+  kpsr_${PROJ_MAIN_NAME} 
+)
 
 # Install
 #---------------------------------------------------#

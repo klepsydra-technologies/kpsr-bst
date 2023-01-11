@@ -12,7 +12,6 @@
 * Cmake 3.5.1 or above
 * gcc for C++11 5.4.0 or above.
 * BST SDK (https://gitlab.com/bstaero/sdk)
-* Pistache (optional)
 * Doxygen (optional)
 * Moxygen (https://github.com/sourcey/moxygen) (optional)
 
@@ -20,14 +19,13 @@
 
 * kpsr-core
 * kpsr-robotics
-* kpsr-admin (optional)
 
 ## Installation
 
 Given ```$KLEPSYDRA_HOME```, for example ```$HOME/klepsydra```:
 
 ```
-git clone https://bitbucket.org/kpsr-devs/kpsr-bst.git
+git clone https://github.com/klepsydra-technologies/kpsr-bst.git
 cd kpsr-bst
 git submodule update --init
 mkdir build
@@ -42,6 +40,8 @@ This will install the klespydra bst in
 
 	/usr/local/
 
+The install location can be controlled using the `CMAKE_INSTALL_PREFIX` variable.
+
 The cmake has the following options:
 * -DKPSR_WITH_DDS=true for building the DDS binding
 * -DKPSR_WITH_ZMQ=true for building the ZeroMQ binding.
@@ -53,6 +53,10 @@ Example:
 ```
 cmake -DKPSR_WITH_ZMQ=true -DBST_SDK_HOME=$HOME/development/swiftpilot/sdk ..
 ```
+
+### BST SDK
+
+The BST SDK is assumed to be compiled and installed using the `make_all.sh` script provided in the repo.
 
 ### Installation packages.
 

@@ -16,13 +16,6 @@
 SET(PROJ_NAME kpsr_mem_${PROJ_MAIN_NAME})
 PROJECT(${PROJ_NAME})
 
-# Include directories with headers
-#---------------------------------------------------#
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/poco/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include )
-INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
-
 # Source
 #---------------------------------------------------#
 FILE(GLOB ${PROJ_NAME}_SRC
@@ -37,16 +30,18 @@ FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
 #---------------------------------------------------#
 ADD_LIBRARY(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIB_TYPE} ${${PROJ_NAME}_HEADERS} ${${PROJ_NAME}_SRC} )
 
+target_include_directories(
+  ${PROJ_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 # Link libraries with Project
 #---------------------------------------------------#
-TARGET_LINK_LIBRARIES(${PROJ_NAME} 
+TARGET_LINK_LIBRARIES(${PROJ_NAME}
+  PUBLIC
     kpsr_${PROJ_MAIN_NAME} 
-    ${KLEPSYDRA_CORE_LIBRARIES}
-    ${BST_LIBRARY_CORE} 
-    ${BST_LIBRARY_NETUAS} 
-    atomic 
-    rt
-    ${CMAKE_THREAD_LIBS_INIT})
+)
 
 # Install
 #---------------------------------------------------#
