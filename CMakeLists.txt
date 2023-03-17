@@ -72,10 +72,18 @@ SET(BST_LIBRARY_CORE_NAME        bstmr_lib)
 SET(BST_LIBRARY_NETUAS_NAME      netuas_lib)
 
 find_library(BST_LIBRARY_CORE NAMES ${BST_LIBRARY_CORE_NAME}
-  PATHS ${BST_LIBRARY_PATH} REQUIRED)
+  PATHS ${BST_LIBRARY_PATH})
+
+if (NOT BST_LIBRARY_CORE)
+  message(FATAL_ERROR "Could not find ${BST_LIBRARY_CORE_NAME} in location ${BST_LIBRARY_PATH}")
+endif()
 
 find_library(BST_LIBRARY_NETUAS NAMES ${BST_LIBRARY_NETUAS_NAME}
-  PATHS ${BST_LIBRARY_PATH} REQUIRED)
+  PATHS ${BST_LIBRARY_PATH})
+
+if (NOT BST_LIBRARY_NETUAS)
+  message(FATAL_ERROR "Could not find ${BST_LIBRARY_NETUAS_NAME} in location ${BST_LIBRARY_PATH}")
+endif()
 
 set(BST_INCLUDE_DIRS)
 list(APPEND BST_INCLUDE_DIRS
@@ -98,7 +106,7 @@ set_target_properties(bst::netuas
   PROPERTIES IMPORTED_LOCATION "${BST_LIBRARY_NETUAS}"
   INTERFACE_INCLUDE_DIRECTORIES "${BST_INCLUDE_DIRS}")
 
-target_link_libraries(bst::netuas INTERFACE bst::core )
+target_link_libraries(bst::netuas INTERFACE bst::core rt)
 
 add_library(bst::bst INTERFACE IMPORTED)
 set_property(TARGET bst::bst PROPERTY INTERFACE_LINK_LIBRARIES bst::netuas)
