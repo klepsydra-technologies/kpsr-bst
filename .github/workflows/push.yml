@@ -1,0 +1,113 @@
+# Copyright 2023 Klepsydra Technologies AG
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Check build
+
+on:
+  push:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  builddebug:
+    name: Vanilla Debug
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/klepsydra-technologies/kpsrbase:1.0.0
+    steps:
+      - name: Clone kpsr-core
+        uses: actions/checkout@v3
+        with:
+          repository: klepsydra-technologies/kpsr-core
+          submodules: recursive
+          ref: main
+          path: kpsr-core
+
+      - name: Install kpsr-core
+        run: |
+          mkdir build && cd build 
+          cmake -DKPSR_WITH_DOXYGEN=true -DKPSR_WITH_DDS=false -DKPSR_WITH_ZMQ=false -DKPSR_WITH_SOCKET=true -DKPSR_WITH_YAML=false -DKPSR_WITH_CODE_METRICS=true -DCMAKE_BUILD_TYPE=Debug -DKPSR_ENABLE_TESTS=false -DKPSR_ENABLE_EXAMPLES=false ../
+          make -j$(nproc)
+          sudo make -j$(nproc) install
+        working-directory: kpsr-core
+
+      - name: Upload kpsr_codegen
+        uses: actions/upload-artifact@v3
+        with:
+          name: kpsr_codegen
+          path: |
+            kpsr-core/build/kpsr_codegen-1.0-py3-none-any.whl
+
+      - name: Remove kpsr-core sources
+        run: |
+          sudo rm -rf ${GITHUB_WORKSPACE}/kpsr-core
+
+      - name: Clone kpsr-robotics
+        uses: actions/checkout@v3
+        with:
+          repository: klepsydra-technologies/kpsr-robotics
+          submodules: recursive
+          path: kpsr-robotics
+
+      - name: Build kpsr-robotics
+        run: |
+          mkdir build && cd build 
+          cmake -DKPSR_WITH_DOXYGEN=true -DCMAKE_BUILD_TYPE=Debug -DKPSR_WITH_OCV=true -DKPSR_ENABLE_TESTS=true -DKPSR_ENABLE_EXAMPLES=true ../
+          make -j$(nproc)
+          sudo make -j$(nproc) install
+        working-directory: kpsr-robotics
+
+      - name: Install BST SDK
+        run: |
+          git clone https://gitlab.com/bstaero/sdk.git ${GITHUB_WORKSPACE}/sdk
+          cd ${GITHUB_WORKSPACE}/sdk
+          git checkout f61cabf1063762e2a1cc0677292a7eedb14b2d8b
+          ./make_all.sh
+
+        
+      - name: Clone project
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          path: kpsr-bst
+
+      - name: Build project
+        run: |
+          mkdir build && cd build 
+          cmake -DBST_SDK_HOME=${GITHUB_WORKSPACE}/sdk ../
+          make -j$(nproc)
+        working-directory: kpsr-bst
+        
+      - name: Unit tests
+        timeout-minutes: 10
+        run: cd build && make test ARGS="--gtest_shuffle"
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: builddebug-logs
+          path: |
+            build/CMakeFiles/CMakeOutput.log
+            build/CMakeFiles/CMakeError.log
+            build/Testing/Temporary
+            build/code_generator/kpsr_codegen/build_cpptesting/Testing/Temporary
+
+      - name: Workspace cleanup
+        if: always()
+        run: |
+          sudo rm -rf ${GITHUB_WORKSPACE}/build
