@@ -17,7 +17,7 @@
 
 ## Klepsydra dependencies
 
-* kpsr-core
+* kpsr-core with YAML support (and State Machine)
 * kpsr-robotics
 
 ## Installation

@@ -204,13 +204,14 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
 
     case TELEMETRY_ORIENTATION: {
         spdlog::debug("{}TELEMETRY_ORIENTATION", __PRETTY_FUNCTION__);
-        ::bst::comms::TelemetryOrientation_t telemetryOrientation;
-        memcpy(&telemetryOrientation, data.data(), sizeof(TelemetryOrientation_t));
+        ::bst::comms::TelemetryOrientation_t telemetryOrientationPublish;
+        memcpy(&telemetryOrientationPublish, data.data(), sizeof(TelemetryOrientation_t));
+        const ::bst::comms::TelemetryOrientation_t& telemetryOrientation = telemetryOrientationPublish;
         spdlog::debug("{}\tq[0]:\t{:.20f}", __PRETTY_FUNCTION__, telemetryOrientation.q[0]);
         spdlog::debug("{}\tq[1]:\t{:.20f}", __PRETTY_FUNCTION__, telemetryOrientation.q[1]);
         spdlog::debug("{}\tq[2]:\t{:.20f}", __PRETTY_FUNCTION__, telemetryOrientation.q[2]);
         spdlog::debug("{}\tq[3]:\t{:.20f}", __PRETTY_FUNCTION__, telemetryOrientation.q[3]);
-        _telemetryOrientationPublisher->publish(telemetryOrientation);
+        _telemetryOrientationPublisher->publish(telemetryOrientationPublish);
         break;
     }
 
