@@ -95,6 +95,7 @@ jobs:
       - name: Unit tests
         timeout-minutes: 10
         run: cd build && make test ARGS="--gtest_shuffle"
+        working-directory: kpsr-bst
 
       - name: Upload logs on failure
         if: failure()
@@ -110,4 +111,4 @@ jobs:
       - name: Workspace cleanup
         if: always()
         run: |
-          sudo rm -rf ${GITHUB_WORKSPACE}/build
+          sudo rm -rf ${GITHUB_WORKSPACE}/kpsr-bst
