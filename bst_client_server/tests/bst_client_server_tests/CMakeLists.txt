@@ -12,38 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-SET(PROJ_NAME kpsr_${PROJ_MAIN_NAME}_tests)
-PROJECT(${PROJ_NAME})
+set(PROJ_NAME kpsr_${PROJ_MAIN_NAME}_tests)
+project(${PROJ_NAME})
 
 # Include directories with headers
-#---------------------------------------------------#
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/modules/bst_comms/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/bst_comms/gen/poco/include )
-INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
+# ---------------------------------------------------#
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include)
+include_directories(${CMAKE_SOURCE_DIR}/bst_comms/modules/bst_comms/include)
+include_directories(${CMAKE_SOURCE_DIR}/bst_comms/gen/poco/include)
+include_directories(${KLEPSYDRA_INCLUDE_DIRS})
 
 # Source
-#---------------------------------------------------#
-FILE(GLOB ${PROJ_NAME}_SRC
-    "src/*.cpp"
-)
+# ---------------------------------------------------#
+file(GLOB ${PROJ_NAME}_SRC "src/*.cpp")
 
 # Create Library
-#---------------------------------------------------#
-ADD_EXECUTABLE(${PROJ_NAME} ${${PROJ_NAME}_SRC} ) 
+# ---------------------------------------------------#
+add_executable(${PROJ_NAME} ${${PROJ_NAME}_SRC})
 
 # Link libraries with Project
-#---------------------------------------------------#
-TARGET_LINK_LIBRARIES(${PROJ_NAME} 
+# ---------------------------------------------------#
+target_link_libraries(
+    ${PROJ_NAME}
     gtest_main
     kpsr_${PROJ_MAIN_NAME}
     kpsr_bst_comms
     ${KLEPSYDRA_CORE_LIBRARIES}
-    ${BST_LIBRARY_CORE} 
-    ${BST_LIBRARY_NETUAS} 
-    atomic 
+    ${BST_LIBRARY_CORE}
+    ${BST_LIBRARY_NETUAS}
+    atomic
     rt
     ${CMAKE_THREAD_LIBS_INIT})
 

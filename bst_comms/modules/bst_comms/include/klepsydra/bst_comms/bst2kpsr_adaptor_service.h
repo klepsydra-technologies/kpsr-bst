@@ -22,10 +22,8 @@
 #include <klepsydra/bst_comms/bst2_kpsr_internal_message.h>
 #include <klepsydra/bst_comms/bst2kpsr_broadcaster.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 /**
  * @brief The Bst2KpsrAdaptorService class
  *
@@ -37,7 +35,8 @@ namespace bst
  *
  * @details Message adaptor service to integrate BST and Klepsydra data domains.
  */
-class Bst2KpsrAdaptorService : public Service {
+class Bst2KpsrAdaptorService : public Service
+{
 public:
     /**
      * @brief Bst2KpsrAdaptorService
@@ -46,14 +45,14 @@ public:
      * @param bst2KpsrBroadcaster
      */
     Bst2KpsrAdaptorService(Environment *environment,
-                           Container * container,
-                           Bst2KpsrBroadcaster & bst2KpsrBroadcaster);
+                           Container *container,
+                           Bst2KpsrBroadcaster &bst2KpsrBroadcaster);
 
     /**
      * @brief onMessageReceived
      * @param message
      */
-    void onMessageReceived(const Bst2KpsrInternalMessage & message);
+    void onMessageReceived(const Bst2KpsrInternalMessage &message);
 
     /**
      * @brief start
@@ -71,10 +70,9 @@ public:
     void execute() {}
 
 private:
-    Container * _container;
-    Bst2KpsrBroadcaster & _bst2KpsrBroadcaster;
+    Container *_container;
+    Bst2KpsrBroadcaster &_bst2KpsrBroadcaster;
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 #endif // BST2KPSR_ADAPTOR_SERVICE_H
-

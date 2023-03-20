@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <math.h>
 #include <stdio.h>
 #include <thread>
 #include <unistd.h>
-#include <math.h>
 
-#include <sstream>
 #include <fstream>
+#include <sstream>
 
 #include "gtest/gtest.h"
 
@@ -30,7 +30,8 @@
 
 #include "bst_client_test_middleware_provider.h"
 
-TEST(BstClientTest, BaseTest) {
+TEST(BstClientTest, BaseTest)
+{
     kpsr::mem::MemEnv environment;
     environment.setPropertyInt("bst_client_heartbeat_period_microsecs", 0);
     environment.setPropertyInt("bst_client_run_period_microsecs", 0);
@@ -38,22 +39,29 @@ TEST(BstClientTest, BaseTest) {
 
     kpsr::bst::test::BstClientTestMiddlewareProvider bstClientMiddlewareProvider;
 
-    kpsr::EventEmitterMiddlewareProvider<std::string> stateMachineMiddlewareProvider(nullptr, "test", 0, nullptr, nullptr);
-    kpsr::EventEmitterMiddlewareProvider<std::string> stateMachineExtEventMiddlewareProvider(nullptr, "test", 0, nullptr, nullptr);
+    kpsr::EventEmitterMiddlewareProvider<std::string> stateMachineMiddlewareProvider(nullptr,
+                                                                                     "test",
+                                                                                     0,
+                                                                                     nullptr,
+                                                                                     nullptr);
+    kpsr::EventEmitterMiddlewareProvider<std::string>
+        stateMachineExtEventMiddlewareProvider(nullptr, "test", 0, nullptr, nullptr);
 
     kpsr::mem::CacheListener<std::string> testStateMachineListener;
     kpsr::mem::CacheListener<std::string> bstClientStateMachineListener;
     kpsr::mem::CacheListener<TelemetrySystem_t> telemetrySystemEventListener;
-    stateMachineMiddlewareProvider.getSubscriber()->registerListener("test", testStateMachineListener.cacheListenerFunction);
+    stateMachineMiddlewareProvider.getSubscriber()
+        ->registerListener("test", testStateMachineListener.cacheListenerFunction);
 
-    kpsr::bst::BstClient bstClient(nullptr, &environment,
+    kpsr::bst::BstClient bstClient(nullptr,
+                                   &environment,
                                    stateMachineExtEventMiddlewareProvider.getSubscriber(),
                                    stateMachineExtEventMiddlewareProvider.getPublisher(),
                                    stateMachineMiddlewareProvider.getSubscriber(),
                                    stateMachineMiddlewareProvider.getPublisher(),
                                    bstClientStateMachineListener,
                                    &bstClientMiddlewareProvider,
-                                   & telemetrySystemEventListener);
+                                   &telemetrySystemEventListener);
 
     ASSERT_EQ(testStateMachineListener.counter, 0);
 
@@ -80,11 +88,10 @@ TEST(BstClientTest, BaseTest) {
 
     {
         kpsr::bst::BstReplyMessageBuilder builder;
-        builder.withId(CONTROL_COMMAND)
-                .withType(CMD_PAYLOAD_CONTROL)
-                .withAck(true);
+        builder.withId(CONTROL_COMMAND).withType(CMD_PAYLOAD_CONTROL).withAck(true);
 
-        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(
+            builder.build());
     }
 
     bstClient.execute();
@@ -116,11 +123,10 @@ TEST(BstClientTest, BaseTest) {
 
     {
         kpsr::bst::BstReplyMessageBuilder builder;
-        builder.withId(CONTROL_COMMAND)
-                .withType(CMD_FLIGHT_MODE)
-                .withAck(true);
+        builder.withId(CONTROL_COMMAND).withType(CMD_FLIGHT_MODE).withAck(true);
 
-        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(
+            builder.build());
     }
     bstClient.execute();
 
@@ -137,11 +143,10 @@ TEST(BstClientTest, BaseTest) {
 
     {
         kpsr::bst::BstReplyMessageBuilder builder;
-        builder.withId(CONTROL_COMMAND)
-                .withType(CMD_ENGINE_KILL)
-                .withAck(true);
+        builder.withId(CONTROL_COMMAND).withType(CMD_ENGINE_KILL).withAck(true);
 
-        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(
+            builder.build());
     }
 
     bstClient.execute();
@@ -151,11 +156,10 @@ TEST(BstClientTest, BaseTest) {
 
     {
         kpsr::bst::BstReplyMessageBuilder builder;
-        builder.withId(CONTROL_COMMAND)
-                .withType(CMD_LAUNCH)
-                .withAck(true);
+        builder.withId(CONTROL_COMMAND).withType(CMD_LAUNCH).withAck(true);
 
-        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(
+            builder.build());
     }
 
     bstClient.execute();
@@ -182,11 +186,10 @@ TEST(BstClientTest, BaseTest) {
 
     {
         kpsr::bst::BstReplyMessageBuilder builder;
-        builder.withId(CONTROL_COMMAND)
-                .withType(CMD_LAND)
-                .withAck(true);
+        builder.withId(CONTROL_COMMAND).withType(CMD_LAND).withAck(true);
 
-        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(
+            builder.build());
     }
 
     bstClient.execute();
@@ -209,11 +212,10 @@ TEST(BstClientTest, BaseTest) {
     ASSERT_EQ(bstClient.getCurrentState(), "bstClientStateMachine:payloadControlOffReq");
     {
         kpsr::bst::BstReplyMessageBuilder builder;
-        builder.withId(CONTROL_COMMAND)
-                .withType(CMD_PAYLOAD_CONTROL)
-                .withAck(true);
+        builder.withId(CONTROL_COMMAND).withType(CMD_PAYLOAD_CONTROL).withAck(true);
 
-        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(builder.build());
+        bstClientMiddlewareProvider.testBst2KpsrReplyMessageProvider.getPublisher()->publish(
+            builder.build());
     }
 
     bstClient.execute();
@@ -222,7 +224,8 @@ TEST(BstClientTest, BaseTest) {
     ASSERT_EQ(bstClient.getCurrentState(), "bstClientStateMachine:ready");
 }
 
-TEST(BstClientTest, InvalidActions) {
+TEST(BstClientTest, InvalidActions)
+{
     kpsr::mem::MemEnv environment;
     environment.setPropertyInt("bst_client_heartbeat_period_microsecs", 0);
     environment.setPropertyInt("bst_client_run_period_microsecs", 0);
@@ -230,22 +233,29 @@ TEST(BstClientTest, InvalidActions) {
 
     kpsr::bst::test::BstClientTestMiddlewareProvider bstClientMiddlewareProvider;
 
-    kpsr::EventEmitterMiddlewareProvider<std::string> stateMachineMiddlewareProvider(nullptr, "test", 0, nullptr, nullptr);
-    kpsr::EventEmitterMiddlewareProvider<std::string> stateMachineExtEventMiddlewareProvider(nullptr, "test", 0, nullptr, nullptr);
+    kpsr::EventEmitterMiddlewareProvider<std::string> stateMachineMiddlewareProvider(nullptr,
+                                                                                     "test",
+                                                                                     0,
+                                                                                     nullptr,
+                                                                                     nullptr);
+    kpsr::EventEmitterMiddlewareProvider<std::string>
+        stateMachineExtEventMiddlewareProvider(nullptr, "test", 0, nullptr, nullptr);
 
     kpsr::mem::CacheListener<std::string> testStateMachineListener;
     kpsr::mem::CacheListener<std::string> bstClientStateMachineListener;
     kpsr::mem::CacheListener<TelemetrySystem_t> telemetrySystemEventListener;
-    stateMachineMiddlewareProvider.getSubscriber()->registerListener("test", testStateMachineListener.cacheListenerFunction);
+    stateMachineMiddlewareProvider.getSubscriber()
+        ->registerListener("test", testStateMachineListener.cacheListenerFunction);
 
-    kpsr::bst::BstClient bstClient(nullptr, &environment,
+    kpsr::bst::BstClient bstClient(nullptr,
+                                   &environment,
                                    stateMachineExtEventMiddlewareProvider.getSubscriber(),
                                    stateMachineExtEventMiddlewareProvider.getPublisher(),
                                    stateMachineMiddlewareProvider.getSubscriber(),
                                    stateMachineMiddlewareProvider.getPublisher(),
                                    bstClientStateMachineListener,
                                    &bstClientMiddlewareProvider,
-                                   & telemetrySystemEventListener);
+                                   &telemetrySystemEventListener);
 
     ASSERT_EQ(testStateMachineListener.counter, 0);
 

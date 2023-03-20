@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /* STD LIBS */
+#include <getopt.h>
 #include <string>
 #include <time.h>
 #include <unistd.h>
-#include <getopt.h>
 
 /* KPSR LIBS */
 #include <klepsydra/serialization/void_caster_mapper.h>
@@ -27,16 +27,16 @@
 
 #include <klepsydra/zmq_bst_comms/bst_server_zmq_provider.h>
 
-#include <klepsydra/bst_comms/cereal/bst_request_message_serializer.h>
 #include <klepsydra/bst_comms/cereal/bst_reply_message_serializer.h>
+#include <klepsydra/bst_comms/cereal/bst_request_message_serializer.h>
 #include <klepsydra/bst_comms/cereal/waypoint_command_message_serializer.h>
 
-#include <klepsydra/bst_client_server/bst_server.h>
 #include <klepsydra/bst_client_server/bst_main_helper.h>
+#include <klepsydra/bst_client_server/bst_server.h>
 #include <klepsydra/bst_client_server/bst_server_user_input.h>
 
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
 int main(int argc, char *argv[])
 {
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     yamlEnv.getPropertyString("log_file_path", logFileName);
     logFileName = logFileName + currentDateTime + ".log";
 
-    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    auto kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
     kpsrLogger->set_level(spdlog::level::debug);
     spdlog::set_default_logger(kpsrLogger);
 
@@ -62,15 +62,15 @@ int main(int argc, char *argv[])
     yamlEnv.getPropertyString("kpsr_zmq_env_topic_name", configTopic);
 
     //  Prepare our context and publisher
-    zmq::context_t context (1);
+    zmq::context_t context(1);
 
     //  Socket to talk to server
     spdlog::info("Setup configuration publisher\n");
-    zmq::socket_t envPublisher (context, ZMQ_PUB);
+    zmq::socket_t envPublisher(context, ZMQ_PUB);
     envPublisher.connect(configWriteUrl);
 
     spdlog::info("Setup configuration subcriber\n");
-    zmq::socket_t envSubscriber (context, ZMQ_SUB);
+    zmq::socket_t envSubscriber(context, ZMQ_SUB);
     envSubscriber.connect(configListenUrl);
     envSubscriber.setsockopt(ZMQ_SUBSCRIBE, configTopic.c_str(), configTopic.size());
 
@@ -92,36 +92,39 @@ int main(int argc, char *argv[])
 
     int numberServerSubscribers = 3;
     std::vector<std::shared_ptr<zmq::socket_t>> bstServerSubscribers(numberServerSubscribers);
-    for (int i = 0; i < numberServerSubscribers; i ++) {
-        bstServerSubscribers[i] = std::shared_ptr<zmq::socket_t>(new zmq::socket_t(context, ZMQ_SUB));
+    for (int i = 0; i < numberServerSubscribers; i++) {
+        bstServerSubscribers[i] = std::shared_ptr<zmq::socket_t>(
+            new zmq::socket_t(context, ZMQ_SUB));
         bstServerSubscribers[i]->connect(bstServerSubscribeUrl);
         bstServerSubscribers[i]->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
     int numberClientSubscribers = 2;
     std::vector<std::shared_ptr<zmq::socket_t>> bstClientSubscribers(numberClientSubscribers);
-    for (int i = 0; i < numberClientSubscribers; i ++) {
-        bstClientSubscribers[i] = std::shared_ptr<zmq::socket_t>(new zmq::socket_t(context, ZMQ_SUB));
+    for (int i = 0; i < numberClientSubscribers; i++) {
+        bstClientSubscribers[i] = std::shared_ptr<zmq::socket_t>(
+            new zmq::socket_t(context, ZMQ_SUB));
         bstClientSubscribers[i]->connect(bstClientSubscribeUrl);
         bstClientSubscribers[i]->setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
-    kpsr::Container * container = nullptr;
+    kpsr::Container *container = nullptr;
 
     kpsr::zmq_mdlw::FromZmqMiddlewareProvider fromZmqMiddlewareProvider;
     kpsr::zmq_mdlw::ToZMQMiddlewareProvider toZmqMiddlewareProvider(container, bstServerPublisher);
 
     kpsr::high_performance::EventLoopMiddlewareProvider<4096> eventloopProvider(container);
 
-    kpsr::bst::zmq_mdlw::BstServerZMQProvider<4096> bstServerZmqProvider(eventloopProvider,
-                                                                        fromZmqMiddlewareProvider,
-                                                                        toZmqMiddlewareProvider,
-                                                                        * bstClientSubscribers[0].get(),
-            * bstClientSubscribers[1].get(),
-            * bstServerSubscribers[0].get(),
-            * bstServerSubscribers[1].get(),
-            * bstServerSubscribers[2].get(),
-            100);
+    kpsr::bst::zmq_mdlw::BstServerZMQProvider<4096>
+        bstServerZmqProvider(eventloopProvider,
+                             fromZmqMiddlewareProvider,
+                             toZmqMiddlewareProvider,
+                             *bstClientSubscribers[0].get(),
+                             *bstClientSubscribers[1].get(),
+                             *bstServerSubscribers[0].get(),
+                             *bstServerSubscribers[1].get(),
+                             *bstServerSubscribers[2].get(),
+                             100);
 
     kpsr::bst::BstServer bstServer(container, &environment, &bstServerZmqProvider);
 

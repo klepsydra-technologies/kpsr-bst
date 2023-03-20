@@ -16,10 +16,11 @@
 
 #include <klepsydra/bst_client_server/bst_main_helper.h>
 
-std::string kpsr::bst::BstMainHelper::getConfFileFromParams(int argc, char *argv[]) {
+std::string kpsr::bst::BstMainHelper::getConfFileFromParams(int argc, char *argv[])
+{
     char c;
     while ((c = getopt(argc, argv, "f:")) != -1) {
-        switch(c) {
+        switch (c) {
         case 'f':
             return std::string(optarg);
             break;
@@ -32,16 +33,18 @@ std::string kpsr::bst::BstMainHelper::getConfFileFromParams(int argc, char *argv
     return "";
 }
 
-void kpsr::bst::BstMainHelper::printHelp() {
+void kpsr::bst::BstMainHelper::printHelp()
+{
     printf("Usage: bst_server [OPTIONS]\n");
     printf("    -f <configuration file> : default null\n");
     exit(0);
 }
 
-std::string kpsr::bst::BstMainHelper::currentDateTime() {
-    time_t     now = time(0);
-    struct tm  tstruct;
-    char       buf[80];
+std::string kpsr::bst::BstMainHelper::currentDateTime()
+{
+    time_t now = time(0);
+    struct tm tstruct;
+    char buf[80];
     tstruct = *localtime(&now);
     strftime(buf, sizeof(buf), "%Y-%m-%d_%H-%M-%S", &tstruct);
     return buf;

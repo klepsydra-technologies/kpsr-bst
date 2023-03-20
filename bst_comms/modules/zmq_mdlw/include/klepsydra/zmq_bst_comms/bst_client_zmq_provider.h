@@ -17,8 +17,8 @@
 #ifndef BST_CLIENT_ZMQ_PROVIDER_H
 #define BST_CLIENT_ZMQ_PROVIDER_H
 
-#include <klepsydra/zmq_core/to_zmq_middleware_provider.h>
 #include <klepsydra/zmq_core/from_zmq_middleware_provider.h>
+#include <klepsydra/zmq_core/to_zmq_middleware_provider.h>
 
 #include <klepsydra/high_performance/event_loop_middleware_provider.h>
 
@@ -28,13 +28,10 @@
 
 #include <klepsydra/zmq_bst_comms/bst_zmq_topic_names.h>
 
-namespace kpsr
-{
-namespace bst
-{
-namespace zmq_mdlw
-{
-template <std::size_t BufferSize>
+namespace kpsr {
+namespace bst {
+namespace zmq_mdlw {
+template<std::size_t BufferSize>
 /**
  * @brief The BstClientZMQProvider class
  *
@@ -112,9 +109,9 @@ template <std::size_t BufferSize>
     bstClientZmqProvider.start();
 @endcode
  */
-class BstClientZMQProvider : public BstClientMiddlewareProvider {
+class BstClientZMQProvider : public BstClientMiddlewareProvider
+{
 public:
-
     /**
      * @brief BstClientZMQProvider
      * @param eventloopProvider
@@ -137,49 +134,88 @@ public:
      * @param payloadControlSubscriber
      * @param pollPeriod
      */
-    BstClientZMQProvider(kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> & eventloopProvider,
-                         kpsr::zmq_mdlw::FromZmqMiddlewareProvider & fromZmqMiddlewareProvider,
-                         kpsr::zmq_mdlw::ToZMQMiddlewareProvider & toZmqMiddlewareProvider,
-                         zmq::socket_t & bstReplySubscriber,
-                         zmq::socket_t & poseDataSubscriber,
-                         zmq::socket_t & systemInitializeSubscriber,
-                         zmq::socket_t & telemetryPositionSubscriber,
-                         zmq::socket_t & telemetryOrientationSubscriber,
-                         zmq::socket_t & sensorsSubscriber,
-                         zmq::socket_t & calibrateSensorSubscriber,
-                         zmq::socket_t & commandSubscriber,
-                         zmq::socket_t & pidSubscriber,
-                         zmq::socket_t & systemSubscriber,
-                         zmq::socket_t & telemetrySystemSubscriber,
-                         zmq::socket_t & telemetryPressureSubscriber,
-                         zmq::socket_t & telemetryControlSubscriber,
-                         zmq::socket_t & telemetryGCSSubscriber,
-                         zmq::socket_t & payloadControlSubscriber,
-                         long pollPeriod)
+    BstClientZMQProvider(
+        kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> &eventloopProvider,
+        kpsr::zmq_mdlw::FromZmqMiddlewareProvider &fromZmqMiddlewareProvider,
+        kpsr::zmq_mdlw::ToZMQMiddlewareProvider &toZmqMiddlewareProvider,
+        zmq::socket_t &bstReplySubscriber,
+        zmq::socket_t &poseDataSubscriber,
+        zmq::socket_t &systemInitializeSubscriber,
+        zmq::socket_t &telemetryPositionSubscriber,
+        zmq::socket_t &telemetryOrientationSubscriber,
+        zmq::socket_t &sensorsSubscriber,
+        zmq::socket_t &calibrateSensorSubscriber,
+        zmq::socket_t &commandSubscriber,
+        zmq::socket_t &pidSubscriber,
+        zmq::socket_t &systemSubscriber,
+        zmq::socket_t &telemetrySystemSubscriber,
+        zmq::socket_t &telemetryPressureSubscriber,
+        zmq::socket_t &telemetryControlSubscriber,
+        zmq::socket_t &telemetryGCSSubscriber,
+        zmq::socket_t &payloadControlSubscriber,
+        long pollPeriod)
         : _eventloopProvider(eventloopProvider)
         , _fromZmqMiddlewareProvider(fromZmqMiddlewareProvider)
         , _toZmqMiddlewareProvider(toZmqMiddlewareProvider)
-        , _bstReplyFromZmqChannel(fromZmqMiddlewareProvider.getJsonFromMiddlewareChannel<kpsr::bst::BstReplyMessage>(bstReplySubscriber, pollPeriod))
-        , _poseDataFromZmqChannel(fromZmqMiddlewareProvider.getJsonFromMiddlewareChannel<kpsr::geometry::PoseEventData>(poseDataSubscriber, pollPeriod))
-        , _systemInitializeFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<SystemInitialize_t>(systemInitializeSubscriber, pollPeriod))
-        , _telemetryPositionFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<TelemetryPosition_t>(telemetryPositionSubscriber, pollPeriod))
-        , _telemetryOrientationFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<TelemetryOrientation_t>(telemetryOrientationSubscriber, pollPeriod))
-        , _sensorsFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<Sensors_t>(sensorsSubscriber, pollPeriod))
-        , _calibrateSensorFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<CalibrateSensor_t>(calibrateSensorSubscriber, pollPeriod))
-        , _commandFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<Command_t>(commandSubscriber, pollPeriod))
-        , _pidFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<PID_t>(pidSubscriber, pollPeriod))
-        , _systemFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<uint8_t>(systemSubscriber, pollPeriod))
-        , _telemetrySystemFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<TelemetrySystem_t>(telemetrySystemSubscriber, pollPeriod))
-        , _telemetryPressureFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<TelemetryPressure_t>(telemetryPressureSubscriber, pollPeriod))
-        , _telemetryControlFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<::bst::comms::TelemetryControl_t>(telemetryControlSubscriber, pollPeriod))
-        , _telemetryGCSFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<gcs::TelemetryGCS_t>(telemetryGCSSubscriber, pollPeriod))
-        , _payloadControlFromZmqChannel(fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<PayloadControl_t>(payloadControlSubscriber, pollPeriod))
+        , _bstReplyFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getJsonFromMiddlewareChannel<kpsr::bst::BstReplyMessage>(bstReplySubscriber,
+                                                                            pollPeriod))
+        , _poseDataFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getJsonFromMiddlewareChannel<kpsr::geometry::PoseEventData>(poseDataSubscriber,
+                                                                               pollPeriod))
+        , _systemInitializeFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getVoidCasterFromMiddlewareChannel<SystemInitialize_t>(systemInitializeSubscriber,
+                                                                          pollPeriod))
+        , _telemetryPositionFromZmqChannel(
+              fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<TelemetryPosition_t>(
+                  telemetryPositionSubscriber, pollPeriod))
+        , _telemetryOrientationFromZmqChannel(
+              fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<TelemetryOrientation_t>(
+                  telemetryOrientationSubscriber, pollPeriod))
+        , _sensorsFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getVoidCasterFromMiddlewareChannel<Sensors_t>(sensorsSubscriber, pollPeriod))
+        , _calibrateSensorFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getVoidCasterFromMiddlewareChannel<CalibrateSensor_t>(calibrateSensorSubscriber,
+                                                                         pollPeriod))
+        , _commandFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getVoidCasterFromMiddlewareChannel<Command_t>(commandSubscriber, pollPeriod))
+        , _pidFromZmqChannel(
+              fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<PID_t>(pidSubscriber,
+                                                                                  pollPeriod))
+        , _systemFromZmqChannel(
+              fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<uint8_t>(systemSubscriber,
+                                                                                    pollPeriod))
+        , _telemetrySystemFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getVoidCasterFromMiddlewareChannel<TelemetrySystem_t>(telemetrySystemSubscriber,
+                                                                         pollPeriod))
+        , _telemetryPressureFromZmqChannel(
+              fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<TelemetryPressure_t>(
+                  telemetryPressureSubscriber, pollPeriod))
+        , _telemetryControlFromZmqChannel(
+              fromZmqMiddlewareProvider.getVoidCasterFromMiddlewareChannel<
+                  ::bst::comms::TelemetryControl_t>(telemetryControlSubscriber, pollPeriod))
+        , _telemetryGCSFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getVoidCasterFromMiddlewareChannel<gcs::TelemetryGCS_t>(telemetryGCSSubscriber,
+                                                                           pollPeriod))
+        , _payloadControlFromZmqChannel(
+              fromZmqMiddlewareProvider
+                  .getVoidCasterFromMiddlewareChannel<PayloadControl_t>(payloadControlSubscriber,
+                                                                        pollPeriod))
     {}
 
     /**
      * @brief start
      */
-    void start() override {
+    void start() override
+    {
         _bstReplyFromZmqChannel->start();
         _poseDataFromZmqChannel->start();
         _systemInitializeFromZmqChannel->start();
@@ -200,7 +236,8 @@ public:
     /**
      * @brief stop
      */
-    void stop() override {
+    void stop() override
+    {
         _bstReplyFromZmqChannel->stop();
         _poseDataFromZmqChannel->stop();
         _systemInitializeFromZmqChannel->stop();
@@ -222,17 +259,24 @@ public:
      * @brief getBstRequestMessagePublisher
      * @return
      */
-    kpsr::Publisher<kpsr::bst::BstRequestMessage> * getBstRequestMessagePublisher() {
-        return _toZmqMiddlewareProvider.getJsonToMiddlewareChannel<kpsr::bst::BstRequestMessage>(ZMQ_TOPIC_NAME_BST_REQUEST, 0);
+    kpsr::Publisher<kpsr::bst::BstRequestMessage> *getBstRequestMessagePublisher()
+    {
+        return _toZmqMiddlewareProvider
+            .getJsonToMiddlewareChannel<kpsr::bst::BstRequestMessage>(ZMQ_TOPIC_NAME_BST_REQUEST, 0);
     }
 
     /**
      * @brief getBst2KpsrReplyMessageSubscriber
      * @return
      */
-    kpsr::Subscriber<kpsr::bst::BstReplyMessage> * getBst2KpsrReplyMessageSubscriber() {
+    kpsr::Subscriber<kpsr::bst::BstReplyMessage> *getBst2KpsrReplyMessageSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_BST_REPLY;
-        kpsr::Publisher<kpsr::bst::BstReplyMessage> * publisher = _eventloopProvider.template getPublisher<kpsr::bst::BstReplyMessage>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<kpsr::bst::BstReplyMessage> *publisher =
+            _eventloopProvider.template getPublisher<kpsr::bst::BstReplyMessage>(eventName,
+                                                                                 0,
+                                                                                 nullptr,
+                                                                                 nullptr);
         _bstReplyFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<kpsr::bst::BstReplyMessage>(eventName);
     }
@@ -241,17 +285,24 @@ public:
      * @brief getBstWaypointCommandMessagePublisher
      * @return
      */
-    kpsr::Publisher<WaypointCommandMessage> * getBstWaypointCommandMessagePublisher() {
-        return _toZmqMiddlewareProvider.getJsonToMiddlewareChannel<WaypointCommandMessage>(ZMQ_TOPIC_NAME_BST_WP_CMD, 0);
+    kpsr::Publisher<WaypointCommandMessage> *getBstWaypointCommandMessagePublisher()
+    {
+        return _toZmqMiddlewareProvider
+            .getJsonToMiddlewareChannel<WaypointCommandMessage>(ZMQ_TOPIC_NAME_BST_WP_CMD, 0);
     }
 
     /**
      * @brief getPoseEventDataSubscriber
      * @return
      */
-    kpsr::Subscriber<kpsr::geometry::PoseEventData> * getPoseEventDataSubscriber() {
+    kpsr::Subscriber<kpsr::geometry::PoseEventData> *getPoseEventDataSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_POSE_EVENT;
-        kpsr::Publisher<kpsr::geometry::PoseEventData> * publisher = _eventloopProvider.template getPublisher<kpsr::geometry::PoseEventData>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<kpsr::geometry::PoseEventData> *publisher =
+            _eventloopProvider.template getPublisher<kpsr::geometry::PoseEventData>(eventName,
+                                                                                    0,
+                                                                                    nullptr,
+                                                                                    nullptr);
         _poseDataFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<kpsr::geometry::PoseEventData>(eventName);
     }
@@ -260,9 +311,14 @@ public:
      * @brief getSystemInitializeSubscriber
      * @return
      */
-    kpsr::Subscriber<SystemInitialize_t> * getSystemInitializeSubscriber() {
+    kpsr::Subscriber<SystemInitialize_t> *getSystemInitializeSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_SYSTEM_INIT;
-        kpsr::Publisher<SystemInitialize_t> * publisher = _eventloopProvider.template getPublisher<SystemInitialize_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<SystemInitialize_t> *publisher =
+            _eventloopProvider.template getPublisher<SystemInitialize_t>(eventName,
+                                                                         0,
+                                                                         nullptr,
+                                                                         nullptr);
         _systemInitializeFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<SystemInitialize_t>(eventName);
     }
@@ -271,9 +327,14 @@ public:
      * @brief getTelemetryPositionSubscriber
      * @return
      */
-    kpsr::Subscriber<TelemetryPosition_t> * getTelemetryPositionSubscriber() {
+    kpsr::Subscriber<TelemetryPosition_t> *getTelemetryPositionSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_TELEMETRY_POS;
-        kpsr::Publisher<TelemetryPosition_t> * publisher = _eventloopProvider.template getPublisher<TelemetryPosition_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<TelemetryPosition_t> *publisher =
+            _eventloopProvider.template getPublisher<TelemetryPosition_t>(eventName,
+                                                                          0,
+                                                                          nullptr,
+                                                                          nullptr);
         _telemetryPositionFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<TelemetryPosition_t>(eventName);
     }
@@ -282,9 +343,14 @@ public:
      * @brief getTelemetryOrientationSubscriber
      * @return
      */
-    kpsr::Subscriber<TelemetryOrientation_t> * getTelemetryOrientationSubscriber() {
+    kpsr::Subscriber<TelemetryOrientation_t> *getTelemetryOrientationSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_TELEMETRY_ORI;
-        kpsr::Publisher<TelemetryOrientation_t> * publisher = _eventloopProvider.template getPublisher<TelemetryOrientation_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<TelemetryOrientation_t> *publisher =
+            _eventloopProvider.template getPublisher<TelemetryOrientation_t>(eventName,
+                                                                             0,
+                                                                             nullptr,
+                                                                             nullptr);
         _telemetryOrientationFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<TelemetryOrientation_t>(eventName);
     }
@@ -293,9 +359,11 @@ public:
      * @brief getSensorSubscriber
      * @return
      */
-    kpsr::Subscriber<Sensors_t> * getSensorSubscriber() {
+    kpsr::Subscriber<Sensors_t> *getSensorSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_SENSOR;
-        kpsr::Publisher<Sensors_t> * publisher = _eventloopProvider.template getPublisher<Sensors_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<Sensors_t> *publisher =
+            _eventloopProvider.template getPublisher<Sensors_t>(eventName, 0, nullptr, nullptr);
         _sensorsFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<Sensors_t>(eventName);
     }
@@ -304,9 +372,14 @@ public:
      * @brief getCalibrateSubscriber
      * @return
      */
-    kpsr::Subscriber<CalibrateSensor_t> * getCalibrateSubscriber() {
+    kpsr::Subscriber<CalibrateSensor_t> *getCalibrateSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_CALIBRATE;
-        kpsr::Publisher<CalibrateSensor_t> * publisher = _eventloopProvider.template getPublisher<CalibrateSensor_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<CalibrateSensor_t> *publisher =
+            _eventloopProvider.template getPublisher<CalibrateSensor_t>(eventName,
+                                                                        0,
+                                                                        nullptr,
+                                                                        nullptr);
         _calibrateSensorFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<CalibrateSensor_t>(eventName);
     }
@@ -315,9 +388,11 @@ public:
      * @brief getControlCommandSubscriber
      * @return
      */
-    kpsr::Subscriber<Command_t> * getControlCommandSubscriber() {
+    kpsr::Subscriber<Command_t> *getControlCommandSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_CONTROL_CMD;
-        kpsr::Publisher<Command_t> * publisher = _eventloopProvider.template getPublisher<Command_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<Command_t> *publisher =
+            _eventloopProvider.template getPublisher<Command_t>(eventName, 0, nullptr, nullptr);
         _commandFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<Command_t>(eventName);
     }
@@ -326,9 +401,11 @@ public:
      * @brief getControlPidSubscriber
      * @return
      */
-    kpsr::Subscriber<PID_t> * getControlPidSubscriber() {
+    kpsr::Subscriber<PID_t> *getControlPidSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_CONTROL_PID;
-        kpsr::Publisher<PID_t> * publisher = _eventloopProvider.template getPublisher<PID_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<PID_t> *publisher =
+            _eventloopProvider.template getPublisher<PID_t>(eventName, 0, nullptr, nullptr);
         _pidFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<PID_t>(eventName);
     }
@@ -337,9 +414,11 @@ public:
      * @brief getSystemSubscriber
      * @return
      */
-    kpsr::Subscriber<uint8_t> * getSystemSubscriber() {
+    kpsr::Subscriber<uint8_t> *getSystemSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_SYSTEM;
-        kpsr::Publisher<uint8_t> * publisher = _eventloopProvider.template getPublisher<uint8_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<uint8_t> *publisher =
+            _eventloopProvider.template getPublisher<uint8_t>(eventName, 0, nullptr, nullptr);
         _systemFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<uint8_t>(eventName);
     }
@@ -348,9 +427,14 @@ public:
      * @brief getTelemetrySystemSubscriber
      * @return
      */
-    kpsr::Subscriber<TelemetrySystem_t> * getTelemetrySystemSubscriber() {
+    kpsr::Subscriber<TelemetrySystem_t> *getTelemetrySystemSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_TELEMETRY_SYS;
-        kpsr::Publisher<TelemetrySystem_t> * publisher = _eventloopProvider.template getPublisher<TelemetrySystem_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<TelemetrySystem_t> *publisher =
+            _eventloopProvider.template getPublisher<TelemetrySystem_t>(eventName,
+                                                                        0,
+                                                                        nullptr,
+                                                                        nullptr);
         _telemetrySystemFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<TelemetrySystem_t>(eventName);
     }
@@ -359,9 +443,14 @@ public:
      * @brief getTelemetryPressureSubscriber
      * @return
      */
-    kpsr::Subscriber<TelemetryPressure_t> * getTelemetryPressureSubscriber() {
+    kpsr::Subscriber<TelemetryPressure_t> *getTelemetryPressureSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_TELEMETRY_PRES;
-        kpsr::Publisher<TelemetryPressure_t> * publisher = _eventloopProvider.template getPublisher<TelemetryPressure_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<TelemetryPressure_t> *publisher =
+            _eventloopProvider.template getPublisher<TelemetryPressure_t>(eventName,
+                                                                          0,
+                                                                          nullptr,
+                                                                          nullptr);
         _telemetryPressureFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<TelemetryPressure_t>(eventName);
     }
@@ -370,20 +459,31 @@ public:
      * @brief getTelemetryControlSubscriber
      * @return
      */
-    kpsr::Subscriber<::bst::comms::TelemetryControl_t> * getTelemetryControlSubscriber() {
+    kpsr::Subscriber<::bst::comms::TelemetryControl_t> *getTelemetryControlSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_TELEMETRY_CTRL;
-        kpsr::Publisher<::bst::comms::TelemetryControl_t> * publisher = _eventloopProvider.template getPublisher<::bst::comms::TelemetryControl_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<::bst::comms::TelemetryControl_t> *publisher =
+            _eventloopProvider.template getPublisher<::bst::comms::TelemetryControl_t>(eventName,
+                                                                                       0,
+                                                                                       nullptr,
+                                                                                       nullptr);
         _telemetryControlFromZmqChannel->registerToTopic(eventName, publisher);
-        return _eventloopProvider.template getSubscriber<::bst::comms::TelemetryControl_t>(eventName);
+        return _eventloopProvider.template getSubscriber<::bst::comms::TelemetryControl_t>(
+            eventName);
     }
 
     /**
      * @brief getTelemetryGCSSubscriber
      * @return
      */
-    kpsr::Subscriber<gcs::TelemetryGCS_t> * getTelemetryGCSSubscriber() {
+    kpsr::Subscriber<gcs::TelemetryGCS_t> *getTelemetryGCSSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_TELEMETRY_GCS;
-        kpsr::Publisher<gcs::TelemetryGCS_t> * publisher = _eventloopProvider.template getPublisher<gcs::TelemetryGCS_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<gcs::TelemetryGCS_t> *publisher =
+            _eventloopProvider.template getPublisher<gcs::TelemetryGCS_t>(eventName,
+                                                                          0,
+                                                                          nullptr,
+                                                                          nullptr);
         _telemetryGCSFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<gcs::TelemetryGCS_t>(eventName);
     }
@@ -392,9 +492,14 @@ public:
      * @brief getPayloadControlSubscriber
      * @return
      */
-    kpsr::Subscriber<PayloadControl_t> * getPayloadControlSubscriber() {
+    kpsr::Subscriber<PayloadControl_t> *getPayloadControlSubscriber()
+    {
         std::string eventName = ZMQ_TOPIC_NAME_PAYLOAD_CONTROL;
-        kpsr::Publisher<PayloadControl_t> * publisher = _eventloopProvider.template getPublisher<PayloadControl_t>(eventName, 0, nullptr, nullptr);
+        kpsr::Publisher<PayloadControl_t> *publisher =
+            _eventloopProvider.template getPublisher<PayloadControl_t>(eventName,
+                                                                       0,
+                                                                       nullptr,
+                                                                       nullptr);
         _payloadControlFromZmqChannel->registerToTopic(eventName, publisher);
         return _eventloopProvider.template getSubscriber<PayloadControl_t>(eventName);
     }
@@ -403,33 +508,31 @@ public:
      * @brief getScheduler
      * @return
      */
-    Scheduler * getScheduler() override {
-        return _eventloopProvider.getScheduler();
-    }
+    Scheduler *getScheduler() override { return _eventloopProvider.getScheduler(); }
 
 private:
-    kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> & _eventloopProvider;
-    kpsr::zmq_mdlw::FromZmqMiddlewareProvider & _fromZmqMiddlewareProvider;
-    kpsr::zmq_mdlw::ToZMQMiddlewareProvider & _toZmqMiddlewareProvider;
+    kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> &_eventloopProvider;
+    kpsr::zmq_mdlw::FromZmqMiddlewareProvider &_fromZmqMiddlewareProvider;
+    kpsr::zmq_mdlw::ToZMQMiddlewareProvider &_toZmqMiddlewareProvider;
 
-    kpsr::zmq_mdlw::FromZmqChannel<std::string> * _bstReplyFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::string> * _poseDataFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _systemInitializeFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _telemetryPositionFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _telemetryOrientationFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _sensorsFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _calibrateSensorFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _commandFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _pidFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _systemFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _telemetrySystemFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _telemetryPressureFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _telemetryControlFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _telemetryGCSFromZmqChannel;
-    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> * _payloadControlFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::string> *_bstReplyFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::string> *_poseDataFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_systemInitializeFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_telemetryPositionFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_telemetryOrientationFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_sensorsFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_calibrateSensorFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_commandFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_pidFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_systemFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_telemetrySystemFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_telemetryPressureFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_telemetryControlFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_telemetryGCSFromZmqChannel;
+    kpsr::zmq_mdlw::FromZmqChannel<std::vector<unsigned char>> *_payloadControlFromZmqChannel;
 };
-}
-}
-}
+} // namespace zmq_mdlw
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_CLIENT_ZMQ_PROVIDER_H

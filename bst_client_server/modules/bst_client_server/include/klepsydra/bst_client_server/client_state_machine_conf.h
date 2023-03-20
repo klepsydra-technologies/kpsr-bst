@@ -29,7 +29,7 @@ public:
 
     kpsr::fsm::ConfigStateMachine stateMachineConf;
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // CLIENT_STATE_MACHINE_CONF_H

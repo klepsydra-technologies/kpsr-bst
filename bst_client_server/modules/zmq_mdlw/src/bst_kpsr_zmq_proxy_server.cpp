@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /* STD LIBS */
-#include <string>
 #include <getopt.h>
+#include <string>
 #include <time.h>
 #include <unistd.h>
 
@@ -24,15 +24,16 @@
 /* KPSR LIBS */
 #include <klepsydra/core/yaml_environment.h>
 
-#include <klepsydra/bst_client_server/bst_server_user_input.h>
-#include <klepsydra/bst_client_server/bst_main_helper.h>
-#include <zmq.hpp>
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
+#include <klepsydra/bst_client_server/bst_main_helper.h>
+#include <klepsydra/bst_client_server/bst_server_user_input.h>
+#include <zmq.hpp>
 
-class ZmqProxy {
+class ZmqProxy
+{
 public:
-    ZmqProxy(const std::string & frontendUrl, const std::string & backendUrl, bool bindFrontend)
+    ZmqProxy(const std::string &frontendUrl, const std::string &backendUrl, bool bindFrontend)
         : _running(false)
         , _context(1)
         , _frontend(_context, ZMQ_SUB)
@@ -53,7 +54,8 @@ public:
         _frontend.setsockopt(ZMQ_SUBSCRIBE, "", 0);
     }
 
-    void start () {
+    void start()
+    {
         _running = true;
         _thread = std::thread([this]() {
             while (_running) {
@@ -62,7 +64,8 @@ public:
         });
     }
 
-    void stop() {
+    void stop()
+    {
         _running = false;
         if (_thread.joinable()) {
             _thread.join();
@@ -79,79 +82,87 @@ protected:
     zmq::socket_t _backend;
 };
 
-class ZmqBasicProxy : public ZmqProxy {
+class ZmqBasicProxy : public ZmqProxy
+{
 public:
-    ZmqBasicProxy(const std::string & frontendUrl, const std::string & backendUrl)
+    ZmqBasicProxy(const std::string &frontendUrl, const std::string &backendUrl)
         : ZmqProxy(frontendUrl, backendUrl, false)
     {}
 
 protected:
-    void run() override {
+    void run() override
+    {
         while (1) {
             zmq::message_t message;
             int more;
-            size_t more_size = sizeof (more);
+            size_t more_size = sizeof(more);
 
             //  Process all parts of the message
             _frontend.recv(&message);
-            _frontend.getsockopt( ZMQ_RCVMORE, &more, &more_size);
-            _backend.send(message, more? ZMQ_SNDMORE: 0);
+            _frontend.getsockopt(ZMQ_RCVMORE, &more, &more_size);
+            _backend.send(message, more ? ZMQ_SNDMORE : 0);
             if (!more) {
-                break;      //  Last message part
+                break; //  Last message part
             }
         }
     }
 };
 
-class ZmqLvcProxy : public ZmqProxy {
+class ZmqLvcProxy : public ZmqProxy
+{
 public:
-    ZmqLvcProxy(const std::string & frontendUrl, const std::string & backendUrl, int timeout)
+    ZmqLvcProxy(const std::string &frontendUrl, const std::string &backendUrl, int timeout)
         : ZmqProxy(frontendUrl, backendUrl, true)
         , _timeout(timeout)
     {}
 
 protected:
-    void run() override {
-        zmq::pollitem_t items [] = {
-            { _frontend, 0, ZMQ_POLLIN, 0 },
-            { _backend,  0, ZMQ_POLLIN, 0 }
-        };
+    void run() override
+    {
+        zmq::pollitem_t items[] = {{_frontend, 0, ZMQ_POLLIN, 0}, {_backend, 0, ZMQ_POLLIN, 0}};
         if (zmq::poll(items, 2, _timeout) == -1)
-            return;              //  Interrupted
+            return; //  Interrupted
 
         if (items[0].revents & ZMQ_POLLIN) {
             zmq::message_t topicMsg;
             zmq::message_t content;
             _frontend.recv(topicMsg);
             _frontend.recv(content);
-            std::string topic(static_cast<char*>(topicMsg.data()), topicMsg.size());
-            std::string contentString(static_cast<char*>(content.data()), content.size());
-            spdlog::info("{}new message received from server. Topic {}. Contents: {}", __PRETTY_FUNCTION__, topic, contentString);
+            std::string topic(static_cast<char *>(topicMsg.data()), topicMsg.size());
+            std::string contentString(static_cast<char *>(content.data()), content.size());
+            spdlog::info("{}new message received from server. Topic {}. Contents: {}",
+                         __PRETTY_FUNCTION__,
+                         topic,
+                         contentString);
             _cache[topic] = contentString;
             _backend.send(topicMsg, zmq::send_flags::sndmore);
             _backend.send(content);
         }
 
-        if (items [1].revents & ZMQ_POLLIN) {
+        if (items[1].revents & ZMQ_POLLIN) {
             spdlog::info("{}new subcriber connected for topic.0", __PRETTY_FUNCTION__);
-            zframe_t *frame = zframe_recv (_backend);
+            zframe_t *frame = zframe_recv(_backend);
             if (!frame)
                 return;
             //  Event is one byte 0=unsub or 1=sub, followed by topic
-            byte *event = zframe_data (frame);
-            spdlog::info("{}new subcriber connected for topic: {}", __PRETTY_FUNCTION__, event [0]);
-            if (event [0] == 1) {
-                std::string topic(event + 1, event + zframe_size (frame));
+            byte *event = zframe_data(frame);
+            spdlog::info("{}new subcriber connected for topic: {}", __PRETTY_FUNCTION__, event[0]);
+            if (event[0] == 1) {
+                std::string topic(event + 1, event + zframe_size(frame));
                 std::map<std::string, std::string>::iterator it;
                 it = _cache.find(topic);
                 if (it != _cache.end()) {
-                    _backend.send(zmq::const_buffer(topic.data(), topic.size()), zmq::send_flags::sndmore);
+                    _backend.send(zmq::const_buffer(topic.data(), topic.size()),
+                                  zmq::send_flags::sndmore);
                     zmq::message_t secondElem(it->second.c_str(), it->second.size());
                     _backend.send(secondElem);
-                    spdlog::info("{}new subcriber connected for topic {}. Sending contents: {}", __PRETTY_FUNCTION__, topic, it->second);
+                    spdlog::info("{}new subcriber connected for topic {}. Sending contents: {}",
+                                 __PRETTY_FUNCTION__,
+                                 topic,
+                                 it->second);
                 }
             }
-            zframe_destroy (&frame);
+            zframe_destroy(&frame);
         }
     }
 
@@ -168,23 +179,23 @@ int main(int argc, char *argv[])
 
     std::string logFileName;
     yamlEnv.getPropertyString("log_file_path", logFileName);
-    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    auto kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
     kpsrLogger->set_level(spdlog::level::debug);
     spdlog::set_default_logger(kpsrLogger);
 
-    std::string serverPublishUrl; // frontend
+    std::string serverPublishUrl;   // frontend
     std::string serverSubscribeUrl; // backend
     yamlEnv.getPropertyString("bst_server_publish_url", serverPublishUrl);
     yamlEnv.getPropertyString("bst_server_subscribe_url", serverSubscribeUrl);
     ZmqBasicProxy serverProxy(serverPublishUrl, serverSubscribeUrl);
 
-    std::string clientPublishUrl; // frontend
+    std::string clientPublishUrl;   // frontend
     std::string clientSubscribeUrl; // backend
     yamlEnv.getPropertyString("bst_client_publish_url", clientPublishUrl);
     yamlEnv.getPropertyString("bst_client_subscribe_url", clientSubscribeUrl);
     ZmqBasicProxy clientProxy(clientPublishUrl, clientSubscribeUrl);
 
-    std::string envWriteUrl; // frontend
+    std::string envWriteUrl;  // frontend
     std::string envListenUrl; // backend
     int timeout;
     yamlEnv.getPropertyString("kpsr_zmq_env_write_url", envWriteUrl);

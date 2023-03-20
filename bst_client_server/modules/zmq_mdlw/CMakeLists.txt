@@ -12,91 +12,66 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set(PROJ_NAME kpsr_zmq_${PROJ_MAIN_NAME})
+project(${PROJ_NAME})
 
-SET(PROJ_NAME kpsr_zmq_${PROJ_MAIN_NAME})
-PROJECT(${PROJ_NAME})
-
-#find cppzmq wrapper, installed by make of cppzmq
+# find cppzmq wrapper, installed by make of cppzmq
 find_package(cppzmq REQUIRED)
 
 # Source
-#---------------------------------------------------#
-FILE(GLOB ${PROJ_NAME}_SRC
-    "src/*.cpp"
-)
+# ---------------------------------------------------#
+file(GLOB ${PROJ_NAME}_SRC "src/*.cpp")
 
-FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
-    "include/*.h"
-)
+file(GLOB_RECURSE ${PROJ_NAME}_HEADERS "include/*.h")
 
 # Create Library
-#---------------------------------------------------#
-ADD_EXECUTABLE(kpsr_zmq_bst_client src/bst_zmq_client.cpp  )
-ADD_EXECUTABLE(kpsr_zmq_bst_server src/bst_zmq_server.cpp  )
-ADD_EXECUTABLE(kpsr_zmq_bst_proxy src/bst_kpsr_zmq_proxy_server.cpp )
+# ---------------------------------------------------#
+add_executable(kpsr_zmq_bst_client src/bst_zmq_client.cpp)
+add_executable(kpsr_zmq_bst_server src/bst_zmq_server.cpp)
+add_executable(kpsr_zmq_bst_proxy src/bst_kpsr_zmq_proxy_server.cpp)
 
-target_include_directories(
-  kpsr_zmq_bst_client
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-target_include_directories(
-  kpsr_zmq_bst_server
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
-target_include_directories(
-  kpsr_zmq_bst_proxy
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  )
+target_include_directories(kpsr_zmq_bst_client
+                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(kpsr_zmq_bst_server
+                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(kpsr_zmq_bst_proxy
+                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 # Link libraries with Project
-#---------------------------------------------------#
-TARGET_LINK_LIBRARIES(kpsr_zmq_bst_client
-  PRIVATE
-  kpsr_${PROJ_MAIN_NAME} 
-  kpsr_zmq_bst_comms
-  ${KLEPSYDRA_ZMQ_LIBRARIES}
-  ${KPSR_ROBOTICS_ZMQ_LIBRARIES}
-)
+# ---------------------------------------------------#
+target_link_libraries(
+    kpsr_zmq_bst_client
+    PRIVATE kpsr_${PROJ_MAIN_NAME} kpsr_zmq_bst_comms
+            ${KLEPSYDRA_ZMQ_LIBRARIES} ${KPSR_ROBOTICS_ZMQ_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(kpsr_zmq_bst_server
-  PRIVATE
-  kpsr_${PROJ_MAIN_NAME} 
-  kpsr_zmq_bst_comms
-  ${KLEPSYDRA_ZMQ_LIBRARIES}
-  ${KPSR_ROBOTICS_ZMQ_LIBRARIES}
-)
+target_link_libraries(
+    kpsr_zmq_bst_server
+    PRIVATE kpsr_${PROJ_MAIN_NAME} kpsr_zmq_bst_comms
+            ${KLEPSYDRA_ZMQ_LIBRARIES} ${KPSR_ROBOTICS_ZMQ_LIBRARIES})
 
-TARGET_LINK_LIBRARIES(kpsr_zmq_bst_proxy 
-  PRIVATE
-  czmq
-  kpsr_${PROJ_MAIN_NAME} 
-  kpsr_zmq_bst_comms
-  ${KLEPSYDRA_ZMQ_LIBRARIES}
-  ${KPSR_ROBOTICS_ZMQ_LIBRARIES}
-)
+target_link_libraries(
+    kpsr_zmq_bst_proxy
+    PRIVATE czmq kpsr_${PROJ_MAIN_NAME} kpsr_zmq_bst_comms
+            ${KLEPSYDRA_ZMQ_LIBRARIES} ${KPSR_ROBOTICS_ZMQ_LIBRARIES})
 
 # Install
-#---------------------------------------------------#
-INSTALL(TARGETS kpsr_zmq_bst_client
+# ---------------------------------------------------#
+install(
+    TARGETS kpsr_zmq_bst_client
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    COMPONENT libs
-)
-INSTALL(TARGETS kpsr_zmq_bst_server
+    COMPONENT libs)
+install(
+    TARGETS kpsr_zmq_bst_server
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    COMPONENT libs
-)
-INSTALL(TARGETS kpsr_zmq_bst_proxy
+    COMPONENT libs)
+install(
+    TARGETS kpsr_zmq_bst_proxy
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    COMPONENT libs
-)
+    COMPONENT libs)
 
 add_zmq_export_target(kpsr_zmq_bst_client)
 add_zmq_export_target(kpsr_zmq_bst_server)
 add_zmq_export_target(kpsr_zmq_bst_proxy)
-#PRINTBASICINFO(${PROJ_NAME})
-
+# PRINTBASICINFO(${PROJ_NAME})

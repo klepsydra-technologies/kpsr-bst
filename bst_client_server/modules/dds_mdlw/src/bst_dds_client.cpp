@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /* STD LIBS */
+#include <getopt.h>
 #include <string>
 #include <time.h>
 #include <unistd.h>
-#include <getopt.h>
 
 /* KPSR LIBS */
 
@@ -25,14 +25,15 @@
 #include <klepsydra/dds_bst_comms/bst_client_dds_provider.h>
 #include <klepsydra/dds_bst_comms/bst_dds_topic_names.h>
 
-#include <klepsydra/bst_client_server/bst_test_client.h>
-#include <klepsydra/bst_client_server/bst_main_helper.h>
 #include <klepsydra/bst_client_server/bst_client_eventloop_provider.h>
+#include <klepsydra/bst_client_server/bst_main_helper.h>
+#include <klepsydra/bst_client_server/bst_test_client.h>
 
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
-void printHelp() {
+void printHelp()
+{
     printf("Usage: test [OPTIONS]\n");
     printf("  Klepsydra paramerters:\n");
     printf("    -a <admint port>   : default null\n");
@@ -62,58 +63,86 @@ int main(int argc, char *argv[])
 
     kpsr::dds_mdlw::DDSEnv environment(fileName, configKey, &datawriter, &datareader);
 
-    dds::topic::Topic<kpsr_dds_bst::BstRequestData> bstRequestTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REQUEST);
-    dds::pub::DataWriter<kpsr_dds_bst::BstRequestData> bstRequestDataWriter(publisher, bstRequestTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstRequestData>
+        bstRequestTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REQUEST);
+    dds::pub::DataWriter<kpsr_dds_bst::BstRequestData> bstRequestDataWriter(publisher,
+                                                                            bstRequestTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::WaypointCommandData> bstWaypointCommandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_WP_CMD);
-    dds::pub::DataWriter<kpsr_dds_bst::WaypointCommandData> bstWaypointCommandDataWriter(publisher, bstWaypointCommandTopic);
+    dds::topic::Topic<kpsr_dds_bst::WaypointCommandData>
+        bstWaypointCommandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_WP_CMD);
+    dds::pub::DataWriter<kpsr_dds_bst::WaypointCommandData>
+        bstWaypointCommandDataWriter(publisher, bstWaypointCommandTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstReplyData> bstReplyTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REPLY);
+    dds::topic::Topic<kpsr_dds_bst::BstReplyData>
+        bstReplyTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REPLY);
     dds::sub::DataReader<kpsr_dds_bst::BstReplyData> bstReplyDataReader(subscriber, bstReplyTopic);
 
-    dds::topic::Topic<kpsr_dds_geometry::PoseEventData> poseTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_POSE_EVENT);
+    dds::topic::Topic<kpsr_dds_geometry::PoseEventData>
+        poseTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_POSE_EVENT);
     dds::sub::DataReader<kpsr_dds_geometry::PoseEventData> poseDataReader(subscriber, poseTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> systemInitiazeTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM_INIT);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> systemInitializeReader(subscriber, systemInitiazeTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        systemInitiazeTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM_INIT);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> systemInitializeReader(subscriber,
+                                                                             systemInitiazeTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryPositionTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_POS);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryPositionReader(subscriber, telemetryPositionTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryPositionTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_POS);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryPositionReader(subscriber,
+                                                                              telemetryPositionTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryOrientationTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_ORI);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryOrientationReader(subscriber, telemetryOrientationTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryOrientationTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_ORI);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData>
+        telemetryOrientationReader(subscriber, telemetryOrientationTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> sensorsTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SENSOR);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        sensorsTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SENSOR);
     dds::sub::DataReader<kpsr_dds_bst::BstPacketData> sensorsReader(subscriber, sensorsTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> calibrateSensorTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CALIBRATE);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> calibrateSensorReader(subscriber, calibrateSensorTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        calibrateSensorTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CALIBRATE);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> calibrateSensorReader(subscriber,
+                                                                            calibrateSensorTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> commandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_CMD);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        commandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_CMD);
     dds::sub::DataReader<kpsr_dds_bst::BstPacketData> commandReader(subscriber, commandTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> pidTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_PID);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        pidTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_PID);
     dds::sub::DataReader<kpsr_dds_bst::BstPacketData> pidReader(subscriber, pidTopic);
 
-    dds::topic::Topic<kpsr_dds_serialization::OctetData> systemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM);
+    dds::topic::Topic<kpsr_dds_serialization::OctetData>
+        systemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM);
     dds::sub::DataReader<kpsr_dds_serialization::OctetData> systemReader(subscriber, systemTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetrySystemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_SYS);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetrySystemReader(subscriber, telemetrySystemTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetrySystemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_SYS);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetrySystemReader(subscriber,
+                                                                            telemetrySystemTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryPressureTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_PRES);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryPressureReader(subscriber, telemetryPressureTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryPressureTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_PRES);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryPressureReader(subscriber,
+                                                                              telemetryPressureTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_CTRL);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryControlReader(subscriber, telemetryControlTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_CTRL);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryControlReader(subscriber,
+                                                                             telemetryControlTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryGCSTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_GCS);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryGCSReader(subscriber, telemetryGCSTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryGCSTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_GCS);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryGCSReader(subscriber,
+                                                                         telemetryGCSTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> payloadControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_PAYLOAD_CONTROL);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> payloadControlReader(subscriber, payloadControlTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        payloadControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_PAYLOAD_CONTROL);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> payloadControlReader(subscriber,
+                                                                           payloadControlTopic);
 
-    kpsr::Container * container = nullptr;
+    kpsr::Container *container = nullptr;
 
     kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
     kpsr::bst::dds_mdlw::BstClientDDSProvider<256> bstClientDdsProvider(container,
@@ -136,7 +165,8 @@ int main(int argc, char *argv[])
                                                                         &telemetryGCSReader,
                                                                         &payloadControlReader);
 
-    kpsr::bst::BstClientEventloopProvider<256> bstClientProvider(container, &environment,
+    kpsr::bst::BstClientEventloopProvider<256> bstClientProvider(container,
+                                                                 &environment,
                                                                  eventloopProvider,
                                                                  &bstClientDdsProvider);
     BstTestClient bstTestClient(bstClientProvider.getBstClient());

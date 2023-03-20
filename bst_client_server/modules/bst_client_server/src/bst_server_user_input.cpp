@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <functional>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <functional>
 
 #include <spdlog/spdlog.h>
 
@@ -27,13 +27,14 @@ BstServerUserInput::BstServerUserInput()
     : _isRunning(false)
 {}
 
-void BstServerUserInput::run() {
+void BstServerUserInput::run()
+{
     _serverThread = std::thread([this]() {
         initializeServer();
         printTestHelp();
 
         _isRunning = true;
-        while(_isRunning) {
+        while (_isRunning) {
             updateServer();
         }
         exitServer();
@@ -41,18 +42,19 @@ void BstServerUserInput::run() {
     _serverThread.join();
 }
 
-void BstServerUserInput::printTestHelp() {
+void BstServerUserInput::printTestHelp()
+{
     printf("Keys:\n");
     printf("  q   : Quit\n");
     printf("  p   : Print help\n");
 }
 
-void BstServerUserInput::initializeServer() {
-
+void BstServerUserInput::initializeServer()
+{
     /*tcgetattr gets the parameters of the current terminal
     STDIN_FILENO will tell tcgetattr that it should write the settings
     of stdin to initial_settings*/
-    tcgetattr( STDIN_FILENO, &initial_settings);
+    tcgetattr(STDIN_FILENO, &initial_settings);
     /*now the settings will be copied*/
     new_settings = initial_settings;
 
@@ -63,14 +65,15 @@ void BstServerUserInput::initializeServer() {
 
     /*Those new settings will be set to STDIN
     TCSANOW tells tcsetattr to change attributes immediately. */
-    tcsetattr( STDIN_FILENO, TCSANOW, &new_settings);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_settings);
 }
 
-void BstServerUserInput::updateServer() {
+void BstServerUserInput::updateServer()
+{
     char input = getchar();
 
-    if(input > 0) {
-        switch(input) {
+    if (input > 0) {
+        switch (input) {
         case 'p':
             printTestHelp();
             break;
@@ -91,6 +94,7 @@ void BstServerUserInput::updateServer() {
     }
 }
 
-void BstServerUserInput::exitServer() {
+void BstServerUserInput::exitServer()
+{
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
 }

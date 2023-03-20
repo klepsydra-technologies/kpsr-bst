@@ -19,28 +19,25 @@
 
 #include <inttypes.h>
 
-namespace kpsr
-{
-namespace bst
-{
-namespace Bst2KpsrModules
-{
+namespace kpsr {
+namespace bst {
+namespace Bst2KpsrModules {
 namespace BasicModule {
-    void sendCommand(uint8_t type, void * data, uint16_t size, void * parameter);
-    void receive(uint8_t type, void * data, uint16_t size, const void * parameter);
-    uint8_t receiveCommand(uint8_t type, void * data, uint16_t size, const void * parameter);
-    void receiveReply(uint8_t type, void * data, uint16_t size, bool ack, const void * parameter);
-    bool publish(uint8_t type, uint8_t param);
-}
+void sendCommand(uint8_t type, void *data, uint16_t size, void *parameter);
+void receive(uint8_t type, void *data, uint16_t size, const void *parameter);
+uint8_t receiveCommand(uint8_t type, void *data, uint16_t size, const void *parameter);
+void receiveReply(uint8_t type, void *data, uint16_t size, bool ack, const void *parameter);
+bool publish(uint8_t type, uint8_t param);
+} // namespace BasicModule
 namespace FlightPlan {
-    void sendCommand(uint8_t type, void * data, uint16_t size, void * parameter);
-    void receive(uint8_t type, void * data, uint16_t size, const void * parameter);
-    uint8_t receiveCommand(uint8_t type, void * data, uint16_t size, const void * parameter);
-    void receiveReply(uint8_t type, void * data, uint16_t size, bool ack, const void * parameter);
-    bool publish(uint8_t type, uint8_t param);
-}
-}
-}
-}
+void sendCommand(uint8_t type, void *data, uint16_t size, void *parameter);
+void receive(uint8_t type, void *data, uint16_t size, const void *parameter);
+uint8_t receiveCommand(uint8_t type, void *data, uint16_t size, const void *parameter);
+void receiveReply(uint8_t type, void *data, uint16_t size, bool ack, const void *parameter);
+bool publish(uint8_t type, uint8_t param);
+} // namespace FlightPlan
+} // namespace Bst2KpsrModules
+} // namespace bst
+} // namespace kpsr
 
 #endif

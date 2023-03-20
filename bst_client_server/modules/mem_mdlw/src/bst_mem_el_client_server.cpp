@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /* STD LIBS */
-#include <string>
 #include <getopt.h>
+#include <string>
 #include <time.h>
 
 /* KPSR LIBS */
@@ -24,13 +24,13 @@
 
 #include <klepsydra/mem_bst_comms/bst_client_server_eventloop_provider.h>
 
-#include <klepsydra/bst_client_server/bst_test_client.h>
-#include <klepsydra/bst_client_server/bst_server.h>
-#include <klepsydra/bst_client_server/bst_main_helper.h>
 #include <klepsydra/bst_client_server/bst_client_eventloop_provider.h>
+#include <klepsydra/bst_client_server/bst_main_helper.h>
+#include <klepsydra/bst_client_server/bst_server.h>
+#include <klepsydra/bst_client_server/bst_test_client.h>
 
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
 int main(int argc, char *argv[])
 {
@@ -42,15 +42,16 @@ int main(int argc, char *argv[])
     currentDateTime = kpsr::bst::BstMainHelper::currentDateTime();
     environment.getPropertyString("log_file_path", logFileName);
     logFileName = logFileName + currentDateTime + ".log";
-    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    auto kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
     spdlog::set_default_logger(kpsrLogger);
     spdlog::set_pattern("[%c] [%H:%M:%S %f] [%n] [%l] [%t] %v");
     spdlog::set_level(spdlog::level::debug); // Set global log level to info
 
-    kpsr::Container * container = nullptr;
+    kpsr::Container *container = nullptr;
 
     kpsr::high_performance::EventLoopMiddlewareProvider<1024> eventloopProvider(container);
-    kpsr::bst::mem::BstClientServerEventLoopProvider<1024> bstClientServerMemProvider(eventloopProvider);
+    kpsr::bst::mem::BstClientServerEventLoopProvider<1024> bstClientServerMemProvider(
+        eventloopProvider);
 
     kpsr::bst::BstServer bstServer(container, &environment, &bstClientServerMemProvider);
 

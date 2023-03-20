@@ -20,23 +20,42 @@
 
 kpsr::high_performance::EventLoopMiddlewareProvider<256> bst2KpsrInternalMessageProvider(nullptr);
 
-void kpsr::bst::Bst2KpsrMiddlewareProvider::start(Container *container) {
+void kpsr::bst::Bst2KpsrMiddlewareProvider::start(Container *container)
+{
     bst2KpsrInternalMessageProvider.start();
     spdlog::info("{}. started.", __PRETTY_FUNCTION__);
     if (container != nullptr) {
-        container->attach(&bst2KpsrInternalMessageProvider.getPublisher<kpsr::bst::Bst2KpsrInternalMessage>("bst_internal_message", 0, nullptr, nullptr)->_publicationStats);
-        bst2KpsrInternalMessageProvider.getSubscriber<kpsr::bst::Bst2KpsrInternalMessage>("bst_internal_message")->_container = container;
+        container->attach(
+            &bst2KpsrInternalMessageProvider
+                 .getPublisher<kpsr::bst::Bst2KpsrInternalMessage>("bst_internal_message",
+                                                                   0,
+                                                                   nullptr,
+                                                                   nullptr)
+                 ->_publicationStats);
+        bst2KpsrInternalMessageProvider
+            .getSubscriber<kpsr::bst::Bst2KpsrInternalMessage>("bst_internal_message")
+            ->_container = container;
     }
 }
 
-void kpsr::bst::Bst2KpsrMiddlewareProvider::stop() {
+void kpsr::bst::Bst2KpsrMiddlewareProvider::stop()
+{
     bst2KpsrInternalMessageProvider.stop();
 }
 
-kpsr::Subscriber<kpsr::bst::Bst2KpsrInternalMessage> * kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessageSubscriber() {
-    return bst2KpsrInternalMessageProvider.getSubscriber<kpsr::bst::Bst2KpsrInternalMessage>("bst_internal_message");
+kpsr::Subscriber<kpsr::bst::Bst2KpsrInternalMessage>
+    *kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessageSubscriber()
+{
+    return bst2KpsrInternalMessageProvider.getSubscriber<kpsr::bst::Bst2KpsrInternalMessage>(
+        "bst_internal_message");
 }
 
-kpsr::Publisher<kpsr::bst::Bst2KpsrInternalMessage> * kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessagePublisher() {
-    return bst2KpsrInternalMessageProvider.getPublisher<kpsr::bst::Bst2KpsrInternalMessage>("bst_internal_message", 0, nullptr, nullptr);
+kpsr::Publisher<kpsr::bst::Bst2KpsrInternalMessage>
+    *kpsr::bst::Bst2KpsrMiddlewareProvider::getBst2KpsrInternalMessagePublisher()
+{
+    return bst2KpsrInternalMessageProvider
+        .getPublisher<kpsr::bst::Bst2KpsrInternalMessage>("bst_internal_message",
+                                                          0,
+                                                          nullptr,
+                                                          nullptr);
 }

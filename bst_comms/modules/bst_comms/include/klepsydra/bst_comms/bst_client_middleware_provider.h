@@ -24,19 +24,17 @@
 #include "multicopter.h"
 
 #include <klepsydra/core/publisher.h>
-#include <klepsydra/core/subscriber.h>
 #include <klepsydra/core/scheduler.h>
+#include <klepsydra/core/subscriber.h>
 
 #include <klepsydra/geometry/pose_event_data.h>
 
-#include <klepsydra/bst_comms/bst_request_message.h>
 #include <klepsydra/bst_comms/bst_reply_message.h>
+#include <klepsydra/bst_comms/bst_request_message.h>
 #include <klepsydra/bst_comms/waypoint_command_message.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 /**
  * @brief The BstClientMiddlewareProvider class
  *
@@ -157,9 +155,9 @@ public:
 }
 @endcode
  */
-class BstClientMiddlewareProvider {
+class BstClientMiddlewareProvider
+{
 public:
-
     /**
      * @brief start underlying middleware queues
      */
@@ -174,112 +172,111 @@ public:
      * @brief BST Command request publisher used for sending commands to BST Autopilot.
      * @return
      */
-    virtual Publisher<BstRequestMessage> * getBstRequestMessagePublisher() = 0;
+    virtual Publisher<BstRequestMessage> *getBstRequestMessagePublisher() = 0;
 
     /**
      * @brief Klepsydra reply queue with the result of the request command.
      * @return
      */
-    virtual Subscriber<BstReplyMessage> * getBst2KpsrReplyMessageSubscriber() = 0;
+    virtual Subscriber<BstReplyMessage> *getBst2KpsrReplyMessageSubscriber() = 0;
 
     /**
      * @brief BST Command request publisher for sending waypoints commmands
      * @return
      */
-    virtual Publisher<WaypointCommandMessage> * getBstWaypointCommandMessagePublisher() = 0;
+    virtual Publisher<WaypointCommandMessage> *getBstWaypointCommandMessagePublisher() = 0;
 
     /**
      * @brief Klepsydra geometry telemetry message subscriber.
      * @return
      */
-    virtual Subscriber<geometry::PoseEventData> * getPoseEventDataSubscriber() = 0;
+    virtual Subscriber<geometry::PoseEventData> *getPoseEventDataSubscriber() = 0;
 
     /**
      * @brief BST SystemInitialize_t subscriber
      * @return
      */
-    virtual Subscriber<SystemInitialize_t> * getSystemInitializeSubscriber() = 0;
+    virtual Subscriber<SystemInitialize_t> *getSystemInitializeSubscriber() = 0;
 
     /**
      * @brief BST TelemetryPosition_t subscriber
      * @return
      */
-    virtual Subscriber<TelemetryPosition_t> * getTelemetryPositionSubscriber() = 0;
+    virtual Subscriber<TelemetryPosition_t> *getTelemetryPositionSubscriber() = 0;
 
     /**
      * @brief BST TelemetryOrientation_t subscriber
      * @return
      */
-    virtual Subscriber<TelemetryOrientation_t> * getTelemetryOrientationSubscriber() = 0;
+    virtual Subscriber<TelemetryOrientation_t> *getTelemetryOrientationSubscriber() = 0;
 
     /**
      * @brief getSensorSubscriber
      * @return
      */
-    virtual Subscriber<Sensors_t> * getSensorSubscriber() = 0;
+    virtual Subscriber<Sensors_t> *getSensorSubscriber() = 0;
 
     /**
      * @brief BST CalibrateSensor_t subscriber
      * @return
      */
-    virtual Subscriber<CalibrateSensor_t> * getCalibrateSubscriber() = 0;
+    virtual Subscriber<CalibrateSensor_t> *getCalibrateSubscriber() = 0;
 
     /**
      * @brief BST Command_t subscriber
      * @return
      */
-    virtual Subscriber<Command_t> * getControlCommandSubscriber() = 0;
+    virtual Subscriber<Command_t> *getControlCommandSubscriber() = 0;
 
     /**
      * @brief BST PID_t subscriber
      * @return
      */
-    virtual Subscriber<PID_t> * getControlPidSubscriber() = 0;
+    virtual Subscriber<PID_t> *getControlPidSubscriber() = 0;
 
     /**
      * @brief BST uint8_t subscriber
      * @return
      */
-    virtual Subscriber<uint8_t> * getSystemSubscriber() = 0;
+    virtual Subscriber<uint8_t> *getSystemSubscriber() = 0;
 
     /**
      * @brief BST TelemetrySystem_t subscriber
      * @return
      */
-    virtual Subscriber<TelemetrySystem_t> * getTelemetrySystemSubscriber() = 0;
+    virtual Subscriber<TelemetrySystem_t> *getTelemetrySystemSubscriber() = 0;
 
     /**
      * @brief BST TelemetryPressure_t subscriber
      * @return
      */
-    virtual Subscriber<TelemetryPressure_t> * getTelemetryPressureSubscriber() = 0;
+    virtual Subscriber<TelemetryPressure_t> *getTelemetryPressureSubscriber() = 0;
 
     /**
      * @brief BST ::bst::comms::TelemetryControl_t subscriber
      * @return
      */
-    virtual Subscriber<::bst::comms::TelemetryControl_t> * getTelemetryControlSubscriber() = 0;
+    virtual Subscriber<::bst::comms::TelemetryControl_t> *getTelemetryControlSubscriber() = 0;
 
     /**
      * @brief BST gcs::TelemetryGCS_t subscriber
      * @return
      */
-    virtual Subscriber<gcs::TelemetryGCS_t> * getTelemetryGCSSubscriber() = 0;
+    virtual Subscriber<gcs::TelemetryGCS_t> *getTelemetryGCSSubscriber() = 0;
 
     /**
      * @brief BST PayloadControl_t subscriber
      * @return
      */
-    virtual Subscriber<PayloadControl_t> * getPayloadControlSubscriber() = 0;
+    virtual Subscriber<PayloadControl_t> *getPayloadControlSubscriber() = 0;
 
     /**
      * @brief getScheduler
      * @return
      */
-    virtual Scheduler * getScheduler() = 0;
+    virtual Scheduler *getScheduler() = 0;
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_CLIENT_MIDDLEWARE_PROVIDER_H
-
