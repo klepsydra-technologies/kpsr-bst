@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Check build
+name: Code style check
 
 on:
+  pull_request:
   push:
+    branches:
+      - main
   workflow_dispatch:
 
 defaults:
@@ -23,8 +26,8 @@ defaults:
     shell: bash
 
 jobs:
-  builddebug:
-    name: Vanilla Debug
+  format-check:
+    name: Code style
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/klepsydra-technologies/kpsrbase:1.0.0
@@ -78,37 +81,95 @@ jobs:
           git checkout f61cabf1063762e2a1cc0677292a7eedb14b2d8b
           ./make_all.sh
 
-        
       - name: Clone project
         uses: actions/checkout@v3
         with:
           submodules: recursive
           path: kpsr-bst
 
-      - name: Build project
+      - name: Code format check
+        run: |
+          mkdir build && cd build
+          cmake -DBST_SDK_HOME=${GITHUB_WORKSPACE}/sdk -DCMAKE_BUILD_TYPE=Debug ../
+          make formatcheck
+          make cmake-format-check
+        working-directory: kpsr-bst
+
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/klepsydra-technologies/kpsrbase:1.0.0
+    steps:
+      - name: Clone kpsr-core
+        uses: actions/checkout@v3
+        with:
+          repository: klepsydra-technologies/kpsr-core
+          submodules: recursive
+          ref: main
+          path: kpsr-core
+
+      - name: Install kpsr-core
         run: |
           mkdir build && cd build 
-          cmake -DBST_SDK_HOME=${GITHUB_WORKSPACE}/sdk -DCMAKE_BUILD_TYPE=Debug ../
+          cmake -DKPSR_WITH_DOXYGEN=true -DKPSR_WITH_DDS=false -DKPSR_WITH_ZMQ=false -DKPSR_WITH_SOCKET=true -DKPSR_WITH_YAML=true -DKPSR_WITH_CODE_METRICS=true -DCMAKE_BUILD_TYPE=Debug -DKPSR_ENABLE_TESTS=false -DKPSR_ENABLE_EXAMPLES=false ../
           make -j$(nproc)
-        working-directory: kpsr-bst
-        
-      - name: Unit tests
-        timeout-minutes: 10
-        run: cd build && make test ARGS="--gtest_shuffle"
-        working-directory: kpsr-bst
+          sudo make -j$(nproc) install
+        working-directory: kpsr-core
 
-      - name: Upload logs on failure
-        if: failure()
+      - name: Upload kpsr_codegen
         uses: actions/upload-artifact@v3
         with:
-          name: builddebug-logs
+          name: kpsr_codegen
           path: |
-            build/CMakeFiles/CMakeOutput.log
-            build/CMakeFiles/CMakeError.log
-            build/Testing/Temporary
-            build/code_generator/kpsr_codegen/build_cpptesting/Testing/Temporary
+            kpsr-core/build/kpsr_codegen-1.0-py3-none-any.whl
 
-      - name: Workspace cleanup
-        if: always()
+      - name: Remove kpsr-core sources
         run: |
-          sudo rm -rf ${GITHUB_WORKSPACE}/kpsr-bst
+          sudo rm -rf ${GITHUB_WORKSPACE}/kpsr-core
+
+      - name: Clone kpsr-robotics
+        uses: actions/checkout@v3
+        with:
+          repository: klepsydra-technologies/kpsr-robotics
+          submodules: recursive
+          path: kpsr-robotics
+
+      - name: Build kpsr-robotics
+        run: |
+          mkdir build && cd build 
+          cmake -DKPSR_WITH_DOXYGEN=true -DCMAKE_BUILD_TYPE=Debug -DKPSR_WITH_OCV=true -DKPSR_ENABLE_TESTS=true -DKPSR_ENABLE_EXAMPLES=true ../
+          make -j$(nproc)
+          sudo make -j$(nproc) install
+        working-directory: kpsr-robotics
+
+      - name: Install BST SDK
+        run: |
+          git clone https://gitlab.com/bstaero/sdk.git ${GITHUB_WORKSPACE}/sdk
+          cd ${GITHUB_WORKSPACE}/sdk
+          git checkout f61cabf1063762e2a1cc0677292a7eedb14b2d8b
+          ./make_all.sh
+
+      - name: Clone project
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          path: kpsr-bst
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake -DBST_SDK_HOME=${GITHUB_WORKSPACE}/sdk -DKPSR_WITH_CODE_METRICS=true -DCMAKE_BUILD_TYPE=Debug ../
+          make -j$(nproc)
+        working-directory: kpsr-bst
+
+      - name: Coverage
+        timeout-minutes: 10
+        run: |
+          cd build
+          make -j$(nproc) coverage
+        working-directory: kpsr-bst
+
+      - uses: codecov/codecov-action@v3
+        with:
+          files: build/coverage.xml

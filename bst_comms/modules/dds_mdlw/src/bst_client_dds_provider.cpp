@@ -13,4 +13,3 @@
 // limitations under the License.
 
 #include "bst_client_dds_provider.h"
-

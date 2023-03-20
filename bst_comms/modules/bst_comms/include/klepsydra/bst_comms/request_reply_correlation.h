@@ -19,15 +19,13 @@
 
 #include <functional>
 
-#include <klepsydra/bst_comms/bst_request_message.h>
 #include <klepsydra/bst_comms/bst_reply_message.h>
+#include <klepsydra/bst_comms/bst_request_message.h>
 
 #include <klepsydra/bst_comms/waypoint_command_message.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 /**
  * @brief The RequestReplyCorrelation class
  *
@@ -39,13 +37,17 @@ namespace bst
  *
  * @details Request reply correlation facility.
  */
-class RequestReplyCorrelation {
+class RequestReplyCorrelation
+{
 public:
     /**
      * @brief RequestReplyCorrelation
      */
     RequestReplyCorrelation()
-        : correlationFunction(std::bind(&RequestReplyCorrelation::match, this, std::placeholders::_1, std::placeholders::_2))
+        : correlationFunction(std::bind(&RequestReplyCorrelation::match,
+                                        this,
+                                        std::placeholders::_1,
+                                        std::placeholders::_2))
     {}
 
     /**
@@ -54,7 +56,8 @@ public:
      * @param reply
      * @return
      */
-    bool match(const BstRequestMessage & request, const BstReplyMessage & reply) {
+    bool match(const BstRequestMessage &request, const BstReplyMessage &reply)
+    {
         return ((request.type == reply.type) && (request.id == reply.id));
     }
 
@@ -62,7 +65,6 @@ public:
      * @brief correlationFunction
      */
     std::function<bool(const BstRequestMessage &, const BstReplyMessage &)> correlationFunction;
-
 };
 
 /**
@@ -76,13 +78,17 @@ public:
  *
  * @details Request reply correlation facility.
  */
-class FlightPlantReplyCorrelation {
+class FlightPlantReplyCorrelation
+{
 public:
     /**
      * @brief RequestReplyCorrelation
      */
     FlightPlantReplyCorrelation()
-        : correlationFunction(std::bind(&FlightPlantReplyCorrelation::match, this, std::placeholders::_1, std::placeholders::_2))
+        : correlationFunction(std::bind(&FlightPlantReplyCorrelation::match,
+                                        this,
+                                        std::placeholders::_1,
+                                        std::placeholders::_2))
     {}
 
     /**
@@ -91,7 +97,8 @@ public:
      * @param reply
      * @return
      */
-    bool match(const WaypointCommandMessage & request, const BstReplyMessage & reply) {
+    bool match(const WaypointCommandMessage &request, const BstReplyMessage &reply)
+    {
         return (request.id == reply.id);
     }
 
@@ -99,9 +106,8 @@ public:
      * @brief correlationFunction
      */
     std::function<bool(const WaypointCommandMessage &, const BstReplyMessage &)> correlationFunction;
-
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // REQUEST_REPLY_CORRELATION_H

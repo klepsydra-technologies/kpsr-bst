@@ -18,20 +18,18 @@
 #ifndef BST_SERVER_H
 #define BST_SERVER_H
 
+#include <klepsydra/mem_core/basic_scheduler.h>
+#include <spdlog/spdlog.h>
 #include <string>
 #include <unistd.h>
-#include <spdlog/spdlog.h>
-#include <klepsydra/mem_core/basic_scheduler.h>
 
-#include <klepsydra/bst_comms/comm_interface_service.h>
 #include <klepsydra/bst_comms/bst2kpsr_adaptor_service.h>
-#include <klepsydra/bst_comms/telemetry_pose_service.h>
 #include <klepsydra/bst_comms/bst_server_middleware_provider.h>
+#include <klepsydra/bst_comms/comm_interface_service.h>
+#include <klepsydra/bst_comms/telemetry_pose_service.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 /**
  * @brief The BstServer class
  *
@@ -43,21 +41,20 @@ namespace bst
  *
  * @details Server interface to all BST provided messages publishers and request subscriber. Code example:
  */
-class BstServer : public Service {
+class BstServer : public Service
+{
 public:
-
     /**
      * @brief BstServer
      * @param container
      * @param environment
      * @param serverMiddlewareProvider
      */
-    BstServer(Container * container,
-              Environment * environment,
-              BstServerMiddlewareProvider * serverMiddlewareProvider);
+    BstServer(Container *container,
+              Environment *environment,
+              BstServerMiddlewareProvider *serverMiddlewareProvider);
 
 protected:
-
     void start() override;
 
     void stop() override;
@@ -65,16 +62,15 @@ protected:
     void execute() override;
 
 private:
-
-    BstServerMiddlewareProvider * _serverMiddlewareProvider;
-    Bst2KpsrAdaptorService * _bst2KpsrAdaptorService;
-    TelemetryPoseService * _telemetryPoseService;
-    CommInterfaceService * _commInterfaceService;
-    Bst2KpsrBroadcaster * _bst2KpsrBroadcaster;
+    BstServerMiddlewareProvider *_serverMiddlewareProvider;
+    Bst2KpsrAdaptorService *_bst2KpsrAdaptorService;
+    TelemetryPoseService *_telemetryPoseService;
+    CommInterfaceService *_commInterfaceService;
+    Bst2KpsrBroadcaster *_bst2KpsrBroadcaster;
 
     kpsr::mem::BasicScheduler scheduler;
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_SERVER_H

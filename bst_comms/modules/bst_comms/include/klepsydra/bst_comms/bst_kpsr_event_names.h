@@ -19,10 +19,8 @@
 
 #include <string>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 static const std::string EVENT_NAME_BST_REQUEST = "bst_request";
 static const std::string EVENT_NAME_BST_REPLY = "bst_reply";
 static const std::string EVENT_NAME_BST_WP_CMD = "bst_waypoint_cmd";
@@ -40,7 +38,7 @@ static const std::string EVENT_NAME_TELEMETRY_PRES = "bst_telemetry_pressure";
 static const std::string EVENT_NAME_TELEMETRY_CTRL = "bst_telemetry_control";
 static const std::string EVENT_NAME_TELEMETRY_GCS = "bst_telemetry_gcs";
 static const std::string EVENT_NAME_PAYLOAD_CONTROL = "bst_payload_control";
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_KPSR_EVENT_NAMES_H

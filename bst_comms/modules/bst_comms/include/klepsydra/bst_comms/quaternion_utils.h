@@ -32,15 +32,18 @@ namespace bst {
  *
  * @details Quaternion to Euler calculation utils.
  */
-class QuaternionUtils {
+class QuaternionUtils
+{
 public:
     /**
      * @brief  Convert quaternion to roll angle
      * @param  data pointer to quaternion
      * @retval roll angle in radians
      */
-    static float quat_to_roll(const float V[4]) {
-        return std::atan2( 2*(V[2]*V[3] + V[0]*V[1]), V[0]*V[0] - V[1]*V[1] - V[2]*V[2] + V[3]*V[3] );
+    static float quat_to_roll(const float V[4])
+    {
+        return std::atan2(2 * (V[2] * V[3] + V[0] * V[1]),
+                          V[0] * V[0] - V[1] * V[1] - V[2] * V[2] + V[3] * V[3]);
     }
 
     /**
@@ -48,8 +51,9 @@ public:
      * @param  data pointer to quaternion
      * @retval pitch angle in radians
      */
-    static float quat_to_pitch(const float V[4]) {
-        return std::asin( -2*(V[1]*V[3] - V[0]*V[2]) );
+    static float quat_to_pitch(const float V[4])
+    {
+        return std::asin(-2 * (V[1] * V[3] - V[0] * V[2]));
     }
 
     /**
@@ -57,12 +61,13 @@ public:
      * @param  data pointer to quaternion
      * @retval yaw angle in radians
      */
-    static float quat_to_yaw(const float V[4]) {
-        return std::atan2( 2*(V[1]*V[2] + V[0]*V[3]), V[0]*V[0] + V[1]*V[1] - V[2]*V[2] - V[3]*V[3] );
+    static float quat_to_yaw(const float V[4])
+    {
+        return std::atan2(2 * (V[1] * V[2] + V[0] * V[3]),
+                          V[0] * V[0] + V[1] * V[1] - V[2] * V[2] - V[3] * V[3]);
     }
 
 #endif // QUATERNION_UTILS_H
-
 };
 }
 }

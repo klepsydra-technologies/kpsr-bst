@@ -24,8 +24,8 @@
 namespace kpsr {
 namespace bst {
 namespace test {
-class BstClientTestMiddlewareProvider : public BstClientMiddlewareProvider {
-
+class BstClientTestMiddlewareProvider : public BstClientMiddlewareProvider
+{
 public:
     BstClientTestMiddlewareProvider()
         : testBstRequestMessageProvider(nullptr, "test", 0, nullptr, nullptr)
@@ -50,77 +50,92 @@ public:
     virtual void start() override {}
     virtual void stop() override {}
 
-    virtual Publisher<BstRequestMessage> * getBstRequestMessagePublisher() override {
+    virtual Publisher<BstRequestMessage> *getBstRequestMessagePublisher() override
+    {
         return testBstRequestMessageProvider.getPublisher();
     }
 
-    virtual Subscriber<BstReplyMessage> * getBst2KpsrReplyMessageSubscriber() override {
+    virtual Subscriber<BstReplyMessage> *getBst2KpsrReplyMessageSubscriber() override
+    {
         return testBst2KpsrReplyMessageProvider.getSubscriber();
     }
 
-    virtual Publisher<WaypointCommandMessage> * getBstWaypointCommandMessagePublisher() override {
+    virtual Publisher<WaypointCommandMessage> *getBstWaypointCommandMessagePublisher() override
+    {
         return testBstWaypointCommandMessageProvider.getPublisher();
     }
 
-    virtual Subscriber<geometry::PoseEventData> * getPoseEventDataSubscriber() override {
+    virtual Subscriber<geometry::PoseEventData> *getPoseEventDataSubscriber() override
+    {
         return testPoseEventDataProvider.getSubscriber();
     }
 
-    virtual Subscriber<SystemInitialize_t> * getSystemInitializeSubscriber() override {
+    virtual Subscriber<SystemInitialize_t> *getSystemInitializeSubscriber() override
+    {
         return testSystemInitializeProvider.getSubscriber();
     }
 
-    virtual Subscriber<TelemetryPosition_t> * getTelemetryPositionSubscriber() override {
+    virtual Subscriber<TelemetryPosition_t> *getTelemetryPositionSubscriber() override
+    {
         return testTelemetryPositionProvider.getSubscriber();
     }
 
-    virtual Subscriber<TelemetryOrientation_t> * getTelemetryOrientationSubscriber() override {
+    virtual Subscriber<TelemetryOrientation_t> *getTelemetryOrientationSubscriber() override
+    {
         return testTelemetryOrientationProvider.getSubscriber();
     }
 
-    virtual Subscriber<Sensors_t> * getSensorSubscriber() override {
+    virtual Subscriber<Sensors_t> *getSensorSubscriber() override
+    {
         return testSensorProvider.getSubscriber();
     }
 
-    virtual Subscriber<CalibrateSensor_t> * getCalibrateSubscriber() override {
+    virtual Subscriber<CalibrateSensor_t> *getCalibrateSubscriber() override
+    {
         return testCalibrateProvider.getSubscriber();
     }
 
-    virtual Subscriber<Command_t> * getControlCommandSubscriber() override {
+    virtual Subscriber<Command_t> *getControlCommandSubscriber() override
+    {
         return testControlCommandProvider.getSubscriber();
     }
 
-    virtual Subscriber<PID_t> * getControlPidSubscriber() override {
+    virtual Subscriber<PID_t> *getControlPidSubscriber() override
+    {
         return testControlPidProvider.getSubscriber();
     }
 
-    virtual Subscriber<uint8_t> * getSystemSubscriber() override {
+    virtual Subscriber<uint8_t> *getSystemSubscriber() override
+    {
         return testSystemProvider.getSubscriber();
     }
 
-    virtual Subscriber<TelemetrySystem_t> * getTelemetrySystemSubscriber() override {
+    virtual Subscriber<TelemetrySystem_t> *getTelemetrySystemSubscriber() override
+    {
         return testTelemetrySystemProvider.getSubscriber();
     }
 
-    virtual Subscriber<TelemetryPressure_t> * getTelemetryPressureSubscriber() override {
+    virtual Subscriber<TelemetryPressure_t> *getTelemetryPressureSubscriber() override
+    {
         return testTelemetryPressureProvider.getSubscriber();
     }
 
-    virtual Subscriber<::bst::comms::TelemetryControl_t> * getTelemetryControlSubscriber() override {
+    virtual Subscriber<::bst::comms::TelemetryControl_t> *getTelemetryControlSubscriber() override
+    {
         return testTelemetryControlProvider.getSubscriber();
     }
 
-    virtual Subscriber<gcs::TelemetryGCS_t> * getTelemetryGCSSubscriber() override {
+    virtual Subscriber<gcs::TelemetryGCS_t> *getTelemetryGCSSubscriber() override
+    {
         return testTelemetryGCSProvider.getSubscriber();
     }
 
-    virtual Subscriber<PayloadControl_t> * getPayloadControlSubscriber() override {
+    virtual Subscriber<PayloadControl_t> *getPayloadControlSubscriber() override
+    {
         return testPayloadControlProvider.getSubscriber();
     }
 
-    virtual Scheduler * getScheduler() override {
-        return nullptr;
-    }
+    virtual Scheduler *getScheduler() override { return nullptr; }
 
     EventEmitterMiddlewareProvider<BstRequestMessage> testBstRequestMessageProvider;
     EventEmitterMiddlewareProvider<BstReplyMessage> testBst2KpsrReplyMessageProvider;
@@ -140,8 +155,8 @@ public:
     EventEmitterMiddlewareProvider<gcs::TelemetryGCS_t> testTelemetryGCSProvider;
     EventEmitterMiddlewareProvider<PayloadControl_t> testPayloadControlProvider;
 };
-}
-}
-}
+} // namespace test
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_CLIENT_TEST_MIDDLEWARE_PROVIDER_H

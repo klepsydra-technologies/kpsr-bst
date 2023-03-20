@@ -12,63 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-SET(PROJ_NAME kpsr_${PROJ_MAIN_NAME})
-PROJECT(${PROJ_NAME})
+set(PROJ_NAME kpsr_${PROJ_MAIN_NAME})
+project(${PROJ_NAME})
 
 # Source
-#---------------------------------------------------#
-FILE(GLOB ${PROJ_NAME}_SRC
-    "src/*.cpp"
-)
+# ---------------------------------------------------#
+file(GLOB ${PROJ_NAME}_SRC "src/*.cpp")
 
-FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
-    "include/*.h"
-)
+file(GLOB_RECURSE ${PROJ_NAME}_HEADERS "include/*.h")
 
-FILE(GLOB ${PROJ_NAME}_GEN_HEADERS
-    "${${PROJ_MAIN_NAME}_PATH_MAIN}/${PROJ_MAIN_NAME}}/gen/poco/include/*.h"
-)
+file(GLOB ${PROJ_NAME}_GEN_HEADERS
+     "${${PROJ_MAIN_NAME}_PATH_MAIN}/${PROJ_MAIN_NAME}}/gen/poco/include/*.h")
 
 # Create Library
-#---------------------------------------------------#
-ADD_LIBRARY(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIB_TYPE} ${${PROJ_NAME}_HEADERS} ${${PROJ_NAME}_SRC})
+# ---------------------------------------------------#
+add_library(${PROJ_NAME} ${${PROJ_MAIN_NAME}_LIB_TYPE} ${${PROJ_NAME}_HEADERS}
+                         ${${PROJ_NAME}_SRC})
 
 target_include_directories(
-  ${PROJ_NAME}
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/poco/include>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
+    ${PROJ_NAME}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/poco/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 # Link libraries with Project
-#---------------------------------------------------#
-TARGET_LINK_LIBRARIES(${PROJ_NAME}
-  PUBLIC
-  ${KLEPSYDRA_CORE_LIBRARIES}
-  ${KLEPSYDRA_ROBOTICS_CORE_LIBRARIES}
-  bst::bst
-)
-
+# ---------------------------------------------------#
+target_link_libraries(
+    ${PROJ_NAME} PUBLIC ${KLEPSYDRA_CORE_LIBRARIES}
+                        ${KLEPSYDRA_ROBOTICS_CORE_LIBRARIES} bst::bst)
 
 # Install
-#---------------------------------------------------#
-INSTALL(TARGETS ${PROJ_NAME}
+# ---------------------------------------------------#
+install(
+    TARGETS ${PROJ_NAME}
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    COMPONENT libs
-)
-INSTALL(DIRECTORY "include/klepsydra"
+    COMPONENT libs)
+install(
+    DIRECTORY "include/klepsydra"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    COMPONENT dev
-)
+    COMPONENT dev)
 
-INSTALL(DIRECTORY "${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/poco/include/klepsydra/"
+install(
+    DIRECTORY
+        "${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/gen/poco/include/klepsydra/"
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-    COMPONENT dev
-)
+    COMPONENT dev)
 
 add_core_export_target(${PROJ_NAME})
-#PRINTBASICINFO(${PROJ_NAME})
-
+# PRINTBASICINFO(${PROJ_NAME})

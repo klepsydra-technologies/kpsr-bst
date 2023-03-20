@@ -12,40 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <functional>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <functional>
-#include <iostream>
 
 /* BST */
 #include "bst_module_basic.h"
 #include "bst_module_flight_plan.h"
 #include "bst_protocol.h"
+#include "gcs.h"
 #include "helper_functions.h"
 #include "multicopter.h"
-#include "gcs.h"
-
 
 #include <klepsydra/core/time_utils.h>
 
-#include <klepsydra/bst_comms/waypoint_message.h>
 #include <klepsydra/bst_comms/waypoint_command_message.h>
+#include <klepsydra/bst_comms/waypoint_message.h>
 
 #include <klepsydra/bst_client_server/bst_test_client.h>
 
-BstTestClient::BstTestClient(kpsr::bst::BstClient & bstClient)
+BstTestClient::BstTestClient(kpsr::bst::BstClient &bstClient)
     : _bstClient(bstClient)
     , _isRunning(false)
 {}
 
-void BstTestClient::run() {
+void BstTestClient::run()
+{
     _clientThread = std::thread([this]() {
         initializeClient();
         printTestHelp();
 
         _isRunning = true;
-        while(_isRunning) {
+        while (_isRunning) {
             updateClient();
         }
         exitClient();
@@ -53,7 +53,8 @@ void BstTestClient::run() {
     _clientThread.join();
 }
 
-void BstTestClient::printTestHelp() {
+void BstTestClient::printTestHelp()
+{
     printf("Keys:\n");
     printf("  h   : Send payload heartbeat\n");
     printf("  r   : Send payload ready comannd\n");
@@ -78,12 +79,12 @@ void BstTestClient::printTestHelp() {
     printf("  p   : print this help\n");
 }
 
-void BstTestClient::initializeClient() {
-
+void BstTestClient::initializeClient()
+{
     /*tcgetattr gets the parameters of the current terminal
     STDIN_FILENO will tell tcgetattr that it should write the settings
     of stdin to initial_settings*/
-    tcgetattr( STDIN_FILENO, &initial_settings);
+    tcgetattr(STDIN_FILENO, &initial_settings);
     /*now the settings will be copied*/
     new_settings = initial_settings;
 
@@ -94,20 +95,21 @@ void BstTestClient::initializeClient() {
 
     /*Those new settings will be set to STDIN
     TCSANOW tells tcsetattr to change attributes immediately. */
-    tcsetattr( STDIN_FILENO, TCSANOW, &new_settings);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_settings);
 }
 
-void BstTestClient::updateClient() {
+void BstTestClient::updateClient()
+{
     char input = getchar();
     std::cout << "previous bstClientState: " << _bstClient.getCurrentState() << std::endl;
-    if(input > 0) {
-        switch(input) {
+    if (input > 0) {
+        switch (input) {
         case 'r':
             if (_bstClient.acquirePayloadControl()) {
                 spdlog::info("Sending payload ready command mode ...");
-            }
-            else {
-                spdlog::info("Cannot send the payload ready command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the payload ready command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         case 'z': {
@@ -123,9 +125,9 @@ void BstTestClient::updateClient() {
         case 'o':
             if (_bstClient.releasePayloadControl()) {
                 spdlog::info("Sending payload off command ...");
-            }
-            else {
-                spdlog::info("Cannot send the payload off command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the payload off command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
 
@@ -137,9 +139,9 @@ void BstTestClient::updateClient() {
             } else if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending land command...");
                 _bstClient.land();
-            }
-            else {
-                spdlog::info("Cannot send the Launch/land command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the Launch/land command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
 
             break;
@@ -152,9 +154,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending velocity command");
                 _bstClient.sendCommand(message);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         }
@@ -166,9 +168,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending velocity command");
                 _bstClient.sendCommand(message);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         }
@@ -180,9 +182,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending velocity command");
                 _bstClient.sendCommand(message);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         }
@@ -194,9 +196,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending velocity command");
                 _bstClient.sendCommand(message);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         }
@@ -208,9 +210,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending velocity command");
                 _bstClient.sendCommand(message);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         }
@@ -222,9 +224,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending velocity command");
                 _bstClient.sendCommand(message);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         }
@@ -237,17 +239,17 @@ void BstTestClient::updateClient() {
             waypointComand.plan[0].num = 80;
             waypointComand.plan[0].next = 80;
             waypointComand.plan[0].latitude = 43.238407;  // [deg]
-            waypointComand.plan[0].longitude = -1.973326;  // [deg]
-            waypointComand.plan[0].altitude = 168.0;  // [m]
-            waypointComand.plan[0].radius = 0.0;  // [m]
+            waypointComand.plan[0].longitude = -1.973326; // [deg]
+            waypointComand.plan[0].altitude = 168.0;      // [m]
+            waypointComand.plan[0].radius = 0.0;          // [m]
 
             waypointComand.mode = ADD;
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending a single waypoint");
                 _bstClient.sendWaypoints(waypointComand);
-            }
-            else {
-                spdlog::info("Cannot send the add single waypoint command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the add single waypoint command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
 
             break;
@@ -261,33 +263,33 @@ void BstTestClient::updateClient() {
             /***      GAZEBO          ***/
             waypointComand.plan[0].num = 80;
             waypointComand.plan[0].next = 81;
-            waypointComand.plan[0].latitude = 40.133057;  // [deg]
-            waypointComand.plan[0].longitude = -105.069714;  // [deg]
-            waypointComand.plan[0].altitude = 1575.0;  // [m]
-            waypointComand.plan[0].radius = 0.0;  // [m]
+            waypointComand.plan[0].latitude = 40.133057;    // [deg]
+            waypointComand.plan[0].longitude = -105.069714; // [deg]
+            waypointComand.plan[0].altitude = 1575.0;       // [m]
+            waypointComand.plan[0].radius = 0.0;            // [m]
 
             waypointComand.plan[1].num = 81;
             waypointComand.plan[1].next = 82;
-            waypointComand.plan[1].latitude = 40.133057;  // [deg]
-            waypointComand.plan[1].longitude = -105.070368;  // [deg]
-            waypointComand.plan[1].altitude = 1575.0;  // [m]
-            waypointComand.plan[1].radius = 0.0;  // [m]
+            waypointComand.plan[1].latitude = 40.133057;    // [deg]
+            waypointComand.plan[1].longitude = -105.070368; // [deg]
+            waypointComand.plan[1].altitude = 1575.0;       // [m]
+            waypointComand.plan[1].radius = 0.0;            // [m]
 
             waypointComand.plan[2].num = 82;
             waypointComand.plan[2].next = 83;
-            waypointComand.plan[2].latitude = 40.132384;  // [deg]
-            waypointComand.plan[2].longitude = -105.070368;  // [deg]
-            waypointComand.plan[2].altitude = 1575.0;  // [m]
-            waypointComand.plan[2].radius = 0.0;  // [m]
+            waypointComand.plan[2].latitude = 40.132384;    // [deg]
+            waypointComand.plan[2].longitude = -105.070368; // [deg]
+            waypointComand.plan[2].altitude = 1575.0;       // [m]
+            waypointComand.plan[2].radius = 0.0;            // [m]
 
             waypointComand.plan[3].num = 83;
             waypointComand.plan[3].next = 80;
-            waypointComand.plan[3].latitude = 40.132384;  // [deg]
-            waypointComand.plan[3].longitude = -105.069714;  // [deg]
-            waypointComand.plan[3].altitude = 1575.0;  // [m]
-            waypointComand.plan[3].radius = 0.0;  // [m]
+            waypointComand.plan[3].latitude = 40.132384;    // [deg]
+            waypointComand.plan[3].longitude = -105.069714; // [deg]
+            waypointComand.plan[3].altitude = 1575.0;       // [m]
+            waypointComand.plan[3].radius = 0.0;            // [m]
 
-           /***      URNIETA
+            /***      URNIETA
             waypointComand.plan[0].num = 80;
             waypointComand.plan[0].next = 81;
             waypointComand.plan[0].latitude = 43.238407;  // [deg]
@@ -323,9 +325,9 @@ void BstTestClient::updateClient() {
                 spdlog::info("Sending a single waypoint");
                 waypointComand.id = 128;
                 _bstClient.sendWaypoints(waypointComand);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
 
             break;
@@ -345,9 +347,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending a single waypoint");
                 _bstClient.sendWaypoints(waypointComand);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
 
             break;
@@ -362,9 +364,9 @@ void BstTestClient::updateClient() {
             if (_bstClient.getCurrentState() == "bstClientStateMachine:flying") {
                 spdlog::info("Sending velocity command");
                 _bstClient.sendCommand(message);
-            }
-            else {
-                spdlog::info("Cannot send the velocity command. Client is in {}", _bstClient.getCurrentState());
+            } else {
+                spdlog::info("Cannot send the velocity command. Client is in {}",
+                             _bstClient.getCurrentState());
             }
             break;
         }
@@ -387,6 +389,7 @@ void BstTestClient::updateClient() {
     }
 }
 
-void BstTestClient::exitClient() {
+void BstTestClient::exitClient()
+{
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
 }

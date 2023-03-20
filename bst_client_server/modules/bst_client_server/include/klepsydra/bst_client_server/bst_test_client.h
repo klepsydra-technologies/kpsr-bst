@@ -17,21 +17,20 @@
 #ifndef BST_TEST_CLIENT_H
 #define BST_TEST_CLIENT_H
 
+#include <atomic>
 #include <termios.h>
 #include <thread>
-#include <atomic>
 
 #include <klepsydra/bst_client_server/bst_client.h>
 
-class BstTestClient {
+class BstTestClient
+{
 public:
-
-    BstTestClient(kpsr::bst::BstClient & bstClient);
+    BstTestClient(kpsr::bst::BstClient &bstClient);
 
     void run();
 
 private:
-
     void printTestHelp(void);
     void exitClient(void);
     void initializeClient(void);
@@ -39,7 +38,7 @@ private:
 
     termios initial_settings, new_settings;
 
-    kpsr::bst::BstClient & _bstClient;
+    kpsr::bst::BstClient &_bstClient;
 
     std::atomic_bool _isRunning;
     std::thread _clientThread;

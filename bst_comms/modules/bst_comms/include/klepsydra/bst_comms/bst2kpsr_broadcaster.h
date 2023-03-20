@@ -23,18 +23,16 @@
 #include "bst_module_basic.h"
 #include "bst_module_flight_plan.h"
 #include "bst_protocol.h"
+#include "gcs.h"
 #include "helper_functions.h"
 #include "multicopter.h"
-#include "gcs.h"
 
 #include <klepsydra/core/publisher.h>
 
 #include <klepsydra/bst_comms/bst_reply_message.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 /**
  * @brief The Bst2KpsrBroadcaster class
  *
@@ -46,22 +44,23 @@ namespace bst
  *
  * @details This class is in charge of broadcasting all messages coming from BST into Klepsydra.
  */
-class Bst2KpsrBroadcaster {
+class Bst2KpsrBroadcaster
+{
 public:
-    Bst2KpsrBroadcaster(Publisher<Sensors_t> * sensorPublisher,
-                        Publisher<CalibrateSensor_t> * calibratePublisher,
-                        Publisher<Command_t> * controlCommandPublisher,
-                        Publisher<PID_t> * controlPidPublisher,
-                        Publisher<uint8_t> * systemPublisher,
-                        Publisher<SystemInitialize_t> * systemInitializePublisher,
-                        Publisher<TelemetryPosition_t> * telemetryPositionPublisher,
-                        Publisher<TelemetryOrientation_t> * telemetryOrientationPublisher,
-                        Publisher<TelemetrySystem_t> * telemetrySystemPublisher,
-                        Publisher<TelemetryPressure_t> * telemetryPressurePublisher,
-                        Publisher<::bst::comms::TelemetryControl_t> * telemetryControlPublisher,
-                        Publisher<gcs::TelemetryGCS_t> * telemetryGCSPublisher,
-                        Publisher<PayloadControl_t> * payloadControlPublisher,
-                        Publisher<BstReplyMessage> * bst2KpsrReplyMessagePublisher,
+    Bst2KpsrBroadcaster(Publisher<Sensors_t> *sensorPublisher,
+                        Publisher<CalibrateSensor_t> *calibratePublisher,
+                        Publisher<Command_t> *controlCommandPublisher,
+                        Publisher<PID_t> *controlPidPublisher,
+                        Publisher<uint8_t> *systemPublisher,
+                        Publisher<SystemInitialize_t> *systemInitializePublisher,
+                        Publisher<TelemetryPosition_t> *telemetryPositionPublisher,
+                        Publisher<TelemetryOrientation_t> *telemetryOrientationPublisher,
+                        Publisher<TelemetrySystem_t> *telemetrySystemPublisher,
+                        Publisher<TelemetryPressure_t> *telemetryPressurePublisher,
+                        Publisher<::bst::comms::TelemetryControl_t> *telemetryControlPublisher,
+                        Publisher<gcs::TelemetryGCS_t> *telemetryGCSPublisher,
+                        Publisher<PayloadControl_t> *payloadControlPublisher,
+                        Publisher<BstReplyMessage> *bst2KpsrReplyMessagePublisher,
                         uint32_t serialNumber);
 
     /**
@@ -71,7 +70,10 @@ public:
      * @param size
      * @param parameter
      */
-    void receive(uint8_t type, std::vector<unsigned char> data, uint16_t size, const void * parameter);
+    void receive(uint8_t type,
+                 std::vector<unsigned char> data,
+                 uint16_t size,
+                 const void *parameter);
 
     /**
      * @brief receiveCommand
@@ -81,7 +83,10 @@ public:
      * @param parameter
      * @return
      */
-    uint8_t receiveCommand(uint8_t type, std::vector<unsigned char> data, uint16_t size, const void * parameter);
+    uint8_t receiveCommand(uint8_t type,
+                           std::vector<unsigned char> data,
+                           uint16_t size,
+                           const void *parameter);
 
     /**
      * @brief receiveReply
@@ -91,7 +96,11 @@ public:
      * @param ack
      * @param parameter
      */
-    void receiveReply(uint8_t type, std::vector<unsigned char> data, uint16_t size, bool ack, const void * parameter);
+    void receiveReply(uint8_t type,
+                      std::vector<unsigned char> data,
+                      uint16_t size,
+                      bool ack,
+                      const void *parameter);
 
     /**
      * @brief publish
@@ -104,72 +113,72 @@ public:
     /**
      * @brief _sensorPublisher
      */
-    Publisher<Sensors_t> * _sensorPublisher;
+    Publisher<Sensors_t> *_sensorPublisher;
 
     /**
      * @brief _calibratePublisher
      */
-    Publisher<CalibrateSensor_t> * _calibratePublisher;
+    Publisher<CalibrateSensor_t> *_calibratePublisher;
 
     /**
      * @brief _controlCommandPublisher
      */
-    Publisher<Command_t> * _controlCommandPublisher;
+    Publisher<Command_t> *_controlCommandPublisher;
 
     /**
      * @brief _controlPidPublisher
      */
-    Publisher<PID_t> * _controlPidPublisher;
+    Publisher<PID_t> *_controlPidPublisher;
 
     /**
      * @brief _systemPublisher
      */
-    Publisher<uint8_t> * _systemPublisher;
+    Publisher<uint8_t> *_systemPublisher;
 
     /**
      * @brief _systemInitializePublisher
      */
-    Publisher<SystemInitialize_t> * _systemInitializePublisher;
+    Publisher<SystemInitialize_t> *_systemInitializePublisher;
 
     /**
      * @brief _telemetryPositionPublisher
      */
-    Publisher<TelemetryPosition_t> * _telemetryPositionPublisher;
+    Publisher<TelemetryPosition_t> *_telemetryPositionPublisher;
 
     /**
      * @brief _telemetryOrientationPublisher
      */
-    Publisher<TelemetryOrientation_t> * _telemetryOrientationPublisher;
+    Publisher<TelemetryOrientation_t> *_telemetryOrientationPublisher;
 
     /**
      * @brief _telemetrySystemPublisher
      */
-    Publisher<TelemetrySystem_t> * _telemetrySystemPublisher;
+    Publisher<TelemetrySystem_t> *_telemetrySystemPublisher;
 
     /**
      * @brief _telemetryPressurePublisher
      */
-    Publisher<TelemetryPressure_t> * _telemetryPressurePublisher;
+    Publisher<TelemetryPressure_t> *_telemetryPressurePublisher;
 
     /**
      * @brief _telemetryControlPublisher
      */
-    Publisher<::bst::comms::TelemetryControl_t> * _telemetryControlPublisher;
+    Publisher<::bst::comms::TelemetryControl_t> *_telemetryControlPublisher;
 
     /**
      * @brief _telemetryGCSPublisher
      */
-    Publisher<gcs::TelemetryGCS_t> * _telemetryGCSPublisher;
+    Publisher<gcs::TelemetryGCS_t> *_telemetryGCSPublisher;
 
     /**
      * @brief _payloadControlPublisher
      */
-    Publisher<PayloadControl_t> * _payloadControlPublisher;
+    Publisher<PayloadControl_t> *_payloadControlPublisher;
 
     /**
      * @brief _bst2KpsrReplyMessagePublisher
      */
-    Publisher<BstReplyMessage> * _bst2KpsrReplyMessagePublisher;
+    Publisher<BstReplyMessage> *_bst2KpsrReplyMessagePublisher;
 
     /**
      * @brief _payloadCurrentState
@@ -183,7 +192,7 @@ public:
 
 private:
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST2KPSR_BROADCASTER_H

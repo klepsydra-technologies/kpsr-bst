@@ -13,24 +13,24 @@
 // limitations under the License.
 
 /* STD LIBS */
-#include <string>
 #include <getopt.h>
+#include <string>
 #include <time.h>
 #include <unistd.h>
 
 /* KPSR LIBS */
 #include <klepsydra/dds_core/dds_env.h>
 
-#include <klepsydra/dds_bst_comms/bst_server_dds_provider.h>
 #include <klepsydra/dds_bst_comms/bst_dds_topic_names.h>
+#include <klepsydra/dds_bst_comms/bst_server_dds_provider.h>
 
-#include <klepsydra/bst_client_server/bst_server.h>
 #include <klepsydra/bst_client_server/bst_main_helper.h>
+#include <klepsydra/bst_client_server/bst_server.h>
 
 #include <klepsydra/bst_client_server/bst_server_user_input.h>
 
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
 int main(int argc, char *argv[])
 {
@@ -54,61 +54,92 @@ int main(int argc, char *argv[])
 
     kpsr::dds_mdlw::DDSEnv environment(fileName, configKey, &datawriter, &datareader);
 
-    dds::topic::Topic<kpsr_dds_bst::BstRequestData> bstRequestTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REQUEST);
-    dds::sub::DataReader<kpsr_dds_bst::BstRequestData> bstRequestDataReader(subscriber, bstRequestTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstRequestData>
+        bstRequestTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REQUEST);
+    dds::sub::DataReader<kpsr_dds_bst::BstRequestData> bstRequestDataReader(subscriber,
+                                                                            bstRequestTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::WaypointCommandData> bstWaypointCommandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_WP_CMD);
-    dds::sub::DataReader<kpsr_dds_bst::WaypointCommandData> bstWaypointCommandDataReader(subscriber, bstWaypointCommandTopic);
+    dds::topic::Topic<kpsr_dds_bst::WaypointCommandData>
+        bstWaypointCommandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_WP_CMD);
+    dds::sub::DataReader<kpsr_dds_bst::WaypointCommandData>
+        bstWaypointCommandDataReader(subscriber, bstWaypointCommandTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstReplyData> bstReplyTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REPLY);
+    dds::topic::Topic<kpsr_dds_bst::BstReplyData>
+        bstReplyTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_BST_REPLY);
     dds::pub::DataWriter<kpsr_dds_bst::BstReplyData> bstReplyDataWriter(publisher, bstReplyTopic);
 
-    dds::topic::Topic<kpsr_dds_geometry::PoseEventData> poseTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_POSE_EVENT);
+    dds::topic::Topic<kpsr_dds_geometry::PoseEventData>
+        poseTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_POSE_EVENT);
     dds::pub::DataWriter<kpsr_dds_geometry::PoseEventData> poseDataWriter(publisher, poseTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> systemInitiazeTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM_INIT);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> systemInitializeWriter(publisher, systemInitiazeTopic);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> systemInitializeReader(subscriber, systemInitiazeTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        systemInitiazeTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM_INIT);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> systemInitializeWriter(publisher,
+                                                                             systemInitiazeTopic);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> systemInitializeReader(subscriber,
+                                                                             systemInitiazeTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryPositionTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_POS);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryPositionWriter(publisher, telemetryPositionTopic);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryPositionReader(subscriber, telemetryPositionTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryPositionTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_POS);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryPositionWriter(publisher,
+                                                                              telemetryPositionTopic);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryPositionReader(subscriber,
+                                                                              telemetryPositionTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryOrientationTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_ORI);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryOrientationWriter(publisher, telemetryOrientationTopic);
-    dds::sub::DataReader<kpsr_dds_bst::BstPacketData> telemetryOrientationReader(subscriber, telemetryOrientationTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryOrientationTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_ORI);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData>
+        telemetryOrientationWriter(publisher, telemetryOrientationTopic);
+    dds::sub::DataReader<kpsr_dds_bst::BstPacketData>
+        telemetryOrientationReader(subscriber, telemetryOrientationTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> sensorsTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SENSOR);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        sensorsTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SENSOR);
     dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> sensorsWriter(publisher, sensorsTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> calibrateSensorTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CALIBRATE);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> calibrateSensorWriter(publisher, calibrateSensorTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        calibrateSensorTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CALIBRATE);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> calibrateSensorWriter(publisher,
+                                                                            calibrateSensorTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> commandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_CMD);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        commandTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_CMD);
     dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> commandWriter(publisher, commandTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> pidTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_PID);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        pidTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_CONTROL_PID);
     dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> pidWriter(publisher, pidTopic);
 
-    dds::topic::Topic<kpsr_dds_serialization::OctetData> systemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM);
+    dds::topic::Topic<kpsr_dds_serialization::OctetData>
+        systemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_SYSTEM);
     dds::pub::DataWriter<kpsr_dds_serialization::OctetData> systemWriter(publisher, systemTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetrySystemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_SYS);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetrySystemWriter(publisher, telemetrySystemTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetrySystemTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_SYS);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetrySystemWriter(publisher,
+                                                                            telemetrySystemTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryPressureTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_PRES);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryPressureWriter(publisher, telemetryPressureTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryPressureTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_PRES);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryPressureWriter(publisher,
+                                                                              telemetryPressureTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_CTRL);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryControlWriter(publisher, telemetryControlTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_CTRL);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryControlWriter(publisher,
+                                                                             telemetryControlTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> telemetryGCSTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_GCS);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryGCSWriter(publisher, telemetryGCSTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        telemetryGCSTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_TELEMETRY_GCS);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> telemetryGCSWriter(publisher,
+                                                                         telemetryGCSTopic);
 
-    dds::topic::Topic<kpsr_dds_bst::BstPacketData> payloadControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_PAYLOAD_CONTROL);
-    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> payloadControlWriter(publisher, payloadControlTopic);
+    dds::topic::Topic<kpsr_dds_bst::BstPacketData>
+        payloadControlTopic(dp, kpsr::bst::dds_mdlw::DDS_TOPIC_NAME_PAYLOAD_CONTROL);
+    dds::pub::DataWriter<kpsr_dds_bst::BstPacketData> payloadControlWriter(publisher,
+                                                                           payloadControlTopic);
 
-    kpsr::Container * container = nullptr;
+    kpsr::Container *container = nullptr;
     kpsr::high_performance::EventLoopMiddlewareProvider<256> eventloopProvider(container);
 
     kpsr::bst::dds_mdlw::BstServerDDSProvider<256> bstServerDdsProvider(container,

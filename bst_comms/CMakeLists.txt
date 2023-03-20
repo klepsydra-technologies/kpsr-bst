@@ -12,23 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set(PROJ_MAIN_NAME "bst_comms")
+project(${PROJ_MAIN_NAME})
 
-SET(PROJ_MAIN_NAME "bst_comms")
-PROJECT(${PROJ_MAIN_NAME})
-
-if (NOT KPSR_CODEGEN_DISABLED)
+if(NOT KPSR_CODEGEN_DISABLED)
     include(${KLEPSYDRA_CODE_GENERATOR})
-    KpsrEventGenerator("${CMAKE_CURRENT_SOURCE_DIR}/kidl" "${CMAKE_CURRENT_SOURCE_DIR}/gen" "klepsydra/bst_comms" "True" "False" "False" "True")
+    kpsreventgenerator(
+        "${CMAKE_CURRENT_SOURCE_DIR}/kidl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gen"
+        "klepsydra/bst_comms"
+        "True"
+        "False"
+        "False"
+        "True")
 endif()
 
-######################################################################################
+# ##############################################################################
 # ADD SUB FOLDERS
-######################################################################################
-ADD_SUBDIRECTORY(modules)
-ADD_SUBDIRECTORY(tests)
+# ##############################################################################
+add_subdirectory(modules)
+add_subdirectory(tests)
 
 add_core_export_target()
 add_dds_export_target()
 add_zmq_export_target()
 add_include_dirs()
-

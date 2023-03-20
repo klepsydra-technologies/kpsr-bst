@@ -12,25 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SET(PROJ_NAME kpsr_dds_${PROJ_MAIN_NAME}_tests)
-PROJECT(${PROJ_NAME})
+set(PROJ_NAME kpsr_dds_${PROJ_MAIN_NAME}_tests)
+project(${PROJ_NAME})
 
-include (MacroConnext)
+include(MacroConnext)
 # Source
-#---------------------------------------------------#
-FILE(GLOB ${PROJ_NAME}_SRC
-    "src/*.cpp"
-)
+# ---------------------------------------------------#
+file(GLOB ${PROJ_NAME}_SRC "src/*.cpp")
 
 # Link libraries with Project
-#---------------------------------------------------#
-ADD_EXECUTABLE(${PROJ_NAME} ${${PROJ_NAME}_SRC} ) 
+# ---------------------------------------------------#
+add_executable(${PROJ_NAME} ${${PROJ_NAME}_SRC})
 target_include_directories(${PROJ_NAME}
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/include)
+                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-#---------------------------------------------------#
-TARGET_LINK_LIBRARIES(${PROJ_NAME} kpsr_core yaml-cpp gtest_main
-    kpsr_dds_serialization_datamodel kpsr_dds_${PROJ_MAIN_NAME}_datamodel)
+# ---------------------------------------------------#
+target_link_libraries(
+    ${PROJ_NAME} kpsr_core yaml-cpp gtest_main kpsr_dds_serialization_datamodel
+    kpsr_dds_${PROJ_MAIN_NAME}_datamodel)
 
 add_test(NAME ${PROJ_NAME} COMMAND ${PROJ_NAME})

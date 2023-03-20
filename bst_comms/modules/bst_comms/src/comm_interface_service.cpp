@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <thread>
 #include <inttypes.h>
+#include <thread>
 
 #include <spdlog/spdlog.h>
 
@@ -27,10 +27,11 @@
 
 char FLIGHT_PLAN_NAME[] = "KPSR_MAP";
 
-kpsr::bst::CommInterfaceService::CommInterfaceService(Environment *_environment,
-                                                      Subscriber<BstRequestMessage> * bstRequestMessageSubscriber,
-                                                      Subscriber<WaypointCommandMessage> * bstWaypointCommandtMessageSubscriber,
-                                                      Subscriber<SystemInitialize_t> * systemInitializeSubscriber)
+kpsr::bst::CommInterfaceService::CommInterfaceService(
+    Environment *_environment,
+    Subscriber<BstRequestMessage> *bstRequestMessageSubscriber,
+    Subscriber<WaypointCommandMessage> *bstWaypointCommandtMessageSubscriber,
+    Subscriber<SystemInitialize_t> *systemInitializeSubscriber)
     : Service(_environment, "sdk_bst_interface_service")
     , _bstRequestMessageSubscriber(bstRequestMessageSubscriber)
     , _bstWaypointCommandtMessageSubscriber(bstWaypointCommandtMessageSubscriber)
@@ -38,13 +39,15 @@ kpsr::bst::CommInterfaceService::CommInterfaceService(Environment *_environment,
     , _flightPlanModule(FLIGHT_PLAN_NAME)
 {}
 
-void kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived(const WaypointCommandMessage & eventData) {
-    std::lock_guard<std::mutex> lock (_mutex);
+void kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived(
+    const WaypointCommandMessage &eventData)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
     spdlog::debug("{}. Received a set of {} waypoints.", __PRETTY_FUNCTION__, eventData.plan.size());
     uint8_t num_points = 0;
     _flightPlan.reset();
 
-    for (size_t i = 0; i < eventData.plan.size(); i ++) {
+    for (size_t i = 0; i < eventData.plan.size(); i++) {
         spdlog::debug("{} Adding waypoint {} to map.", __PRETTY_FUNCTION__, eventData.plan[i].num);
         _tempWaypoints[i].num = eventData.plan[i].num;
         _tempWaypoints[i].next = eventData.plan[i].next;
@@ -58,16 +61,21 @@ void kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived(const 
 
     // Get all waypoints
     num_points = _flightPlan.getAll(_tempWaypoints);
-    memcpy(&_flightPlanMap,_flightPlan.getMap(),sizeof(FlightPlanMap_t));
+    memcpy(&_flightPlanMap, _flightPlan.getMap(), sizeof(FlightPlanMap_t));
     _flightPlanMap.mode = eventData.mode;
 
     spdlog::debug("{} sendCommand for {} waypoints.", __PRETTY_FUNCTION__, num_points);
-    _commHandler->sendCommand(FLIGHT_PLAN, (uint8_t *)_tempWaypoints, num_points, &_flightPlanMap);
+    _commHandler->sendCommand(FLIGHT_PLAN, (uint8_t *) _tempWaypoints, num_points, &_flightPlanMap);
 }
 
-void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstRequestMessage  & eventData) {
-    std::lock_guard<std::mutex> lock (_mutex);
-    spdlog::trace("{}, eventData.id: {}, eventData.type: {}, eventData.value: {}", __PRETTY_FUNCTION__, eventData.id, eventData.type, eventData.value);
+void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstRequestMessage &eventData)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    spdlog::trace("{}, eventData.id: {}, eventData.type: {}, eventData.value: {}",
+                  __PRETTY_FUNCTION__,
+                  eventData.id,
+                  eventData.type,
+                  eventData.value);
     switch (eventData.id) {
     case CONTROL_COMMAND: {
         switch (eventData.type) {
@@ -78,19 +86,26 @@ void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstReque
             Command_t payLoadActiveCommand;
             payLoadActiveCommand.id = CMD_PAYLOAD_CONTROL;
             payLoadActiveCommand.value = PAYLOAD_CTRL_ACTIVE;
-            _commHandler->sendCommand(CONTROL_COMMAND, (uint8_t *)&payLoadActiveCommand, sizeof(Command_t), NULL);
+            _commHandler->sendCommand(CONTROL_COMMAND,
+                                      (uint8_t *) &payLoadActiveCommand,
+                                      sizeof(Command_t),
+                                      NULL);
             Command_t command;
             command.id = eventData.type;
             command.value = eventData.value;
-            _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
+            _commHandler->sendCommand(eventData.id, (uint8_t *) &command, sizeof(Command_t), NULL);
             break;
         }
         default: {
             Command_t command;
             command.id = eventData.type;
             command.value = eventData.value;
-            spdlog::debug("{} default. eventData.type: {}. eventData.id: {}. eventData.value: {}", __PRETTY_FUNCTION__, eventData.type, eventData.id, eventData.value);
-            _commHandler->sendCommand(eventData.id, (uint8_t *)&command, sizeof(Command_t), NULL);
+            spdlog::debug("{} default. eventData.type: {}. eventData.id: {}. eventData.value: {}",
+                          __PRETTY_FUNCTION__,
+                          eventData.type,
+                          eventData.id,
+                          eventData.value);
+            _commHandler->sendCommand(eventData.id, (uint8_t *) &command, sizeof(Command_t), NULL);
             break;
         }
         }
@@ -107,11 +122,19 @@ void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstReque
     case SENSORS_CALIBRATE: {
         switch (eventData.type) {
         case GYROSCOPE: {
-            spdlog::debug("{} calibrate sensor command. eventData.type: {}. eventData.id: {}. eventData.value: {}", __PRETTY_FUNCTION__, eventData.type, eventData.id, eventData.value);
+            spdlog::debug("{} calibrate sensor command. eventData.type: {}. eventData.id: {}. "
+                          "eventData.value: {}",
+                          __PRETTY_FUNCTION__,
+                          eventData.type,
+                          eventData.id,
+                          eventData.value);
             CalibrateSensor_t calibrateSensor;
             calibrateSensor.sensor = GYROSCOPE;
             calibrateSensor.state = static_cast<CalibrationState_t>(eventData.value);
-            _commHandler->sendCommand(eventData.id, (uint8_t *)&calibrateSensor, sizeof(CalibrateSensor_t), NULL);
+            _commHandler->sendCommand(eventData.id,
+                                      (uint8_t *) &calibrateSensor,
+                                      sizeof(CalibrateSensor_t),
+                                      NULL);
             break;
         }
         }
@@ -120,13 +143,16 @@ void kpsr::bst::CommInterfaceService::onBstRequestMessageReceived(const BstReque
     }
 }
 
-void kpsr::bst::CommInterfaceService::onSystemInitializeReceived(const ::bst::comms::SystemInitialize_t & eventData) {
-    std::lock_guard<std::mutex> lock (_mutex);
+void kpsr::bst::CommInterfaceService::onSystemInitializeReceived(
+    const ::bst::comms::SystemInitialize_t &eventData)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
     spdlog::debug("{}", __PRETTY_FUNCTION__);
-    _commHandler->send(SYSTEM_INITIALIZE, (uint8_t *)&eventData, sizeof(SystemInitialize_t), NULL);
+    _commHandler->send(SYSTEM_INITIALIZE, (uint8_t *) &eventData, sizeof(SystemInitialize_t), NULL);
 }
 
-void kpsr::bst::CommInterfaceService::bstCommunicationsInit () {
+void kpsr::bst::CommInterfaceService::bstCommunicationsInit()
+{
     spdlog::debug("{}", __PRETTY_FUNCTION__);
     std::string bstSerialPort;
     std::string bstBaudRate;
@@ -142,8 +168,7 @@ void kpsr::bst::CommInterfaceService::bstCommunicationsInit () {
         _environment->getPropertyString("bst_baud_rate", bstBaudRate);
         spdlog::info("{}. bstSerialPort:{}", __PRETTY_FUNCTION__, bstSerialPort);
         spdlog::info("{}. bstBaudRate:{}", __PRETTY_FUNCTION__, bstBaudRate);
-    }
-    else {
+    } else {
         _environment->getPropertyString("bst_host", bstHost);
         _environment->getPropertyString("bst_port", bstPort);
         spdlog::info("{}. bstHost:{}", __PRETTY_FUNCTION__, bstHost);
@@ -154,7 +179,7 @@ void kpsr::bst::CommInterfaceService::bstCommunicationsInit () {
     _commHandler = new BSTProtocol();
 
     // set interface
-    if(serialComm) {
+    if (serialComm) {
         _commHandler->setInterface(new NetuasSerial);
         _commInterface = _commHandler->getInterface();
         _commInterface->initialize(bstSerialPort.c_str(), bstBaudRate.c_str(), "");
@@ -174,30 +199,44 @@ void kpsr::bst::CommInterfaceService::bstCommunicationsInit () {
     _flightPlanModule.registerReceiveReply(kpsr::bst::Bst2KpsrModules::FlightPlan::receiveReply);
     _flightPlanModule.registerPublish(kpsr::bst::Bst2KpsrModules::FlightPlan::publish);
 
-    ((BSTProtocol *)_commHandler)->registerModule(&_basicModule);
-    ((BSTProtocol *)_commHandler)->registerModule(&_flightPlanModule);
+    ((BSTProtocol *) _commHandler)->registerModule(&_basicModule);
+    ((BSTProtocol *) _commHandler)->registerModule(&_flightPlanModule);
 }
 
-void kpsr::bst::CommInterfaceService::start() {
-    std::lock_guard<std::mutex> lock (_mutex);
+void kpsr::bst::CommInterfaceService::start()
+{
+    std::lock_guard<std::mutex> lock(_mutex);
     spdlog::debug("{}", __PRETTY_FUNCTION__);
 
     this->bstCommunicationsInit();
 
-    std::function<void(const BstRequestMessage &)> bstRequestMessageListener = std::bind(&kpsr::bst::CommInterfaceService::onBstRequestMessageReceived, this, std::placeholders::_1);
-    _bstRequestMessageSubscriber->registerListener("sdk_bst_interface_service_listener", bstRequestMessageListener);
+    std::function<void(const BstRequestMessage &)> bstRequestMessageListener =
+        std::bind(&kpsr::bst::CommInterfaceService::onBstRequestMessageReceived,
+                  this,
+                  std::placeholders::_1);
+    _bstRequestMessageSubscriber->registerListener("sdk_bst_interface_service_listener",
+                                                   bstRequestMessageListener);
 
-    std::function<void(const WaypointCommandMessage &)> bstWaypointCommandMessageListener = std::bind(&kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived, this, std::placeholders::_1);
-    _bstWaypointCommandtMessageSubscriber->registerListener("sdk_bst_interface_service_listener", bstWaypointCommandMessageListener);
+    std::function<void(const WaypointCommandMessage &)> bstWaypointCommandMessageListener =
+        std::bind(&kpsr::bst::CommInterfaceService::onBstWaypointCommandMessageReceived,
+                  this,
+                  std::placeholders::_1);
+    _bstWaypointCommandtMessageSubscriber->registerListener("sdk_bst_interface_service_listener",
+                                                            bstWaypointCommandMessageListener);
 
-    std::function<void(const ::bst::comms::SystemInitialize_t &)> systemInitializeListener = std::bind(&kpsr::bst::CommInterfaceService::onSystemInitializeReceived, this, std::placeholders::_1);
-    _systemInitializeSubscriber->registerListener("sdk_bst_interface_service_listener", systemInitializeListener);
+    std::function<void(const ::bst::comms::SystemInitialize_t &)> systemInitializeListener =
+        std::bind(&kpsr::bst::CommInterfaceService::onSystemInitializeReceived,
+                  this,
+                  std::placeholders::_1);
+    _systemInitializeSubscriber->registerListener("sdk_bst_interface_service_listener",
+                                                  systemInitializeListener);
 
     _commHandler->getInterface()->open();
 }
 
-void kpsr::bst::CommInterfaceService::stop() {
-    std::lock_guard<std::mutex> lock (_mutex);
+void kpsr::bst::CommInterfaceService::stop()
+{
+    std::lock_guard<std::mutex> lock(_mutex);
     spdlog::debug("{}", __PRETTY_FUNCTION__);
 
     _bstRequestMessageSubscriber->removeListener("sdk_bst_interface_service_listener");
@@ -207,9 +246,10 @@ void kpsr::bst::CommInterfaceService::stop() {
     _commHandler->getInterface()->close();
 }
 
-void kpsr::bst::CommInterfaceService::execute() {
-    std::lock_guard<std::mutex> lock (_mutex);
-    if(_commInterface->isConnected()) {
+void kpsr::bst::CommInterfaceService::execute()
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (_commInterface->isConnected()) {
         spdlog::debug("{}. Communication Handler Update.", __PRETTY_FUNCTION__);
         _commHandler->update();
     } else {
@@ -217,11 +257,12 @@ void kpsr::bst::CommInterfaceService::execute() {
     }
 }
 
-void kpsr::bst::CommInterfaceService::sendPayloadControlActive() {
+void kpsr::bst::CommInterfaceService::sendPayloadControlActive()
+{
     spdlog::debug("{}", __PRETTY_FUNCTION__);
     Command_t command;
     command.id = CMD_PAYLOAD_CONTROL;
     command.value = PAYLOAD_CTRL_ACTIVE;
 
-    _commHandler->sendCommand(CONTROL_COMMAND, (uint8_t *)&command, sizeof(Command_t), NULL);
+    _commHandler->sendCommand(CONTROL_COMMAND, (uint8_t *) &command, sizeof(Command_t), NULL);
 }

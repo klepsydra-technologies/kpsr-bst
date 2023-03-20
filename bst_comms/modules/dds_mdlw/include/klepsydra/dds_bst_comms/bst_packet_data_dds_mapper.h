@@ -17,8 +17,8 @@
 #ifndef SYSTEM_INITIALIZE_DDS_MAPPER_H
 #define SYSTEM_INITIALIZE_DDS_MAPPER_H
 
-#include <streambuf>
 #include <cstring>
+#include <streambuf>
 
 /* BST */
 #include "bst_module_basic.h"
@@ -40,14 +40,14 @@ template<class T>
 class Mapper<T, kpsr_dds_bst::BstPacketData>
 {
 public:
-
     /**
     * @brief fromMiddleware
     * @param message
     * @param event
     */
-    void fromMiddleware(const kpsr_dds_bst::BstPacketData & message, T & event) {
-        uint8_t * pointer = (uint8_t *) & event;
+    void fromMiddleware(const kpsr_dds_bst::BstPacketData &message, T &event)
+    {
+        uint8_t *pointer = (uint8_t *) &event;
         for (uint i = 0; i < sizeof(T); i++) {
             pointer[i] = message.data()[i];
         }
@@ -58,12 +58,14 @@ public:
     * @param event
     * @param message
     */
-    void toMiddleware(const T & event, kpsr_dds_bst::BstPacketData & message) {
-        std::vector<unsigned char> data((unsigned char*)(&event), (unsigned char*)&event + sizeof(T));
+    void toMiddleware(const T &event, kpsr_dds_bst::BstPacketData &message)
+    {
+        std::vector<unsigned char> data((unsigned char *) (&event),
+                                        (unsigned char *) &event + sizeof(T));
         message.data(data);
     }
 };
 
-}
+} // namespace kpsr
 
 #endif // SYSTEM_INITIALIZE_DDS_MAPPER_H

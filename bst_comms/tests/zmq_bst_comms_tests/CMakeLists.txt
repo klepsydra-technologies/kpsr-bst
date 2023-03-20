@@ -12,39 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SET(PROJ_NAME kpsr_zmq_${PROJ_MAIN_NAME}_tests)
-PROJECT(${PROJ_NAME})
+set(PROJ_NAME kpsr_zmq_${PROJ_MAIN_NAME}_tests)
+project(${PROJ_NAME})
 
-#find cppzmq wrapper, installed by make of cppzmq
+# find cppzmq wrapper, installed by make of cppzmq
 find_package(cppzmq REQUIRED)
 
 # Include directories with headers
-#---------------------------------------------------#
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include )
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/zmq_mdlw/include )
-INCLUDE_DIRECTORIES( ${KLEPSYDRA_INCLUDE_DIRS} )
+# ---------------------------------------------------#
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/${PROJ_MAIN_NAME}/include)
+include_directories(
+    ${CMAKE_SOURCE_DIR}/${PROJ_MAIN_NAME}/modules/zmq_mdlw/include)
+include_directories(${KLEPSYDRA_INCLUDE_DIRS})
 
 # Source
-#---------------------------------------------------#
-FILE(GLOB ${PROJ_NAME}_SRC
-    "src/*.cpp"
-)
-FILE(GLOB ${PROJ_NAME}_HEADERS
-    "include/*.h"
-)
+# ---------------------------------------------------#
+file(GLOB ${PROJ_NAME}_SRC "src/*.cpp")
+file(GLOB ${PROJ_NAME}_HEADERS "include/*.h")
 
 # Link libraries with Project
-#---------------------------------------------------#
-ADD_EXECUTABLE(${PROJ_NAME} ${${PROJ_NAME}_SRC} ) 
+# ---------------------------------------------------#
+add_executable(${PROJ_NAME} ${${PROJ_NAME}_SRC})
 
-#---------------------------------------------------#
-TARGET_LINK_LIBRARIES(${PROJ_NAME} 
-    gtest_main 
+# ---------------------------------------------------#
+target_link_libraries(
+    ${PROJ_NAME}
+    gtest_main
     kpsr_bst_comms
     ${KLEPSYDRA_CORE_LIBRARIES}
-    cppzmq 
-    atomic 
+    cppzmq
+    atomic
     ${CMAKE_THREAD_LIBS_INIT})
 
 add_test(NAME ${PROJ_NAME} COMMAND ${PROJ_NAME})

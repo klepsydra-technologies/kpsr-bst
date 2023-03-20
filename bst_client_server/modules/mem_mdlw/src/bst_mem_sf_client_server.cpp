@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /* STD LIBS */
-#include <string>
 #include <getopt.h>
+#include <string>
 #include <time.h>
 
 /* KPSR LIBS */
@@ -22,14 +22,14 @@
 
 #include <klepsydra/mem_core/mem_env.h>
 
-#include <klepsydra/mem_bst_comms/bst_client_server_mem_provider.h>
-#include <klepsydra/bst_client_server/bst_test_client.h>
-#include <klepsydra/bst_client_server/bst_server.h>
-#include <klepsydra/bst_client_server/bst_main_helper.h>
 #include <klepsydra/bst_client_server/bst_client_eventloop_provider.h>
+#include <klepsydra/bst_client_server/bst_main_helper.h>
+#include <klepsydra/bst_client_server/bst_server.h>
+#include <klepsydra/bst_client_server/bst_test_client.h>
+#include <klepsydra/mem_bst_comms/bst_client_server_mem_provider.h>
 
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
 int main(int argc, char *argv[])
 {
@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
 
     std::string logFileName;
     environment.getPropertyString("log_file_path", logFileName);
-    auto  kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
+    auto kpsrLogger = spdlog::basic_logger_mt("kpsr_logger", logFileName);
     spdlog::set_default_logger(kpsrLogger);
 
-    kpsr::Container * container = nullptr;
+    kpsr::Container *container = nullptr;
 
     kpsr::bst::mem::BstClientServerMemProvider bstClientServerMemProvider(container);
 

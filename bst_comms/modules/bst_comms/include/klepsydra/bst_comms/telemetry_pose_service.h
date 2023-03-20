@@ -18,25 +18,23 @@
 #define TELEMETRY_POSE_SERVICE_H
 
 /* BST */
-#include "netuas_socket.h"
 #include "bst_module_basic.h"
-#include "bst_protocol.h"
-#include "helper_functions.h"
-#include "comm_packets.h"
-#include "comm_interface.h"
-#include "comm_protocol.h"
 #include "bst_module_flight_plan.h"
+#include "bst_protocol.h"
+#include "comm_interface.h"
+#include "comm_packets.h"
+#include "comm_protocol.h"
+#include "helper_functions.h"
+#include "netuas_socket.h"
 
-#include <klepsydra/core/service.h>
 #include <klepsydra/core/publisher.h>
+#include <klepsydra/core/service.h>
 #include <klepsydra/core/subscriber.h>
 
 #include <klepsydra/geometry/pose_event_data.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 /**
  * @brief The TelemetryPoseService class
  *
@@ -48,10 +46,9 @@ namespace bst
  *
  * @details Conversion from Latlong to position and orientation.
  */
-class TelemetryPoseService : public Service {
-
+class TelemetryPoseService : public Service
+{
 public:
-
     /**
      * @brief TelemetryPoseService
      * @param environment
@@ -59,34 +56,35 @@ public:
      * @param telemetryOrientationSubscriber
      * @param poseEventDataPublisher
      */
-    TelemetryPoseService(Environment * environment,
-                         Subscriber<TelemetryPosition_t> * telemetryPositionSubscriber,
-                         Subscriber<TelemetryOrientation_t> * telemetryOrientationSubscriber,
-                         Publisher<kpsr::geometry::PoseEventData> * poseEventDataPublisher);
+    TelemetryPoseService(Environment *environment,
+                         Subscriber<TelemetryPosition_t> *telemetryPositionSubscriber,
+                         Subscriber<TelemetryOrientation_t> *telemetryOrientationSubscriber,
+                         Publisher<kpsr::geometry::PoseEventData> *poseEventDataPublisher);
 
     /**
      * @brief onTelemetryPositionReceived
      * @param eventData
      */
-    void onTelemetryPositionReceived(const ::bst::comms::TelemetryPosition_t  & eventData);
+    void onTelemetryPositionReceived(const ::bst::comms::TelemetryPosition_t &eventData);
 
     /**
      * @brief onTelemetryOrientationReceived
      * @param eventData
      */
-    void onTelemetryOrientationReceived(const ::bst::comms::TelemetryOrientation_t  & eventData);
+    void onTelemetryOrientationReceived(const ::bst::comms::TelemetryOrientation_t &eventData);
 
     /**
      * @brief updatePositionAndPublish
      * @param telemetryPosition
      */
-    void updatePositionAndPublish(const ::bst::comms::TelemetryPosition_t & telemetryPosition);
+    void updatePositionAndPublish(const ::bst::comms::TelemetryPosition_t &telemetryPosition);
 
     /**
      * @brief updateOrientationAndPublish
      * @param telemetryOrientation
      */
-    void updateOrientationAndPublish(const ::bst::comms::TelemetryOrientation_t & telemetryOrientation);
+    void updateOrientationAndPublish(
+        const ::bst::comms::TelemetryOrientation_t &telemetryOrientation);
 
     /**
      * @brief start
@@ -104,9 +102,9 @@ public:
     void execute() {}
 
 private:
-    Subscriber<TelemetryPosition_t> * _telemetryPositionSubscriber;
-    Subscriber<TelemetryOrientation_t> * _telemetryOrientationSubscriber;
-    Publisher<kpsr::geometry::PoseEventData> * _poseEventDataPublisher;
+    Subscriber<TelemetryPosition_t> *_telemetryPositionSubscriber;
+    Subscriber<TelemetryOrientation_t> *_telemetryOrientationSubscriber;
+    Publisher<kpsr::geometry::PoseEventData> *_poseEventDataPublisher;
 
     bool telemetryPositionReceived = false;
     bool telemetryOrientationReceived = false;
@@ -115,7 +113,6 @@ private:
 
     double originLatitude, originLongitude;
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 #endif // TELEMETRY_POSE_SERVICE_H
-

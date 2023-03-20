@@ -19,12 +19,9 @@
 
 #include <string>
 
-namespace kpsr
-{
-namespace bst
-{
-namespace dds_mdlw
-{
+namespace kpsr {
+namespace bst {
+namespace dds_mdlw {
 static const std::string DDS_TOPIC_NAME_BST_REQUEST = "kpsr_bst_request";
 static const std::string DDS_TOPIC_NAME_BST_REPLY = "kpsr_bst_reply";
 static const std::string DDS_TOPIC_NAME_BST_WP_CMD = "kpsr_bst_waypoint_cmd";
@@ -42,8 +39,8 @@ static const std::string DDS_TOPIC_NAME_TELEMETRY_PRES = "kpsr_bst_telemetry_pre
 static const std::string DDS_TOPIC_NAME_TELEMETRY_CTRL = "kpsr_bst_telemetry_control";
 static const std::string DDS_TOPIC_NAME_TELEMETRY_GCS = "kpsr_bst_telemetry_gcs";
 static const std::string DDS_TOPIC_NAME_PAYLOAD_CONTROL = "kpsr_bst_payload_control";
-}
-}
-}
+} // namespace dds_mdlw
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_DDS_TOPIC_NAMES_H

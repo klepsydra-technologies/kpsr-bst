@@ -19,12 +19,9 @@
 
 #include <string>
 
-namespace kpsr
-{
-namespace bst
-{
-namespace zmq_mdlw
-{
+namespace kpsr {
+namespace bst {
+namespace zmq_mdlw {
 static const std::string ZMQ_TOPIC_NAME_BST_REQUEST = "BST_REQUEST";
 static const std::string ZMQ_TOPIC_NAME_BST_REPLY = "BST_REPLY";
 static const std::string ZMQ_TOPIC_NAME_BST_WP_CMD = "BST_WP_CMD";
@@ -42,8 +39,8 @@ static const std::string ZMQ_TOPIC_NAME_TELEMETRY_PRES = "TELEMETRY_PRES";
 static const std::string ZMQ_TOPIC_NAME_TELEMETRY_CTRL = "TELEMETRY_CTRL";
 static const std::string ZMQ_TOPIC_NAME_TELEMETRY_GCS = "TELEMETRY_GCS";
 static const std::string ZMQ_TOPIC_NAME_PAYLOAD_CONTROL = "PAYLOAD_CONTROL";
-}
-}
-}
+} // namespace zmq_mdlw
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_ZMQ_TOPIC_NAMES_H

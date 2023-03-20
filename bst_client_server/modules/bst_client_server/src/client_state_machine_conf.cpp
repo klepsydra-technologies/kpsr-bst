@@ -14,7 +14,8 @@
 
 #include <klepsydra/bst_client_server/client_state_machine_conf.h>
 
-kpsr::bst::ClientStateMachineConfiguration::ClientStateMachineConfiguration() {
+kpsr::bst::ClientStateMachineConfiguration::ClientStateMachineConfiguration()
+{
     stateMachineConf.id = "bstClientStateMachine";
     stateMachineConf.states.resize(20);
 

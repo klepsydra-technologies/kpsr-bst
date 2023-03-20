@@ -21,10 +21,8 @@
 
 #include <klepsydra/core/environment.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 /**
  * @brief The BstMainHelper class
  *
@@ -42,7 +40,8 @@ namespace bst
     fileNameProvided = kpsr::bst::BstMainHelper::getConfFileFromParams(argc, argv, fileName);
 @endcode
  */
-class BstMainHelper {
+class BstMainHelper
+{
 public:
     /**
      * @brief getConfFileFromParams
@@ -53,11 +52,11 @@ public:
      */
     static std::string getConfFileFromParams(int argc, char *argv[]);
     static std::string currentDateTime();
+
 private:
     void static printHelp();
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // BST_MAIN_HELPER_H
-

@@ -24,19 +24,17 @@
 
 #include <klepsydra/bst_comms/bst2_kpsr_internal_message.h>
 
-namespace kpsr
-{
-namespace bst
-{
+namespace kpsr {
+namespace bst {
 namespace Bst2KpsrMiddlewareProvider {
 
-void start(Container * container);
+void start(Container *container);
 void stop();
-kpsr::Subscriber<Bst2KpsrInternalMessage> * getBst2KpsrInternalMessageSubscriber();
-kpsr::Publisher<Bst2KpsrInternalMessage> * getBst2KpsrInternalMessagePublisher();
+kpsr::Subscriber<Bst2KpsrInternalMessage> *getBst2KpsrInternalMessageSubscriber();
+kpsr::Publisher<Bst2KpsrInternalMessage> *getBst2KpsrInternalMessagePublisher();
 
-}
-}
-}
+} // namespace Bst2KpsrMiddlewareProvider
+} // namespace bst
+} // namespace kpsr
 
 #endif

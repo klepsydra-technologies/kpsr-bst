@@ -23,17 +23,18 @@
 
 namespace kpsr {
 namespace bst {
-class BstClient : public Service {
+class BstClient : public Service
+{
 public:
-    BstClient(Container * container,
-              Environment * environment,
-              Subscriber<std::string> * clientStateMachineExtSubscriber,
-              Publisher<std::string> * clientStateMachineExtPublisher,
-              Subscriber<std::string> * clientStateMachineSubscriber,
-              Publisher<std::string> * clientStateMachinePublisher,
-              kpsr::mem::CacheListener<std::string> & clientStateMachineListener,
-              BstClientMiddlewareProvider * bstClientMiddlewareProvider,
-              kpsr::mem::CacheListener<TelemetrySystem_t> * telemetrySystemEventListener);
+    BstClient(Container *container,
+              Environment *environment,
+              Subscriber<std::string> *clientStateMachineExtSubscriber,
+              Publisher<std::string> *clientStateMachineExtPublisher,
+              Subscriber<std::string> *clientStateMachineSubscriber,
+              Publisher<std::string> *clientStateMachinePublisher,
+              kpsr::mem::CacheListener<std::string> &clientStateMachineListener,
+              BstClientMiddlewareProvider *bstClientMiddlewareProvider,
+              kpsr::mem::CacheListener<TelemetrySystem_t> *telemetrySystemEventListener);
 
     void start() override;
 
@@ -49,21 +50,21 @@ public:
 
     bool land();
 
-    bool sendCommand(const BstRequestMessage & command);
+    bool sendCommand(const BstRequestMessage &command);
 
-    bool sendWaypoints(const WaypointCommandMessage & command);
+    bool sendWaypoints(const WaypointCommandMessage &command);
 
     std::string getCurrentState();
 
 private:
-    Subscriber<std::string> * _clientStateMachineSubscriber;
-    Publisher<std::string> * _clientStateMachineExtPublisher;
+    Subscriber<std::string> *_clientStateMachineSubscriber;
+    Publisher<std::string> *_clientStateMachineExtPublisher;
 
-    kpsr::mem::CacheListener<std::string> & _clientStateMachineListener;
+    kpsr::mem::CacheListener<std::string> &_clientStateMachineListener;
 
-    BstClientMiddlewareProvider * _bstClientMiddlewareProvider;
+    BstClientMiddlewareProvider *_bstClientMiddlewareProvider;
     ClientStateMachine _clientStateMachine;
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 #endif // BST_CLIENT_H

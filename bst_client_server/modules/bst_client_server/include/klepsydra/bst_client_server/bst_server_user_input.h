@@ -17,19 +17,18 @@
 #ifndef BST_SERVER_USER_INPUT_H
 #define BST_SERVER_USER_INPUT_H
 
+#include <atomic>
 #include <termios.h>
 #include <thread>
-#include <atomic>
 
-class BstServerUserInput {
+class BstServerUserInput
+{
 public:
-
     BstServerUserInput();
 
     void run();
 
 private:
-
     void printTestHelp(void);
     void exitServer(void);
     void initializeServer(void);

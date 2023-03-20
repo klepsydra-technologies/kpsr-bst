@@ -20,27 +20,44 @@
 #include <klepsydra/bst_comms/bst2kpsr_broadcaster.h>
 
 kpsr::bst::Bst2KpsrBroadcaster::Bst2KpsrBroadcaster(
-    Publisher<Sensors_t> *sensorPublisher, Publisher<CalibrateSensor_t> *calibratePublisher,
-    Publisher<Command_t> *controlCommandPublisher, Publisher<PID_t> *controlPidPublisher,
-    Publisher<uint8_t> *systemPublisher, Publisher<SystemInitialize_t> *systemInitializePublisher,
+    Publisher<Sensors_t> *sensorPublisher,
+    Publisher<CalibrateSensor_t> *calibratePublisher,
+    Publisher<Command_t> *controlCommandPublisher,
+    Publisher<PID_t> *controlPidPublisher,
+    Publisher<uint8_t> *systemPublisher,
+    Publisher<SystemInitialize_t> *systemInitializePublisher,
     Publisher<TelemetryPosition_t> *telemetryPositionPublisher,
     Publisher<TelemetryOrientation_t> *telemetryOrientationPublisher,
-    Publisher<TelemetrySystem_t> *telemetrySystemPublisher, Publisher<TelemetryPressure_t> *telemetryPressurePublisher,
+    Publisher<TelemetrySystem_t> *telemetrySystemPublisher,
+    Publisher<TelemetryPressure_t> *telemetryPressurePublisher,
     Publisher<::bst::comms::TelemetryControl_t> *telemetryControlPublisher,
-    Publisher<gcs::TelemetryGCS_t> *telemetryGCSPublisher, Publisher<PayloadControl_t> *payloadControlPublisher,
-    Publisher<BstReplyMessage> *bst2KpsrReplyMessagePublisher, uint32_t serialNumber)
-    : _sensorPublisher(sensorPublisher), _calibratePublisher(calibratePublisher),
-      _controlCommandPublisher(controlCommandPublisher), _controlPidPublisher(controlPidPublisher),
-      _systemPublisher(systemPublisher), _systemInitializePublisher(systemInitializePublisher),
-      _telemetryPositionPublisher(telemetryPositionPublisher),
-      _telemetryOrientationPublisher(telemetryOrientationPublisher),
-      _telemetrySystemPublisher(telemetrySystemPublisher), _telemetryPressurePublisher(telemetryPressurePublisher),
-      _telemetryControlPublisher(telemetryControlPublisher), _telemetryGCSPublisher(telemetryGCSPublisher),
-      _payloadControlPublisher(payloadControlPublisher), _bst2KpsrReplyMessagePublisher(bst2KpsrReplyMessagePublisher),
-      _payloadCurrentState(PAYLOAD_CTRL_OFF), _serialNumber(serialNumber) {}
+    Publisher<gcs::TelemetryGCS_t> *telemetryGCSPublisher,
+    Publisher<PayloadControl_t> *payloadControlPublisher,
+    Publisher<BstReplyMessage> *bst2KpsrReplyMessagePublisher,
+    uint32_t serialNumber)
+    : _sensorPublisher(sensorPublisher)
+    , _calibratePublisher(calibratePublisher)
+    , _controlCommandPublisher(controlCommandPublisher)
+    , _controlPidPublisher(controlPidPublisher)
+    , _systemPublisher(systemPublisher)
+    , _systemInitializePublisher(systemInitializePublisher)
+    , _telemetryPositionPublisher(telemetryPositionPublisher)
+    , _telemetryOrientationPublisher(telemetryOrientationPublisher)
+    , _telemetrySystemPublisher(telemetrySystemPublisher)
+    , _telemetryPressurePublisher(telemetryPressurePublisher)
+    , _telemetryControlPublisher(telemetryControlPublisher)
+    , _telemetryGCSPublisher(telemetryGCSPublisher)
+    , _payloadControlPublisher(payloadControlPublisher)
+    , _bst2KpsrReplyMessagePublisher(bst2KpsrReplyMessagePublisher)
+    , _payloadCurrentState(PAYLOAD_CTRL_OFF)
+    , _serialNumber(serialNumber)
+{}
 
-void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned char> data, uint16_t size,
-                                             const void *parameter) {
+void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type,
+                                             std::vector<unsigned char> data,
+                                             uint16_t size,
+                                             const void *parameter)
+{
     switch (type) {
     /* SENSORS */
     case SENSORS_GPS: {
@@ -185,7 +202,7 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}TELEMETRY_POSITION", __PRETTY_FUNCTION__);
         ::bst::comms::TelemetryPosition_t telemetryPositionPublish;
         memcpy(&telemetryPositionPublish, data.data(), sizeof(::bst::comms::TelemetryPosition_t));
-        const ::bst::comms::TelemetryPosition_t& telemetryPosition = telemetryPositionPublish;
+        const ::bst::comms::TelemetryPosition_t &telemetryPosition = telemetryPositionPublish;
         spdlog::debug("{}\tLatitude:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.latitude);
         spdlog::debug("{}\tLongitude:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.longitude);
         spdlog::debug("{}\tAltitude:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.altitude);
@@ -195,9 +212,15 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}\tvelocity.x:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.velocity.x);
         spdlog::debug("{}\tvelocity.y:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.velocity.y);
         spdlog::debug("{}\tvelocity.z:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.velocity.z);
-        spdlog::debug("{}\tacceleration.x:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.acceleration.x);
-        spdlog::debug("{}\tacceleration.y:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.acceleration.y);
-        spdlog::debug("{}\tacceleration.z:\t{:.20f}", __PRETTY_FUNCTION__, telemetryPosition.acceleration.z);
+        spdlog::debug("{}\tacceleration.x:\t{:.20f}",
+                      __PRETTY_FUNCTION__,
+                      telemetryPosition.acceleration.x);
+        spdlog::debug("{}\tacceleration.y:\t{:.20f}",
+                      __PRETTY_FUNCTION__,
+                      telemetryPosition.acceleration.y);
+        spdlog::debug("{}\tacceleration.z:\t{:.20f}",
+                      __PRETTY_FUNCTION__,
+                      telemetryPosition.acceleration.z);
         _telemetryPositionPublisher->publish(telemetryPositionPublish);
         break;
     }
@@ -206,7 +229,8 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}TELEMETRY_ORIENTATION", __PRETTY_FUNCTION__);
         ::bst::comms::TelemetryOrientation_t telemetryOrientationPublish;
         memcpy(&telemetryOrientationPublish, data.data(), sizeof(TelemetryOrientation_t));
-        const ::bst::comms::TelemetryOrientation_t& telemetryOrientation = telemetryOrientationPublish;
+        const ::bst::comms::TelemetryOrientation_t &telemetryOrientation =
+            telemetryOrientationPublish;
         spdlog::debug("{}\tq[0]:\t{:.20f}", __PRETTY_FUNCTION__, telemetryOrientation.q[0]);
         spdlog::debug("{}\tq[1]:\t{:.20f}", __PRETTY_FUNCTION__, telemetryOrientation.q[1]);
         spdlog::debug("{}\tq[2]:\t{:.20f}", __PRETTY_FUNCTION__, telemetryOrientation.q[2]);
@@ -219,13 +243,15 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
         spdlog::debug("{}TELEMETRY_SYSTEM, size: {}", __PRETTY_FUNCTION__, size);
         ::bst::comms::TelemetrySystem_t telemetrySystemPublish;
         memcpy(&telemetrySystemPublish, data.data(), sizeof(TelemetrySystem_t));
-        const ::bst::comms::TelemetrySystem_t& telemetrySystem = telemetrySystemPublish;
+        const ::bst::comms::TelemetrySystem_t &telemetrySystem = telemetrySystemPublish;
         for (int i = 0; i < size; i++) {
-            spdlog::debug("{}. data[{}] = {}", __PRETTY_FUNCTION__, i, (int)data[i]);
+            spdlog::debug("{}. data[{}] = {}", __PRETTY_FUNCTION__, i, (int) data[i]);
         }
         std::cout << "bst_flight_mode = " << telemetrySystem.flight_mode << std::endl;
         spdlog::debug("{}\tflight_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.flight_mode);
-        spdlog::debug("{}\tautopilot_mode:\t{}", __PRETTY_FUNCTION__, telemetrySystem.autopilot_mode);
+        spdlog::debug("{}\tautopilot_mode:\t{}",
+                      __PRETTY_FUNCTION__,
+                      telemetrySystem.autopilot_mode);
         spdlog::debug("{}\tbatt_percent:\t{}", __PRETTY_FUNCTION__, telemetrySystem.batt_percent);
         spdlog::debug("{}\tsatellites:\t{}", __PRETTY_FUNCTION__, telemetrySystem.satellites);
         spdlog::debug("{}\terror_code:\t{}", __PRETTY_FUNCTION__, telemetrySystem.error_code);
@@ -267,22 +293,25 @@ void kpsr::bst::Bst2KpsrBroadcaster::receive(uint8_t type, std::vector<unsigned 
     }
 }
 
-uint8_t kpsr::bst::Bst2KpsrBroadcaster::receiveCommand(uint8_t type, std::vector<unsigned char> data, uint16_t size,
-                                                       const void *parameter) {
+uint8_t kpsr::bst::Bst2KpsrBroadcaster::receiveCommand(uint8_t type,
+                                                       std::vector<unsigned char> data,
+                                                       uint16_t size,
+                                                       const void *parameter)
+{
     // validate this is a command
     if (size != sizeof(Command_t)) {
         spdlog::debug("{}receiveCommand: invlid data size - size={}", __PRETTY_FUNCTION__, size);
         return false;
     }
 
-    Command_t *command = (Command_t *)data.data();
+    Command_t *command = (Command_t *) data.data();
 
     switch (command->id) {
     /* PAYLOAD */
     case CMD_PAYLOAD_CONTROL: {
-        PayloadControl_t payloadControl = (PayloadControl_t)command->value;
+        PayloadControl_t payloadControl = (PayloadControl_t) command->value;
         _payloadControlPublisher->publish(payloadControl);
-        switch ((uint8_t)command->value) {
+        switch ((uint8_t) command->value) {
         case PAYLOAD_CTRL_OFF:
             spdlog::debug("{}CMD:PAYLOAD_CTRL_OFF", __PRETTY_FUNCTION__);
             _payloadCurrentState = PAYLOAD_CTRL_OFF;
@@ -311,16 +340,23 @@ uint8_t kpsr::bst::Bst2KpsrBroadcaster::receiveCommand(uint8_t type, std::vector
     return false;
 }
 
-void kpsr::bst::Bst2KpsrBroadcaster::receiveReply(uint8_t type, std::vector<unsigned char> data, uint16_t size,
-                                                  bool ack, const void *parameter) {
-    spdlog::info("{}: type={}, data={}, ack: {}", __PRETTY_FUNCTION__, (int)type, (int)data[0], (ack ? "ACK" : "NACK"));
+void kpsr::bst::Bst2KpsrBroadcaster::receiveReply(
+    uint8_t type, std::vector<unsigned char> data, uint16_t size, bool ack, const void *parameter)
+{
+    spdlog::info("{}: type={}, data={}, ack: {}",
+                 __PRETTY_FUNCTION__,
+                 (int) type,
+                 (int) data[0],
+                 (ack ? "ACK" : "NACK"));
 
     kpsr::bst::BstReplyMessageBuilder builder;
-    std::shared_ptr<BstReplyMessage> message = builder.withType(data[0]).withId(type).withAck(ack).build();
+    std::shared_ptr<BstReplyMessage> message =
+        builder.withType(data[0]).withId(type).withAck(ack).build();
     _bst2KpsrReplyMessagePublisher->publish(message);
 }
 
-bool kpsr::bst::Bst2KpsrBroadcaster::publish(uint8_t type, uint8_t param) {
+bool kpsr::bst::Bst2KpsrBroadcaster::publish(uint8_t type, uint8_t param)
+{
     spdlog::debug("{}publish: type={}", __PRETTY_FUNCTION__, type);
 
     // do some with status request

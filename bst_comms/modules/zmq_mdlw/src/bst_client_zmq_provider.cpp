@@ -13,4 +13,3 @@
 // limitations under the License.
 
 #include <klepsydra/zmq_bst_comms/bst_client_zmq_provider.h>
-

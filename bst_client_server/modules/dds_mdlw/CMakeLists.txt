@@ -12,56 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set(PROJ_NAME kpsr_dds_${PROJ_MAIN_NAME})
+project(${PROJ_NAME})
 
-SET(PROJ_NAME kpsr_dds_${PROJ_MAIN_NAME})
-PROJECT(${PROJ_NAME})
-
-include (MacroConnext)
+include(MacroConnext)
 
 # Source
-#---------------------------------------------------#
-FILE(GLOB ${PROJ_NAME}_SRC
-    "src/*.cpp"
-)
+# ---------------------------------------------------#
+file(GLOB ${PROJ_NAME}_SRC "src/*.cpp")
 
-FILE(GLOB_RECURSE ${PROJ_NAME}_HEADERS
-    "include/*.h"
-)
+file(GLOB_RECURSE ${PROJ_NAME}_HEADERS "include/*.h")
 
 # Create Library
-#---------------------------------------------------#
-ADD_EXECUTABLE(kpsr_dds_bst_client src/bst_dds_client.cpp  )
-ADD_EXECUTABLE(kpsr_dds_bst_server src/bst_dds_server.cpp  )
+# ---------------------------------------------------#
+add_executable(kpsr_dds_bst_client src/bst_dds_client.cpp)
+add_executable(kpsr_dds_bst_server src/bst_dds_server.cpp)
 
-TARGET_LINK_LIBRARIES(kpsr_dds_bst_client 
-    kpsr_${PROJ_MAIN_NAME} 
-    kpsr_bst_comms
-    kpsr_dds_bst_comms_datamodel
-    kpsr_dds_geometry_datamodel
-)
+target_link_libraries(kpsr_dds_bst_client kpsr_${PROJ_MAIN_NAME} kpsr_bst_comms
+                      kpsr_dds_bst_comms_datamodel kpsr_dds_geometry_datamodel)
 
-TARGET_LINK_LIBRARIES(kpsr_dds_bst_server 
-    kpsr_${PROJ_MAIN_NAME} 
-    kpsr_bst_comms
-    kpsr_dds_bst_comms_datamodel
-    kpsr_dds_geometry_datamodel
-)
-
+target_link_libraries(kpsr_dds_bst_server kpsr_${PROJ_MAIN_NAME} kpsr_bst_comms
+                      kpsr_dds_bst_comms_datamodel kpsr_dds_geometry_datamodel)
 
 # Install
-#---------------------------------------------------#
-INSTALL(TARGETS kpsr_dds_bst_client
+# ---------------------------------------------------#
+install(
+    TARGETS kpsr_dds_bst_client
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    COMPONENT libs
-)
-INSTALL(TARGETS kpsr_dds_bst_server
+    COMPONENT libs)
+install(
+    TARGETS kpsr_dds_bst_server
     EXPORT KlepsydraBstTargets
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
-    COMPONENT libs
-)
+    COMPONENT libs)
 
 add_zmq_export_target(kpsr_dds_bst_client)
 add_zmq_export_target(kpsr_dds_bst_server)
-#PRINTBASICINFO(${PROJ_NAME})
-
+# PRINTBASICINFO(${PROJ_NAME})

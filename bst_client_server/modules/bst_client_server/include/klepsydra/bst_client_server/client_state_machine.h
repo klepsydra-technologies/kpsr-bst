@@ -17,13 +17,13 @@
 #ifndef CLIENT_STATE_MACHINE_H
 #define CLIENT_STATE_MACHINE_H
 
-#include <klepsydra/core/service.h>
-#include <klepsydra/core/callback_handler.h>
 #include <klepsydra/core/cache_listener.h>
+#include <klepsydra/core/callback_handler.h>
+#include <klepsydra/core/service.h>
 
+#include <klepsydra/state_machine/sm_factory_impl.h>
 #include <klepsydra/state_machine/state_machine.h>
 #include <klepsydra/state_machine/state_machine_listener.h>
-#include <klepsydra/state_machine/sm_factory_impl.h>
 
 #include <klepsydra/bst_comms/bst_client_middleware_provider.h>
 #include <klepsydra/bst_comms/request_reply_correlation.h>
@@ -34,45 +34,51 @@
 
 namespace kpsr {
 namespace bst {
-class ClientStateMachine : public Service {
+class ClientStateMachine : public Service
+{
 public:
-    ClientStateMachine(Environment * environment,
-                       BstClientMiddlewareProvider * bstClientMiddlewareProvider,
-                       Publisher<std::string> * clientStateMachinePublisher,
-                       Subscriber<std::string> * clientStateMachineExtSubscriber,
-                       kpsr::mem::CacheListener<TelemetrySystem_t> * telemetrySystemEventListener);
+    ClientStateMachine(Environment *environment,
+                       BstClientMiddlewareProvider *bstClientMiddlewareProvider,
+                       Publisher<std::string> *clientStateMachinePublisher,
+                       Subscriber<std::string> *clientStateMachineExtSubscriber,
+                       kpsr::mem::CacheListener<TelemetrySystem_t> *telemetrySystemEventListener);
 
     void start() override;
     void stop() override;
     void execute() override;
     void updateCurrentState(const std::string &currentState, bool stateChanged);
 
-    void sendCommand(const BstRequestMessage & command);
+    void sendCommand(const BstRequestMessage &command);
 
-    bool sendWaypoints(const WaypointCommandMessage & command);
+    bool sendWaypoints(const WaypointCommandMessage &command);
 
 private:
-
-    void sendControlCommandAndUpdateOnAck(unsigned char id, float value, const std::string & eventPrefix);
-    void checkAndWaitUntilFlightMode(std::vector<FlightMode_t> validFlyingModes, std::string listenerName,
-                                     std::string validModeEvent, std::string notValidModeEvent);
+    void sendControlCommandAndUpdateOnAck(unsigned char id,
+                                          float value,
+                                          const std::string &eventPrefix);
+    void checkAndWaitUntilFlightMode(std::vector<FlightMode_t> validFlyingModes,
+                                     std::string listenerName,
+                                     std::string validModeEvent,
+                                     std::string notValidModeEvent);
     void addActionsOnReadyState();
 
-    Environment * _environment;
-    BstClientMiddlewareProvider * _bstClientMiddlewareProvider;
+    Environment *_environment;
+    BstClientMiddlewareProvider *_bstClientMiddlewareProvider;
     kpsr::fsm::SMFactoryImpl _stateMachineFactory;
     ClientStateMachineConfiguration _stateMachineConfiguration;
     std::shared_ptr<kpsr::fsm::StateMachine> _stateMachine;
-    Publisher<std::string> * _clientStateMachinePublisher;
-    Subscriber<std::string> * _clientStateMachineExtSubscriber;
+    Publisher<std::string> *_clientStateMachinePublisher;
+    Subscriber<std::string> *_clientStateMachineExtSubscriber;
     kpsr::fsm::StateMachineListener _clientStateMachineListener;
     kpsr::bst::RequestReplyCorrelation _correlator;
     kpsr::bst::FlightPlantReplyCorrelation _flightPlanCorrelator;
-    kpsr::MultiThreadCallbackHandler<kpsr::bst::BstRequestMessage, kpsr::bst::BstReplyMessage> _callbackHandler;
-    kpsr::MultiThreadCallbackHandler<kpsr::bst::WaypointCommandMessage, kpsr::bst::BstReplyMessage> _flightPlanCallbackHandler;
-    kpsr::mem::CacheListener<TelemetrySystem_t> * _telemetrySystemEventListener;
+    kpsr::MultiThreadCallbackHandler<kpsr::bst::BstRequestMessage, kpsr::bst::BstReplyMessage>
+        _callbackHandler;
+    kpsr::MultiThreadCallbackHandler<kpsr::bst::WaypointCommandMessage, kpsr::bst::BstReplyMessage>
+        _flightPlanCallbackHandler;
+    kpsr::mem::CacheListener<TelemetrySystem_t> *_telemetrySystemEventListener;
 };
-}
-}
+} // namespace bst
+} // namespace kpsr
 
 #endif // CLIENT_STATE_MACHINE_H

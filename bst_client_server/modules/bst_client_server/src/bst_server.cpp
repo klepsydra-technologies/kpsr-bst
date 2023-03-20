@@ -14,48 +14,48 @@
 
 #include <klepsydra/bst_client_server/bst_server.h>
 
-kpsr::bst::BstServer::BstServer(Container * container,
-                                Environment * environment,
-                                BstServerMiddlewareProvider * _serverMiddlewareProvider)
+kpsr::bst::BstServer::BstServer(Container *container,
+                                Environment *environment,
+                                BstServerMiddlewareProvider *_serverMiddlewareProvider)
     : kpsr::Service(environment, "BST_SERVER")
     , _serverMiddlewareProvider(_serverMiddlewareProvider)
 {
     _commInterfaceService = new kpsr::bst::CommInterfaceService(
-                _environment,
-                _serverMiddlewareProvider->getBstRequestMessageSubscriber(),
-                _serverMiddlewareProvider->getBstWaypointCommandMessageSubscriber(),
-                _serverMiddlewareProvider->getSystemInitializeSubscriber());
+        _environment,
+        _serverMiddlewareProvider->getBstRequestMessageSubscriber(),
+        _serverMiddlewareProvider->getBstWaypointCommandMessageSubscriber(),
+        _serverMiddlewareProvider->getSystemInitializeSubscriber());
 
     uint32_t serialNumber;
     int confSerialNumber;
     environment->getPropertyInt("bst_serial_number", confSerialNumber);
     serialNumber = confSerialNumber;
-    _bst2KpsrBroadcaster = new Bst2KpsrBroadcaster(_serverMiddlewareProvider->getSensorPublisher(),
-                                                   _serverMiddlewareProvider->getCalibratePublisher(),
-                                                   _serverMiddlewareProvider->getControlCommandPublisher(),
-                                                   _serverMiddlewareProvider->getControlPidPublisher(),
-                                                   _serverMiddlewareProvider->getSystemPublisher(),
-                                                   _serverMiddlewareProvider->getSystemInitializePublisher(),
-                                                   _serverMiddlewareProvider->getTelemetryPositionPublisher(),
-                                                   _serverMiddlewareProvider->getTelemetryOrientationPublisher(),
-                                                   _serverMiddlewareProvider->getTelemetrySystemPublisher(),
-                                                   _serverMiddlewareProvider->getTelemetryPressurePublisher(),
-                                                   _serverMiddlewareProvider->getTelemetryControlPublisher(),
-                                                   _serverMiddlewareProvider->getTelemetryGCSPublisher(),
-                                                   _serverMiddlewareProvider->getPayloadControlPublisher(),
-                                                   _serverMiddlewareProvider->getBst2KpsrReplyMessagePublisher(),
-                                                   serialNumber);
+    _bst2KpsrBroadcaster =
+        new Bst2KpsrBroadcaster(_serverMiddlewareProvider->getSensorPublisher(),
+                                _serverMiddlewareProvider->getCalibratePublisher(),
+                                _serverMiddlewareProvider->getControlCommandPublisher(),
+                                _serverMiddlewareProvider->getControlPidPublisher(),
+                                _serverMiddlewareProvider->getSystemPublisher(),
+                                _serverMiddlewareProvider->getSystemInitializePublisher(),
+                                _serverMiddlewareProvider->getTelemetryPositionPublisher(),
+                                _serverMiddlewareProvider->getTelemetryOrientationPublisher(),
+                                _serverMiddlewareProvider->getTelemetrySystemPublisher(),
+                                _serverMiddlewareProvider->getTelemetryPressurePublisher(),
+                                _serverMiddlewareProvider->getTelemetryControlPublisher(),
+                                _serverMiddlewareProvider->getTelemetryGCSPublisher(),
+                                _serverMiddlewareProvider->getPayloadControlPublisher(),
+                                _serverMiddlewareProvider->getBst2KpsrReplyMessagePublisher(),
+                                serialNumber);
 
-    _bst2KpsrAdaptorService = new kpsr::bst::Bst2KpsrAdaptorService(
-                _environment,
-                container,
-                *_bst2KpsrBroadcaster);
+    _bst2KpsrAdaptorService = new kpsr::bst::Bst2KpsrAdaptorService(_environment,
+                                                                    container,
+                                                                    *_bst2KpsrBroadcaster);
 
     _telemetryPoseService = new kpsr::bst::TelemetryPoseService(
-                _environment,
-                _serverMiddlewareProvider->getTelemetryPositionSubscriber(),
-                _serverMiddlewareProvider->getTelemetryOrientationSubscriber(),
-                _serverMiddlewareProvider->getPoseEventDataPublisher());
+        _environment,
+        _serverMiddlewareProvider->getTelemetryPositionSubscriber(),
+        _serverMiddlewareProvider->getTelemetryOrientationSubscriber(),
+        _serverMiddlewareProvider->getPoseEventDataPublisher());
 
     if (container != nullptr) {
         container->attach(_commInterfaceService);
@@ -64,7 +64,8 @@ kpsr::bst::BstServer::BstServer(Container * container,
     }
 }
 
-void kpsr::bst::BstServer::start() {
+void kpsr::bst::BstServer::start()
+{
     _commInterfaceService->startup();
     _bst2KpsrAdaptorService->startup();
     _telemetryPoseService->startup();
@@ -74,13 +75,15 @@ void kpsr::bst::BstServer::start() {
     scheduler.startScheduledService(period, true, this);
 }
 
-void kpsr::bst::BstServer::execute() {
+void kpsr::bst::BstServer::execute()
+{
     _commInterfaceService->runOnce();
     _bst2KpsrAdaptorService->runOnce();
     _telemetryPoseService->runOnce();
 }
 
-void kpsr::bst::BstServer::stop() {
+void kpsr::bst::BstServer::stop()
+{
     scheduler.stopScheduledTask("BST_SERVER");
     scheduler.stopScheduledService(this);
 

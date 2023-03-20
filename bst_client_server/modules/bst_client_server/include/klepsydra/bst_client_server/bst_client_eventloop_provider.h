@@ -25,58 +25,67 @@
 
 namespace kpsr {
 namespace bst {
-template <std::size_t BufferSize>
+template<std::size_t BufferSize>
 class BstClientEventloopProvider
 {
 public:
-    BstClientEventloopProvider(Container * container, Environment * environment,
-                               kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> & eventloopMiddlewareProvider,
-                               BstClientMiddlewareProvider * bstClientMiddlewareProvider)
+    BstClientEventloopProvider(
+        Container *container,
+        Environment *environment,
+        kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> &eventloopMiddlewareProvider,
+        BstClientMiddlewareProvider *bstClientMiddlewareProvider)
         : _environment(environment)
         , _eventloopMiddlewareProvider(eventloopMiddlewareProvider)
         , _bstClientMiddlewareProvider(bstClientMiddlewareProvider)
         , _stateMachineListener()
         , _telemetrySystemEventListener()
-        , _bstClient(container, _environment,
-                     _eventloopMiddlewareProvider.template getSubscriber<std::string>("bst_client_ext_state_machine"),
-                     _eventloopMiddlewareProvider.template getPublisher<std::string>("bst_client_ext_state_machine", 0, nullptr, nullptr),
-                     _eventloopMiddlewareProvider.template getSubscriber<std::string>("bst_client_state_machine"),
-                     _eventloopMiddlewareProvider.template getPublisher<std::string>("bst_client_state_machine", 0, nullptr, nullptr),
+        , _bstClient(container,
+                     _environment,
+                     _eventloopMiddlewareProvider.template getSubscriber<std::string>(
+                         "bst_client_ext_state_machine"),
+                     _eventloopMiddlewareProvider.template getPublisher<std::string>(
+                         "bst_client_ext_state_machine", 0, nullptr, nullptr),
+                     _eventloopMiddlewareProvider.template getSubscriber<std::string>(
+                         "bst_client_state_machine"),
+                     _eventloopMiddlewareProvider.template getPublisher<std::string>(
+                         "bst_client_state_machine", 0, nullptr, nullptr),
                      _stateMachineListener,
                      _bstClientMiddlewareProvider,
                      &_telemetrySystemEventListener)
     {}
 
-    void start() {
+    void start()
+    {
         _bstClient.startup();
         int period;
         _environment->getPropertyInt("bst_client_run_period_microsecs", period);
         if (period > 0) {
-            _bstClientMiddlewareProvider->getScheduler()->startScheduledService(period, true, &_bstClient);
+            _bstClientMiddlewareProvider->getScheduler()->startScheduledService(period,
+                                                                                true,
+                                                                                &_bstClient);
         }
     }
 
-    void stop() {
+    void stop()
+    {
         _bstClientMiddlewareProvider->getScheduler()->stopScheduledTask("BST_CLIENT_EXEC");
         _bstClientMiddlewareProvider->getScheduler()->stopScheduledService(&_bstClient);
         _bstClient.shutdown();
     }
 
-    BstClient & getBstClient() {
-        return _bstClient;
-    }
+    BstClient &getBstClient() { return _bstClient; }
 
 private:
-    Environment * _environment;
-    kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> & _eventloopMiddlewareProvider;
-    BstClientMiddlewareProvider * _bstClientMiddlewareProvider;
+    Environment *_environment;
+    kpsr::high_performance::EventLoopMiddlewareProvider<BufferSize> &_eventloopMiddlewareProvider;
+    BstClientMiddlewareProvider *_bstClientMiddlewareProvider;
     kpsr::mem::CacheListener<std::string> _stateMachineListener;
     kpsr::mem::MultiThreadCacheListener<TelemetrySystem_t> _telemetrySystemEventListener;
     BstClient _bstClient;
 };
 
-}
+} // namespace bst
 
-}
+} // namespace kpsr
 
 #endif // BST_CLIENT_EVENTLOOP_PROVIDER_H
